@@ -66,19 +66,34 @@ export const DashboardPage = () => {
                  ) : (
                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                          {properties.map(p => (
-                             <div key={p.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                 <div>
-                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                         <Building2 size={20} color="var(--accent-primary)" />
-                                         <h4 style={{ fontSize: '1.25rem', margin: 0 }}>Mülk #{p.id.toUpperCase()}</h4>
+                             <div key={p.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                                 
+                                 <div style={{ display: 'flex', gap: '16px', flex: 1 }}>
+                                     {/* Fotoğraf Thumbnail (Küçük Resim) Alanı */}
+                                     {p.images && p.images.length > 0 ? (
+                                        <div style={{ width: '80px', height: '80px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
+                                            <img src={p.images[0]} alt="Property" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                     ) : (
+                                        <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px dashed var(--border-glass)' }}>
+                                            <Home size={24} color="var(--text-muted)" />
+                                        </div>
+                                     )}
+
+                                     <div>
+                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                             <Building2 size={18} color="var(--accent-primary)" />
+                                             <h4 style={{ fontSize: '1.1rem', margin: 0 }}>Mülk #{p.id.toUpperCase()}</h4>
+                                         </div>
+                                         <p style={{ color: 'var(--text-main)', fontSize: '0.85rem', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                             <MapPin size={14} color="var(--text-muted)"/> {p.address}
+                                         </p>
+                                         <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                             <Calendar size={14} /> Yapım: {p.buildYear} • Net: {p.area}m² {p.images && p.images.length > 1 && `• +${p.images.length - 1} Fotoğraf`}
+                                         </p>
                                      </div>
-                                     <p style={{ color: 'var(--text-main)', fontSize: '0.9rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                         <MapPin size={14} color="var(--text-muted)"/> {p.address}
-                                     </p>
-                                     <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                         <Calendar size={14} /> Yapım: {p.buildYear} •  Net: {p.area}m²
-                                     </p>
                                  </div>
+                                 
                                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                      <div style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '10px 20px', borderRadius: '30px', fontWeight: '800', border: '1px solid rgba(99,102,241,0.3)', fontSize: '1.1rem' }}>
                                          {p.roomType}

@@ -8,6 +8,7 @@ export type Property = {
   buildYear: number;
   quakeStandard: string;
   rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[];
+  images: string[];
   dateAdded: Date;
 };
 

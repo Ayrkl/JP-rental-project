@@ -14,6 +14,7 @@ export const PropertyForm = () => {
     const [buildYear, setBuildYear] = useState('');
     const [quakeStandard, setQuakeStandard] = useState('new');
     const [rooms, setRooms] = useState<{ id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[]>([]);
+    const [images, setImages] = useState<string[]>([]); // GÖZATILACAK: Resim Listesi
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -27,9 +28,30 @@ export const PropertyForm = () => {
                 setBuildYear(existingProp.buildYear.toString());
                 setQuakeStandard(existingProp.quakeStandard);
                 setRooms(existingProp.rooms);
+                setImages(existingProp.images || []); // Yeni Eklenen Resimler
             }
         }
     }, [id, properties]);
+
+    // RESİM YÜKLEME MANTIĞI (FileReader ile geçici Base64)
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        const files = Array.from(e.target.files);
+        
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (reader.result) {
+                    setImages(prev => [...prev, reader.result as string]);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const removeImage = (index: number) => {
+        setImages(images.filter((_, i) => i !== index));
+    };
 
     const addRoom = (type: 'Room' | 'Living' | 'Dining' | 'Kitchen') => {
         setRooms([...rooms, { id: Math.random().toString(36).substr(2, 9), type }]);
@@ -65,7 +87,8 @@ export const PropertyForm = () => {
             buildYear: Number(buildYear),
             quakeStandard,
             rooms, 
-            roomType: layoutString 
+            roomType: layoutString,
+            images // Dosyaları aktar
         };
 
         if (id) {
@@ -183,6 +206,40 @@ export const PropertyForm = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* --- FOTOĞRAF YÜKLEME MODÜLÜ --- */}
+                <div className="upload-zone" style={{ position: 'relative' }}>
+                    <input 
+                        type="file" 
+                        multiple 
+                        accept="image/*" 
+                        onChange={handleImageUpload} 
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                        title="Resim eklemek için tıklayın veya sürükleyin"
+                    />
+                    <UploadCloud size={40} className="upload-icon" />
+                    <h4>Ev Fotoğraflarını Yükleyin</h4>
+                    <p>Sürükleyip bırakın veya tarayıcıdan dosyaları seçin (Çoklu Tıklama Aktif)</p>
+                    <button type="button" className="secondary-btn" style={{ pointerEvents: 'none' }}>Dosya Seç</button>
+                </div>
+
+                {/* Yüklenen Fotoğraflar Önizleme */}
+                {images.length > 0 && (
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '32px' }}>
+                        {images.map((img, idx) => (
+                            <div key={idx} style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-glass)' }}>
+                                <img src={img} alt={`Preview ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <button 
+                                    type="button" 
+                                    onClick={() => removeImage(idx)} 
+                                    style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', padding: '4px', cursor: 'pointer', display: 'flex' }}
+                                >
+                                    <Trash2 size={12} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <div className="form-actions">
                     <button type="button" className="btn-cancel" onClick={() => navigate('/admin')}>İptal</button>
