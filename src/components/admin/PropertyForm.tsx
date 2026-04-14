@@ -250,7 +250,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto text-foreground animate-in fade-in-50 duration-500 pb-10">
+        <div className="w-full text-foreground animate-in fade-in-50 duration-500 pb-10">
             <div className="mb-6 border-none">
                 <h1 className="text-2xl font-bold tracking-tight mb-1">{id ? 'Mülkü Düzenle' : 'Sisteme Yeni Mülk Ekle'}</h1>
                 <p className="text-muted-foreground text-sm">Gerekli verileri doldurarak işlem aşamalarını kaydedin.</p>

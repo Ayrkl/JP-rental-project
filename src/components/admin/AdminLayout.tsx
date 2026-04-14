@@ -133,7 +133,7 @@ export const AdminLayout = () => {
 
         {/* Router Outlet for Dashboard / Property Form */}
         <main className="flex-1 overflow-auto p-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-[1600px] mx-auto">
             <Outlet />
           </div>
         </main>
