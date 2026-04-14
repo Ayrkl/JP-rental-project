@@ -138,10 +138,6 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <span className="text-sm font-medium block">Kat Planı Oluşturucu</span>
                                 <span className="text-xs text-muted-foreground">Oda bloklarını sırayla ekleyerek gayrimenkulün planını dizayn edin.</span>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nihai Plan</span>
-                                <Badge variant="default" className="text-sm px-3 py-1 font-mono tracking-wider shadow-sm">{layoutString}</Badge>
-                            </div>
                         </div>
 
                         <div className="p-5 flex flex-col gap-6">
