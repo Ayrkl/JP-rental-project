@@ -496,6 +496,17 @@ body {
   background: rgba(0, 0, 0, 0.4);
 }
 
+/* Sayı girişlerindeki (number input) çirkin beyaz okları (spin buttons) gizler */
+.admin-form input[type="number"]::-webkit-outer-spin-button,
+.admin-form input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.admin-form input[type="number"] {
+  -moz-appearance: textfield; /* Firefox desteği */
+}
+
 .custom-select-wrapper {
   position: relative;
 }
