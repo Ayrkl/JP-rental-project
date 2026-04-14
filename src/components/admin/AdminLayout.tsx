@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Home, Users, FileText, Bell,
   ChevronRight, Menu, Search,
-  Megaphone, PanelLeft
+  Megaphone, PanelLeft, Map
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -18,6 +18,7 @@ export const AdminLayout = () => {
       title: null,
       items: [
         { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Kontrol Paneli' },
+        { path: '/admin/map', icon: <Map size={18} />, label: 'Harita' },
         { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Mülk Yönetimi' },
         { path: '#', icon: <FileText size={18} />, label: 'Sözleşmeler' },
       ]

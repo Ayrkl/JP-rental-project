@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Map, Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
+import { Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { PropertyForm } from './PropertyForm';
-import { PropertyMap } from './PropertyMap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,8 +23,8 @@ export const Dashboard = () => {
 
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                <Card className="xl:col-span-1">
+            <div className="grid gap-4 md:grid-cols-3">
+                <Card>
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Home className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">Toplam Mülk</CardTitle>
@@ -35,7 +34,7 @@ export const Dashboard = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="xl:col-span-1">
+                <Card>
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Building2 className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">Aktif Kiracı</CardTitle>
@@ -45,7 +44,7 @@ export const Dashboard = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="xl:col-span-1">
+                <Card>
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Calendar className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">Boşta Ev</CardTitle>
@@ -53,14 +52,6 @@ export const Dashboard = () => {
                     <CardContent>
                         <div className="text-2xl font-bold">0</div>
                     </CardContent>
-                </Card>
-
-                <Card className="md:col-span-3 lg:col-span-4 xl:col-span-3 h-[250px] overflow-hidden p-0 relative group border-border/60">
-                    <div className="absolute top-3 left-3 z-[400] bg-background/90 backdrop-blur px-2.5 py-1 rounded-full border border-border shadow-sm flex items-center gap-2 pointer-events-none transition-opacity group-hover:opacity-100">
-                        <Map className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-[11px] font-semibold uppercase tracking-wider">Canlı Mülk Haritası</span>
-                    </div>
-                    {properties && <PropertyMap properties={properties} onSelectProperty={setSelectedPropertyId} />}
                 </Card>
             </div>
 
