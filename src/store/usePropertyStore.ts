@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export type Property = {
   id: string;
@@ -9,7 +10,7 @@ export type Property = {
   quakeStandard: string;
   rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[];
   images: string[];
-  dateAdded: Date;
+  dateAdded: string;
 };
 
 interface PropertyStore {
@@ -19,25 +20,32 @@ interface PropertyStore {
   removeProperty: (id: string) => void;
 }
 
-export const usePropertyStore = create<PropertyStore>((set) => ({
-  properties: [],
-  
-  addProperty: (property) => set((state) => ({
-    properties: [
-        { 
-            ...property, 
-            id: Math.random().toString(36).substr(2, 9), 
-            dateAdded: new Date() 
-        },
-        ...state.properties, 
-    ]
-  })),
+export const usePropertyStore = create<PropertyStore>()(
+  persist(
+    (set) => ({
+      properties: [],
+      
+      addProperty: (property) => set((state) => ({
+        properties: [
+            { 
+                ...property, 
+                id: Math.random().toString(36).substr(2, 9), 
+                dateAdded: new Date().toISOString() 
+            },
+            ...state.properties, 
+        ]
+      })),
 
-  updateProperty: (id, updatedProp) => set((state) => ({
-    properties: state.properties.map(p => p.id === id ? { ...p, ...updatedProp } : p)
-  })),
-  
-  removeProperty: (id) => set((state) => ({
-    properties: state.properties.filter(p => p.id !== id)
-  }))
-}));
+      updateProperty: (id, updatedProp) => set((state) => ({
+        properties: state.properties.map(p => p.id === id ? { ...p, ...updatedProp } : p)
+      })),
+      
+      removeProperty: (id) => set((state) => ({
+        properties: state.properties.filter(p => p.id !== id)
+      }))
+    }),
+    {
+      name: 'property-storage', // Tarayıcı LocalStorage anahtarı
+    }
+  )
+);
