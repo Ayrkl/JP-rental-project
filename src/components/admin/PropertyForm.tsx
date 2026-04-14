@@ -162,20 +162,28 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 {/* ÖZELLİKLER */}
                 <div className="space-y-4 col-span-1 md:col-span-2">
                     <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">Fiziksel İmkanlar</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
                         {[
-                            { id: 'internet', label: 'Fiber İnternet' },
-                            { id: 'elevator', label: 'Asansör' },
-                            { id: 'autolock', label: 'Otomatik Kilit' },
-                            { id: 'parking', label: 'Otopark Alanı' },
-                            { id: 'pets', label: 'Evcil Hayvan İzni' },
-                            { id: 'balcony', label: 'Balkon' },
-                        ].map(feat => (
-                            <div key={feat.id} className="flex items-center space-x-3">
-                                <Switch checked={features.includes(feat.id)} onCheckedChange={() => toggleFeature(feat.id)} id={`feat-${feat.id}`} />
-                                <Label htmlFor={`feat-${feat.id}`} className={features.includes(feat.id) ? 'font-medium cursor-pointer' : 'text-muted-foreground cursor-pointer font-normal'}>{feat.label}</Label>
-                            </div>
-                        ))}
+                            { id: 'internet', label: 'Fiber İnternet', desc: 'Yüksek hızlı gigabit altyapısı' },
+                            { id: 'elevator', label: 'Asansör', desc: 'Bina içi yük/insan asansörü' },
+                            { id: 'autolock', label: 'Otomatik Kilit', desc: 'Şifreli ve kameralı güvenli giriş' },
+                            { id: 'parking', label: 'Otopark Alanı', desc: 'Binada araca özel tahsisli alan' },
+                            { id: 'pets', label: 'Evcil Hayvan İzni', desc: 'Kedi ve köpek barındırılabilir' },
+                            { id: 'balcony', label: 'Balkon', desc: 'Açık hava özel kullanım alanı' },
+                        ].map(feat => {
+                            const isChecked = features.includes(feat.id);
+                            return (
+                                <div key={feat.id} onClick={() => toggleFeature(feat.id)} className={`flex flex-row items-center justify-between rounded-xl border p-4 cursor-pointer transition-all duration-200 ${isChecked ? 'border-primary bg-primary/5 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}>
+                                    <div className="flex flex-col gap-1 pr-4">
+                                        <span className="text-sm font-semibold">{feat.label}</span>
+                                        <span className="text-xs text-muted-foreground/80 leading-snug">{feat.desc}</span>
+                                    </div>
+                                    <div className="pointer-events-none shrink-0">
+                                        <Switch checked={isChecked} />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
