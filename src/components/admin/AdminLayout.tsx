@@ -113,14 +113,14 @@ export const AdminLayout = () => {
         {/* Header Navbar */}
         <header className="h-[72px] border-b border-[#1e1e1e] bg-[#0a0a0a] flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
-            {/* INLINE TOGGLE BUTTON */}
+              {/* INLINE TOGGLE BUTTON */}
             <Button 
               variant="outline" 
               size="icon" 
               className="hidden md:flex h-9 w-9 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#1e1e1e] transition-colors rounded-lg" 
               onClick={() => setCollapsed(!collapsed)}
             >
-              {collapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={18} />}
+              <PanelLeft size={18} />
             </Button>
             
             <Button variant="ghost" size="icon" className="md:hidden text-zinc-400" onClick={() => setCollapsed(!collapsed)}>
