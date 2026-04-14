@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus } from 'lucide-react';
+import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X } from 'lucide-react';
 import { usePropertyStore, type InventoryItem } from '../../store/usePropertyStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -59,7 +59,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const addInventoryItem = () => {
         setInventory([...inventory, { id: Math.random().toString(), name: '', brandModel: '', condition: 'Yeni' }]);
     };
-    
+
     const updateInventoryItem = (itemId: string, field: keyof InventoryItem, value: string) => {
         setInventory(inventory.map(item => item.id === itemId ? { ...item, [field]: value } : item));
     };
@@ -73,9 +73,9 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
         const hasL = rooms.some(r => r.type === 'Living');
         const hasD = rooms.some(r => r.type === 'Dining');
         const hasK = rooms.some(r => r.type === 'Kitchen');
-        
+
         const prefix = roomCount > 0 ? roomCount.toString() : (rooms.length > 0 ? '0' : '1');
-        const suffix = `${hasL?'L':''}${hasD?'D':''}${hasK?'K':''}`;
+        const suffix = `${hasL ? 'L' : ''}${hasD ? 'D' : ''}${hasK ? 'K' : ''}`;
         return prefix === '0' ? suffix : (prefix === '1' && suffix === '' ? '1R' : prefix + suffix);
     }, [rooms]);
 
@@ -96,28 +96,28 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const formContent = (
         <form className="space-y-10" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
+
                 {/* TEMEL BİLGİLER */}
                 <div className="space-y-4 col-span-1 md:col-span-2">
                     <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">Temel Bilgiler</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                         <div className="space-y-2 col-span-1 md:col-span-2">
-                            <Label className="flex items-center gap-2"><MapPin size={16}/> Açık Adres</Label>
+                            <Label className="flex items-center gap-2"><MapPin size={16} /> Açık Adres</Label>
                             <Input placeholder="Örn: Tokyo-to, Shibuya-ku..." value={address} onChange={e => setAddress(e.target.value)} required />
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="flex items-center gap-2"><Ruler size={16}/> Net Alan (m²)</Label>
+                            <Label className="flex items-center gap-2"><Ruler size={16} /> Net Alan (m²)</Label>
                             <Input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" placeholder="Örn: 45" value={area} onChange={e => e.target.value !== '0' && setArea(e.target.value)} min="1" step="any" required />
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="flex items-center gap-2"><Calendar size={16}/> Yapım Yılı</Label>
+                            <Label className="flex items-center gap-2"><Calendar size={16} /> Yapım Yılı</Label>
                             <Input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" placeholder="Örn: 2018" min="1950" max="2026" value={buildYear} onChange={e => (!e.target.value.startsWith('0') && e.target.value !== '0') && setBuildYear(e.target.value)} required />
                         </div>
 
                         <div className="space-y-2 col-span-1 md:col-span-2">
-                            <Label className="flex items-center gap-2"><ShieldCheck size={16}/> Deprem Sertifikası (耐震基準)</Label>
+                            <Label className="flex items-center gap-2"><ShieldCheck size={16} /> Deprem Sertifikası (耐震基準)</Label>
                             <select className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" value={quakeStandard} onChange={e => setQuakeStandard(e.target.value)}>
                                 <option value="old">Eski Standart (旧耐震 - 1981 Öncesi)</option>
                                 <option value="new">Yeni Standart (新耐震 - 1981 Sonrası)</option>
@@ -129,29 +129,37 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 </div>
 
                 {/* PLAN VE ODALAR */}
-                <div className="space-y-5 col-span-1 md:col-span-2">
-                    <div className="flex items-center justify-between border-b border-border pb-2">
-                        <h3 className="text-lg font-medium tracking-tight">Oda & Plan Çizicisi</h3>
-                        <Badge variant="secondary" className="px-3 py-1 font-mono text-sm">Plan: {layoutString}</Badge>
-                    </div>
+                <div className="space-y-4 col-span-1 md:col-span-2">
+                    <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">Oda & Plan Çizicisi</h3>
 
-                    <div className="flex flex-wrap gap-3">
-                        <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Room')}>Oda Ekle (R)</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Living')}>Salon Ekle (L)</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Dining')}>Yemek Alanı (D)</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Kitchen')}>Mutfak (K)</Button>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2 items-center min-h-[40px] pt-2">
-                        {rooms.length === 0 && <span className="text-muted-foreground text-sm">Kat planı seçilmedi. (Stüdyo tipi olarak kaydedilecek)</span>}
-                        {rooms.map(room => (
-                            <Badge key={room.id} variant="secondary" className="pr-1.5 py-1 text-xs gap-1.5 bg-muted">
-                                {room.type === 'Room' ? 'Yatak Odası' : room.type === 'Living' ? 'Salon' : room.type === 'Dining' ? 'Yemek Alanı' : 'Mutfak'}
-                                <Button type="button" variant="ghost" size="icon" className="h-4 w-4 rounded-full text-muted-foreground hover:text-destructive hover:bg-transparent" onClick={() => setRooms(rooms.filter(r => r.id !== room.id))}>
-                                    <Trash2 className="w-3 h-3" />
+                    <div className="rounded-xl border border-border bg-card overflow-hidden mt-2">
+                        <div className="flex items-center justify-between bg-muted/20 p-4 border-b border-border">
+                            <div className="space-y-0.5">
+                                <span className="text-sm font-medium block">Kat Planı Oluşturucu</span>
+                                <span className="text-xs text-muted-foreground">Oda bloklarını sırayla ekleyerek gayrimenkulün planını dizayn edin.</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Nihai Plan</span>
+                                <Badge variant="default" className="text-sm px-3 py-1 font-mono tracking-wider shadow-sm">{layoutString}</Badge>
+                            </div>
+                        </div>
+
+                        <div className="p-5 flex flex-col gap-6">
+                            <div className="flex flex-wrap gap-3">
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Room')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Yatak Odası (R)
                                 </Button>
-                            </Badge>
-                        ))}
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Living')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Salon (L)
+                                </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Dining')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Yemek Alanı (D)
+                                </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Kitchen')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Mutfak (K)
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -199,12 +207,12 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                             <Plus className="w-4 h-4 mr-1.5" /> Eşya Ekle
                         </Button>
                     </div>
-                    
+
                     <div className="flex flex-col gap-3 pt-2">
                         {inventory.length === 0 && <p className="text-sm text-muted-foreground">Sistemde kayıtlı ekstra demirbaş bulunmuyor.</p>}
                         {inventory.map((item, idx) => (
                             <div key={item.id} className="flex gap-3 items-center p-3 rounded-lg border bg-muted/20">
-                                <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx+1}.</span>
+                                <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx + 1}.</span>
                                 <Input className="h-8 flex-1 border-border/50 bg-background/50 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
                                 <Input className="h-8 flex-[1.5] border-border/50 bg-background/50 shadow-none" placeholder="Marka / Model Belirt" value={item.brandModel} onChange={e => updateInventoryItem(item.id, 'brandModel', e.target.value)} />
                                 <select className="h-8 rounded-md border border-input bg-background/50 px-2 text-sm" value={item.condition} onChange={e => updateInventoryItem(item.id, 'condition', e.target.value)}>
@@ -248,7 +256,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
             <div className="flex justify-end gap-3 pt-4 border-t border-border mt-8">
                 {!isModal && <Button type="button" variant="outline" onClick={() => navigate('/admin')}>Geri Dön</Button>}
                 <Button type="submit" className="min-w-[140px]">
-                    {isSubmitted ? <><CheckCircle2 className="w-4 h-4 mr-2"/> {id ? 'Güncellendi' : 'Eklendi'}</> : (id ? 'Değişiklikleri Kaydet' : 'Yeni Mülkü Ekle')}
+                    {isSubmitted ? <><CheckCircle2 className="w-4 h-4 mr-2" /> {id ? 'Güncellendi' : 'Eklendi'}</> : (id ? 'Değişiklikleri Kaydet' : 'Yeni Mülkü Ekle')}
                 </Button>
             </div>
         </form>
