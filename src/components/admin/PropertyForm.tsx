@@ -169,24 +169,20 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                         ].map(feat => {
                             const isChecked = Array.isArray(features) && features.includes(feat.id);
                             return (
-                                <div key={feat.id} className={`flex flex-row items-center justify-between rounded-xl border p-4 transition-all duration-200 ${isChecked ? 'border-primary bg-primary/5 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}>
-                                    <div className="flex flex-col gap-1 pr-4">
-                                        <Label htmlFor={`feat-${feat.id}`} className="text-sm font-semibold cursor-pointer leading-none">{feat.label}</Label>
-                                        <span className="text-xs text-muted-foreground/80 leading-snug">{feat.desc}</span>
-                                    </div>
-                                    <div className="shrink-0">
-                                        <Switch 
-                                            id={`feat-${feat.id}`} 
-                                            checked={isChecked} 
-                                            onCheckedChange={(checked) => {
-                                                setFeatures(prev => {
-                                                    const current = Array.isArray(prev) ? prev : [];
-                                                    return checked ? [...current, feat.id] : current.filter(f => f !== feat.id);
-                                                });
-                                            }} 
-                                        />
-                                    </div>
-                                </div>
+                                <button
+                                    key={feat.id}
+                                    type="button"
+                                    onClick={() => {
+                                        setFeatures(prev => {
+                                            const current = Array.isArray(prev) ? prev : [];
+                                            return current.includes(feat.id) ? current.filter(f => f !== feat.id) : [...current, feat.id];
+                                        });
+                                    }}
+                                    className={`flex flex-col items-start justify-center text-left rounded-xl border p-4 transition-all duration-200 w-full ${isChecked ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}
+                                >
+                                    <span className={`text-sm font-semibold leading-none ${isChecked ? 'text-primary' : 'text-foreground'}`}>{feat.label}</span>
+                                    <span className="text-xs text-muted-foreground/80 leading-snug mt-1.5">{feat.desc}</span>
+                                </button>
                             );
                         })}
                     </div>
