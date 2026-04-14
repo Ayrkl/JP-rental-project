@@ -155,31 +155,28 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                         </div>
 
                         <div className="p-5 flex flex-col gap-6">
-                            <div className="flex flex-wrap gap-3">
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Room')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Yatak Odası (R)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Living')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Salon (L)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Dining')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Yemek Alanı (D)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Kitchen')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Mutfak (K)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Bathroom')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Banyo (B)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Toilet')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Tuvalet (WC)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Storage')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Depo/Kiler (S)
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Balcony')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
-                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Balkon (BL)
-                                </Button>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                {[
+                                    { id: 'Room', label: 'Yatak Odası', },
+                                    { id: 'Living', label: 'Salon' },
+                                    { id: 'Dining', label: 'Yemek Alanı', },
+                                    { id: 'Kitchen', label: 'Mutfak', },
+                                    { id: 'Bathroom', label: 'Banyo' },
+                                    { id: 'Toilet', label: 'Tuvalet', },
+                                    { id: 'Storage', label: 'Depo/Kiler', },
+                                    { id: 'Balcony', label: 'Balkon', }
+                                ].map((type) => (
+                                    <button
+                                        key={type.id}
+                                        type="button"
+                                        onClick={() => addRoom(type.id as any)}
+                                        className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-card hover:bg-primary/5 hover:border-primary/40 transition-all text-center gap-2 group w-full"
+                                    >
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-sm font-semibold">{type.label}</span>
+                                        </div>
+                                    </button>
+                                ))}
                             </div>
 
                             {/* Seçilen Odaların Görüntülendiği Pano (Pill şeklinde) */}
@@ -193,14 +190,14 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                         <div key={room.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200">
                                             <span className="text-xs font-semibold text-muted-foreground w-4 h-4 flex items-center justify-center rounded-full bg-muted/50">{index + 1}</span>
                                             <span className="text-sm font-medium">
-                                                {room.type === 'Room' ? '🛏️ Yatak Odası' : 
-                                                 room.type === 'Living' ? '🛋️ Salon' : 
-                                                 room.type === 'Dining' ? '🍽️ Yemek Alanı' : 
-                                                 room.type === 'Kitchen' ? '🍳 Mutfak' :
-                                                 room.type === 'Bathroom' ? '🛁 Banyo' :
-                                                 room.type === 'Toilet' ? '🚽 Tuvalet' :
-                                                 room.type === 'Balcony' ? '🌅 Balkon' :
-                                                 '📦 Depo/Kiler'}
+                                                {room.type === 'Room' ? '🛏️ Yatak Odası' :
+                                                    room.type === 'Living' ? '🛋️ Salon' :
+                                                        room.type === 'Dining' ? '🍽️ Yemek Alanı' :
+                                                            room.type === 'Kitchen' ? '🍳 Mutfak' :
+                                                                room.type === 'Bathroom' ? '🛁 Banyo' :
+                                                                    room.type === 'Toilet' ? '🚽 Tuvalet' :
+                                                                        room.type === 'Balcony' ? '🌅 Balkon' :
+                                                                            '📦 Depo/Kiler'}
                                             </span>
                                             <Button type="button" variant="ghost" size="icon" onClick={() => setRooms(rooms.filter(r => r.id !== room.id))} className="h-5 w-5 ml-0.5 rounded-full text-muted-foreground hover:bg-destructive hover:text-destructive-foreground">
                                                 <X className="w-3 h-3" />
