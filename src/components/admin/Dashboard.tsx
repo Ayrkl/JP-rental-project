@@ -6,7 +6,7 @@ import { PropertyForm } from './PropertyForm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
@@ -132,8 +132,14 @@ export const Dashboard = () => {
             </div>
 
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
-                <DialogContent className="max-w-4xl p-0 overflow-hidden border-none bg-transparent shadow-none">
-                    <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} />
+                <DialogContent className="max-w-4xl bg-[#121212] border-border/50 text-zinc-200 max-h-[90vh] overflow-y-auto">
+                    <DialogHeader className="border-b border-border/40 pb-5 mb-5">
+                        <DialogTitle className="text-xl font-bold">Mülkü Düzenle</DialogTitle>
+                        <DialogDescription className="text-zinc-500">
+                            Eşya envanteri dahil tüm mülk detaylarını ve sözleşme öncesi altyapısını güncelleyin.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} isModal={true} />
                 </DialogContent>
             </Dialog>
 

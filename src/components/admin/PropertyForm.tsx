@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
-export const PropertyForm = ({ propertyId, onComplete }: { propertyId?: string; onComplete?: () => void }) => {
+export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?: string; onComplete?: () => void; isModal?: boolean }) => {
     const { addProperty, updateProperty, properties } = usePropertyStore();
     const navigate = useNavigate();
     const { id: routeId } = useParams();
@@ -97,16 +97,9 @@ export const PropertyForm = ({ propertyId, onComplete }: { propertyId?: string; 
         }, 1000);
     };
 
-    return (
-        <Card className="w-full max-w-4xl mx-auto border-border/50 bg-[#121212] text-zinc-200">
-            <CardHeader className="border-b border-border/40 pb-6 mb-6">
-                <CardTitle className="text-2xl font-bold">{id ? 'Mülkü Düzenle' : 'Yeni Mülk Tanımlama'}</CardTitle>
-                <CardDescription className="text-zinc-500">Eşya envanteri dahil tüm mülk detaylarını ve sözleşme öncesi altyapısını kurun.</CardDescription>
-            </CardHeader>
-
-            <CardContent>
-            <form className="space-y-8" onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    const formContent = (
+        <form className="space-y-8" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     <div className="space-y-2 col-span-1 md:col-span-2">
                         <Label className="flex items-center gap-2 text-zinc-400"><MapPin size={16}/> Açık Adres</Label>
@@ -225,13 +218,25 @@ export const PropertyForm = ({ propertyId, onComplete }: { propertyId?: string; 
                 )}
 
                 <div className="flex justify-end gap-4 border-t border-border/40 pt-6">
-                    <Button type="button" variant="ghost" onClick={() => navigate('/admin')}>İptal</Button>
+                    {!isModal && <Button type="button" variant="ghost" onClick={() => navigate('/admin')}>İptal</Button>}
                     <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[160px]">
                         {isSubmitted ? <><CheckCircle2 size={18} className="mr-2"/> {id ? 'Güncellendi' : 'Kaydedildi'}</> : (id ? 'Değişiklikleri Kaydet' : 'Sisteme Ekle')}
                     </Button>
                 </div>
             </form>
-            </CardContent>
+    );
+
+    if (isModal) {
+        return formContent;
+    }
+
+    return (
+        <Card className="w-full max-w-4xl mx-auto border-border/50 bg-[#121212] text-zinc-200">
+            <CardHeader className="border-b border-border/40 pb-6 mb-6">
+                <CardTitle className="text-2xl font-bold">{id ? 'Mülkü Düzenle' : 'Yeni Mülk Tanımlama'}</CardTitle>
+                <CardDescription className="text-zinc-500">Eşya envanteri dahil tüm mülk detaylarını ve sözleşme öncesi altyapısını kurun.</CardDescription>
+            </CardHeader>
+            <CardContent>{formContent}</CardContent>
         </Card>
     );
 };
