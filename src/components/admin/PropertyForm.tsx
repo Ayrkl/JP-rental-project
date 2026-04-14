@@ -57,12 +57,38 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
 
     // Haritadan konum seçme bileşeni
     function LocationPicker() {
+        const [isFetchingAddress, setIsFetchingAddress] = useState(false);
+
         useMapEvents({
-            click(e) {
-                setCoordinates({ lat: e.latlng.lat, lng: e.latlng.lng });
+            async click(e) {
+                const newCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
+                setCoordinates(newCoords);
+
+                // Reverse Geocoding (Nominatim - Ücretsiz)
+                setIsFetchingAddress(true);
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${newCoords.lat}&lon=${newCoords.lng}&accept-language=tr,en,ja`);
+                    const data = await response.json();
+                    if (data && data.display_name) {
+                        setAddress(data.display_name.substring(0, ADDRESS_MAX_LENGTH));
+                    }
+                } catch (error) {
+                    console.error("Adres alınamadı:", error);
+                } finally {
+                    setIsFetchingAddress(false);
+                }
             },
         });
-        return coordinates ? <Marker position={[coordinates.lat, coordinates.lng]} icon={icon} /> : null;
+        return (
+            <>
+                {coordinates && <Marker position={[coordinates.lat, coordinates.lng]} icon={icon} />}
+                {isFetchingAddress && (
+                    <div className="absolute inset-0 bg-background/20 backdrop-blur-[1px] z-[500] flex items-center justify-center pointer-events-none">
+                        <div className="bg-background px-3 py-1 rounded-full border shadow-lg text-[10px] font-bold animate-pulse">Adres Çözümleniyor...</div>
+                    </div>
+                )}
+            </>
+        );
     }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
