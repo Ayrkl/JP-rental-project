@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type InventoryItem = {
+  id: string;
+  name: string;
+  brandModel: string;
+  condition: string;
+};
+
 export type Property = {
   id: string;
   address: string;
@@ -10,6 +17,8 @@ export type Property = {
   quakeStandard: string;
   rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[];
   images: string[];
+  features: string[]; // Yeni: İmkanlar (İnternet, Asansör vs)
+  inventory: InventoryItem[]; // Yeni: Demirbaş Eşyalar
   dateAdded: string;
 };
 
