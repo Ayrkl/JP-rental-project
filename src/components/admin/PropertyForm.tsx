@@ -56,8 +56,13 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
         setRooms([...rooms, { id: Math.random().toString(36).substring(2, 9), type }]);
     };
 
-    const toggleFeature = (featId: string) => {
-        setFeatures(prev => prev.includes(featId) ? prev.filter(f => f !== featId) : [...prev, featId]);
+    const toggleFeature = (e: React.MouseEvent, featId: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setFeatures(prev => {
+            const current = Array.isArray(prev) ? prev : [];
+            return current.includes(featId) ? current.filter(f => f !== featId) : [...current, featId];
+        });
     };
 
     const addInventoryItem = () => {
@@ -171,9 +176,9 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                             { id: 'pets', label: 'Evcil Hayvan İzni', desc: 'Kedi ve köpek barındırılabilir' },
                             { id: 'balcony', label: 'Balkon', desc: 'Açık hava özel kullanım alanı' },
                         ].map(feat => {
-                            const isChecked = features.includes(feat.id);
+                            const isChecked = Array.isArray(features) && features.includes(feat.id);
                             return (
-                                <div key={feat.id} onClick={() => toggleFeature(feat.id)} className={`flex flex-row items-center justify-between rounded-xl border p-4 cursor-pointer transition-all duration-200 ${isChecked ? 'border-primary bg-primary/5 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}>
+                                <div key={feat.id} onClick={(e) => toggleFeature(e, feat.id)} className={`flex flex-row items-center justify-between rounded-xl border p-4 cursor-pointer transition-all duration-200 ${isChecked ? 'border-primary bg-primary/5 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}>
                                     <div className="flex flex-col gap-1 pr-4">
                                         <span className="text-sm font-semibold">{feat.label}</span>
                                         <span className="text-xs text-muted-foreground/80 leading-snug">{feat.desc}</span>
