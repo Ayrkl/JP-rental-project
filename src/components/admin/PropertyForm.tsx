@@ -3,10 +3,11 @@ import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Layout
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export const PropertyForm = () => {
+export const PropertyForm = ({ propertyId, onComplete }: { propertyId?: string; onComplete?: () => void }) => {
     const { addProperty, updateProperty, properties } = usePropertyStore();
     const navigate = useNavigate();
-    const { id } = useParams(); // URL'den ID varsa çek
+    const { id: routeId } = useParams(); // URL'den gelirse
+    const id = propertyId || routeId; // İkisinden biri id'dir (Popup vs Navigation)
 
     // Temel Form Verileri
     const [address, setAddress] = useState('');
@@ -100,7 +101,11 @@ export const PropertyForm = () => {
         setIsSubmitted(true);
         setTimeout(() => {
             setIsSubmitted(false);
-            navigate('/admin');
+            if (onComplete) {
+                onComplete(); // Popup mode: Kapat
+            } else {
+                navigate('/admin'); // Page mode: Yönlendir
+            }
         }, 1200);
     };
 

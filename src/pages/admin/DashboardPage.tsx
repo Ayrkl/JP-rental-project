@@ -1,10 +1,14 @@
-import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin, Pencil, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import * as Dialog from '@radix-ui/react-dialog';
 import { usePropertyStore } from '../../store/usePropertyStore';
+import { PropertyForm } from '../../components/admin/PropertyForm';
 
 export const DashboardPage = () => {
     // Zustand'dan global verilerimizi Canlı Dinliyoruz
     const properties = usePropertyStore(state => state.properties);
+    const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
     return (
         <div className="fade-in">
@@ -66,7 +70,12 @@ export const DashboardPage = () => {
                  ) : (
                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                          {properties.map(p => (
-                             <div key={p.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                             <div 
+                               key={p.id} 
+                               className="property-card"
+                               style={{ background: 'rgba(255,255,255,0.03)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', cursor: 'pointer' }}
+                               onClick={() => setSelectedPropertyId(p.id)}
+                             >
                                  
                                  <div style={{ display: 'flex', gap: '16px', flex: 1 }}>
                                      {/* Fotoğraf Thumbnail (Küçük Resim) Alanı */}
@@ -98,15 +107,30 @@ export const DashboardPage = () => {
                                      <div style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '10px 20px', borderRadius: '30px', fontWeight: '800', border: '1px solid rgba(99,102,241,0.3)', fontSize: '1.1rem' }}>
                                          {p.roomType}
                                      </div>
-                                     <Link to={`/admin/properties/edit/${p.id}`} title="Düzenle" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', padding: '10px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-glass)' }}>
+                                     <div onClick={(e) => { e.stopPropagation(); setSelectedPropertyId(p.id); }} style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', padding: '10px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-glass)', cursor: 'pointer' }}>
                                          <Pencil size={18} />
-                                     </Link>
+                                     </div>
                                  </div>
                              </div>
                          ))}
                      </div>
                  )}
             </div>
+
+            {/* RADIX MODAL (POPUP) DÜZENLEME EKRANI */}
+            <Dialog.Root open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
+                <Dialog.Portal>
+                    <Dialog.Overlay className="dialog-overlay" />
+                    <Dialog.Content className="dialog-content">
+                        <Dialog.Close asChild>
+                            <button className="dialog-close" aria-label="Kapat"><X size={18} /></button>
+                        </Dialog.Close>
+                        {/* Popup içerisinde Düzenleme Formu Çağırılır */}
+                        <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} />
+                    </Dialog.Content>
+                </Dialog.Portal>
+            </Dialog.Root>
+
         </div>
     );
 };

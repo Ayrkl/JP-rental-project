@@ -622,3 +622,90 @@ body {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* =========================================
+   RADIX DIALOG (MODAL) STYLES
+   ========================================= */
+.dialog-overlay {
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  animation: fadeOverlay 0.2s ease-out;
+}
+
+.dialog-content {
+  background: var(--bg-dark);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 950px;
+  max-height: 90vh;
+  padding: 0;
+  z-index: 101;
+  animation: dialogScale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Popup içindeyken Form'un gölgesini kaldır */
+.dialog-content .property-form-container {
+  box-shadow: none;
+  border: none;
+  margin: 0;
+  max-width: none;
+  border-radius: 24px;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: var(--transition-smooth);
+}
+
+.dialog-close:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Kart Vurma Efekti (Dashboard) */
+.property-card {
+  transition: var(--transition-smooth);
+}
+.property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  background: rgba(255,255,255,0.06) !important;
+}
+
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialogScale {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
