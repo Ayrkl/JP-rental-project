@@ -172,7 +172,7 @@ export const Dashboard = () => {
             {/* ÖNİZLEME MODALI */}
             <Dialog open={!!previewPropertyId} onOpenChange={(open) => !open && setPreviewPropertyId(null)}>
                 <DialogContent
-                    className="sm:max-w-[850px] lg:max-w-[1200px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[85vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
+                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
                     style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
                 >
                     <div className="px-10 py-10 overflow-y-auto flex-1">
