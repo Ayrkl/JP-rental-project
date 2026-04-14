@@ -1,13 +1,17 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from './components/admin/AdminLayout';
+import { PropertyForm } from './components/admin/PropertyForm';
+import { DashboardPage } from './pages/admin/DashboardPage';
 
 function App() {
   return (
-    <AdminLayout>
-      <div className="empty-state-glass">
-        <h2>Admin Paneline Hoş Geldiniz</h2>
-        <p>Sol menüden "Mülkler" sekmesine giderek yeni bir ev tanımlayabilir, <br/>Japonya genelindeki portföyünüzü buradan yönetebilirsiniz.</p>
-      </div>
-    </AdminLayout>
+    <Routes>
+      <Route path="/" element={<Navigate to="/admin" replace />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="properties/new" element={<PropertyForm />} />
+      </Route>
+    </Routes>
   );
 }
 

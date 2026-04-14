@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { LayoutDashboard, Home, Users, FileText, Settings, Bell, ChevronDown, AlignLeft } from 'lucide-react';
+import { NavLink, Outlet } from 'react-router-dom';
 
-export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -20,14 +21,14 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         <nav className="sidebar-nav">
-          <a href="#" className="nav-item active">
+          <NavLink to="/admin" end className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
             <LayoutDashboard size={20} />
             {!collapsed && <span>Dashboard</span>}
-          </a>
-          <a href="#" className="nav-item">
+          </NavLink>
+          <NavLink to="/admin/properties/new" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
             <Home size={20} />
-            {!collapsed && <span>Mülkler</span>}
-          </a>
+            {!collapsed && <span>Mülk Ekle</span>}
+          </NavLink>
           <a href="#" className="nav-item">
             <Users size={20} />
             {!collapsed && <span>Kiracılar</span>}
@@ -84,7 +85,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
         {/* Page Content */}
         <div className="admin-content-area">
-           {children}
+           <Outlet />
         </div>
       </main>
     </div>
