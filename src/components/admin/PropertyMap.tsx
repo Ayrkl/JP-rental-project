@@ -28,14 +28,17 @@ export const PropertyMap = ({ properties, onSelectProperty }: PropertyMapProps) 
     return <div className="h-full w-full bg-muted animate-pulse" />;
   }
 
-  const center: [number, number] = [35.6762, 139.6503];
+  // İlk mülkün koordinatlarına veya Tokyo merkezine odaklan
+  const mapCenter: [number, number] = properties.length > 0 && properties[0].coordinates 
+    ? [properties[0].coordinates.lat, properties[0].coordinates.lng]
+    : [35.6762, 139.6503];
 
   return (
     <div className="h-full w-full rounded-xl overflow-hidden border border-border bg-muted/20">
       <MapContainer 
-        center={center} 
+        center={mapCenter} 
         zoom={11} 
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
         style={{ height: '100%', width: '100%' }}
         zoomControl={true}
       >
