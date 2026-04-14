@@ -66,80 +66,87 @@ export const Dashboard = () => {
             </div>
 
             <div>
-                 <div className="flex items-center justify-between mb-4">
-                     <h2 className="text-xl font-bold tracking-tight">Son Eklenen Mülkler</h2>
-                     <Button asChild>
-                         <Link to="/admin/properties/new">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold tracking-tight">Son Eklenen Mülkler</h2>
+                    <Button asChild>
+                        <Link to="/admin/properties/new">
                             <Home className="w-4 h-4 mr-2" /> Yeni Ekle
-                         </Link>
-                     </Button>
-                 </div>
-                 
-                 {properties.length === 0 ? (
-                     <Card className="flex flex-col items-center justify-center py-16 text-center border-dashed">
-                         <div className="p-4 bg-muted rounded-full mb-4">
-                             <Home className="w-8 h-8 text-muted-foreground" />
-                         </div>
-                         <h3 className="text-lg font-semibold mb-2">Sistemde Mülk Yok</h3>
-                         <p className="text-muted-foreground mb-6 max-w-[400px]">Henüz portföye bir mülk eklenmemiş. Lütfen yeni bir mülk tanımlayarak sistemi başlatın.</p>
-                         <Button asChild>
-                             <Link to="/admin/properties/new">Yeni Mülk Tanımla</Link>
-                         </Button>
-                     </Card>
-                 ) : (
-                     <div className="grid gap-4 md:grid-cols-2">
-                         {properties.map(p => (
-                             <Card 
-                               key={p.id} 
-                               className="cursor-pointer hover:border-primary/50 transition-colors"
-                               onClick={() => setSelectedPropertyId(p.id)}
-                             >
-                                 <CardContent className="p-4 flex gap-4">
-                                     {p.images && p.images.length > 0 ? (
+                        </Link>
+                    </Button>
+                </div>
+
+                {properties.length === 0 ? (
+                    <Card className="flex flex-col items-center justify-center py-16 text-center border-dashed">
+                        <div className="p-4 bg-muted rounded-full mb-4">
+                            <Home className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Sistemde Mülk Yok</h3>
+                        <p className="text-muted-foreground mb-6 max-w-[400px]">Henüz portföye bir mülk eklenmemiş. Lütfen yeni bir mülk tanımlayarak sistemi başlatın.</p>
+                        <Button asChild>
+                            <Link to="/admin/properties/new">Yeni Mülk Tanımla</Link>
+                        </Button>
+                    </Card>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {properties.map(p => (
+                            <Card
+                                key={p.id}
+                                className="cursor-pointer hover:border-primary/50 transition-colors"
+                                onClick={() => setSelectedPropertyId(p.id)}
+                            >
+                                <CardContent className="p-4 flex gap-4">
+                                    {p.images && p.images.length > 0 ? (
                                         <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0 border bg-muted">
                                             <img src={p.images[0]} alt="Property" className="w-full h-full object-cover" />
                                         </div>
-                                     ) : (
+                                    ) : (
                                         <div className="w-20 h-20 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-dashed">
                                             <Home className="w-6 h-6 text-muted-foreground" />
                                         </div>
-                                     )}
+                                    )}
 
-                                     <div className="flex-1 min-w-0">
-                                         <div className="flex items-center gap-2 mb-1.5">
-                                             <Building2 className="w-4 h-4 text-primary shrink-0" />
-                                             <h4 className="font-semibold text-base truncate">Mülk #{p.id.toUpperCase()}</h4>
-                                         </div>
-                                         <p className="text-sm text-foreground flex items-center gap-1.5 mb-1 truncate">
-                                             <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0"/> {p.address}
-                                         </p>
-                                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                                             <Calendar className="w-3 h-3" /> Yapım: {p.buildYear} • Net: {p.area}m² {p.images && p.images.length > 1 && `• +${p.images.length - 1}`}
-                                         </p>
-                                     </div>
-                                     
-                                     <div className="flex flex-col items-end gap-2 justify-between">
-                                         <Badge variant="secondary" className="px-3 py-1 font-bold text-sm tracking-widest">{p.roomType}</Badge>
-                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={(e) => { e.stopPropagation(); setSelectedPropertyId(p.id); }}>
-                                             <Pencil className="w-4 h-4" />
-                                         </Button>
-                                     </div>
-                                 </CardContent>
-                             </Card>
-                         ))}
-                     </div>
-                 )}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1.5">
+                                            <Building2 className="w-4 h-4 text-primary shrink-0" />
+                                            <h4 className="font-semibold text-base truncate">Mülk #{p.id.toUpperCase()}</h4>
+                                        </div>
+                                        <p className="text-sm text-foreground flex items-center gap-1.5 mb-1 truncate">
+                                            <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" /> {p.address}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                            <Calendar className="w-3 h-3" /> Yapım: {p.buildYear} • Net: {p.area}m² {p.images && p.images.length > 1 && `• +${p.images.length - 1}`}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex flex-col items-end gap-2 justify-between">
+                                        <Badge variant="secondary" className="px-3 py-1 font-bold text-sm tracking-widest">{p.roomType}</Badge>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={(e) => { e.stopPropagation(); setSelectedPropertyId(p.id); }}>
+                                            <Pencil className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
-                <DialogContent className="max-w-4xl bg-[#121212] border-border/50 text-zinc-200 max-h-[90vh] overflow-y-auto">
-                    <DialogHeader className="border-b border-border/40 pb-5 mb-5">
-                        <DialogTitle className="text-xl font-bold">Mülkü Düzenle</DialogTitle>
-                        <DialogDescription className="text-zinc-500">
-                            Eşya envanteri dahil tüm mülk detaylarını ve sözleşme öncesi altyapısını güncelleyin.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} isModal={true} />
+                <DialogContent className="max-w-5xl bg-background border-border shadow-2xl sm:rounded-2xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden">
+                    {/* STICKY HEADER GÖRÜNÜMÜ */}
+                    <div className="px-8 py-6 border-b border-border bg-card/50 z-10 shrink-0">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">Mülkü Görüntüle / Düzenle</DialogTitle>
+                            <DialogDescription className="text-sm text-muted-foreground mt-1.5">
+                                Sistemde kayıtlı olan mülkün detaylarını, planını ve eşya envanterini güncelleyin.
+                            </DialogDescription>
+                        </DialogHeader>
+                    </div>
+
+                    {/* SCROLLABLE FORM ALANI */}
+                    <div className="px-8 py-6 overflow-y-auto flex-1">
+                        <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} isModal={true} />
+                    </div>
                 </DialogContent>
             </Dialog>
 

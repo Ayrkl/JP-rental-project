@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?: string; onComplete?: () => void; isModal?: boolean }) => {
     const { addProperty, updateProperty, properties } = usePropertyStore();
@@ -118,12 +119,17 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
 
                         <div className="space-y-2 col-span-1 md:col-span-2">
                             <Label className="flex items-center gap-2"><ShieldCheck size={16} /> Deprem Sertifikası (耐震基準)</Label>
-                            <select className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" value={quakeStandard} onChange={e => setQuakeStandard(e.target.value)}>
-                                <option value="old">Eski Standart (旧耐震 - 1981 Öncesi)</option>
-                                <option value="new">Yeni Standart (新耐震 - 1981 Sonrası)</option>
-                                <option value="grade2">Grade 2 (耐震等級2)</option>
-                                <option value="grade3">Grade 3 (耐震等級3 - Üst Düzen)</option>
-                            </select>
+                            <Select value={quakeStandard} onValueChange={setQuakeStandard}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Bir standart seçin..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="old">Eski Standart (旧耐震 - 1981 Öncesi)</SelectItem>
+                                    <SelectItem value="new">Yeni Standart (新耐震 - 1981 Sonrası)</SelectItem>
+                                    <SelectItem value="grade2">Grade 2 (耐震等級2)</SelectItem>
+                                    <SelectItem value="grade3">Grade 3 (耐震等級3)</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                 </div>
@@ -207,17 +213,24 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                     <div className="flex flex-col gap-3 pt-2">
                         {inventory.length === 0 && <p className="text-sm text-muted-foreground">Sistemde kayıtlı ekstra demirbaş bulunmuyor.</p>}
                         {inventory.map((item, idx) => (
-                            <div key={item.id} className="flex gap-3 items-center p-3 rounded-lg border bg-muted/20">
+                            <div key={item.id} className="flex gap-3 items-center p-3 rounded-lg border border-border/50 bg-background/50">
                                 <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx + 1}.</span>
-                                <Input className="h-8 flex-1 border-border/50 bg-background/50 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
-                                <Input className="h-8 flex-[1.5] border-border/50 bg-background/50 shadow-none" placeholder="Marka / Model Belirt" value={item.brandModel} onChange={e => updateInventoryItem(item.id, 'brandModel', e.target.value)} />
-                                <select className="h-8 rounded-md border border-input bg-background/50 px-2 text-sm" value={item.condition} onChange={e => updateInventoryItem(item.id, 'condition', e.target.value)}>
-                                    <option value="Yeni">Yeni Sıfır</option>
-                                    <option value="Kullanılmış">Kullanılmış</option>
-                                    <option value="Hasarlı">Eski Hasarlı</option>
-                                </select>
-                                <Button type="button" variant="ghost" size="icon" onClick={() => removeInventoryItem(item.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0">
-                                    <Trash2 className="w-4 h-4" />
+                                <Input className="h-9 flex-1 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
+                                <Input className="h-9 flex-[1.5] shadow-none" placeholder="Marka / Model" value={item.brandModel} onChange={e => updateInventoryItem(item.id, 'brandModel', e.target.value)} />
+                                <div className="w-[140px]">
+                                    <Select value={item.condition} onValueChange={v => updateInventoryItem(item.id, 'condition', v)}>
+                                        <SelectTrigger className="h-9 shadow-none">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Yeni">Yeni / Sıfır</SelectItem>
+                                            <SelectItem value="Kullanılmış">İyi Durumda</SelectItem>
+                                            <SelectItem value="Hasarlı">Eski / Hasarlı</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button type="button" variant="ghost" size="icon" onClick={() => removeInventoryItem(item.id)} className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0">
+                                    <Trash2 className="w-4 h-4 ml-0.5" />
                                 </Button>
                             </div>
                         ))}
