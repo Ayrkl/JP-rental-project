@@ -17,16 +17,16 @@ export const AdminLayout = () => {
     {
       title: null,
       items: [
-        { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Panoya Dön' },
-        { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Mülk Yönetimi' },
-        { path: '#', icon: <FileText size={18} />, label: 'Sözleşmeler' },
+        { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
+        { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Property Management' },
+        { path: '#', icon: <FileText size={18} />, label: 'Contracts' },
       ]
     },
     {
-      title: 'Yönetim',
+      title: 'Management',
       items: [
-        { path: '#', icon: <Users size={18} />, label: 'Kullanıcılar ve Roller' },
-        { path: '#', icon: <Megaphone size={18} />, label: 'Duyurular' },
+        { path: '#', icon: <Users size={18} />, label: 'Users and Roles' },
+        { path: '#', icon: <Megaphone size={18} />, label: 'Announcements' },
       ]
     }
   ];
