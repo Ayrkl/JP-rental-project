@@ -121,7 +121,7 @@ export const Dashboard = () => {
 
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
                 <DialogContent
-                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-2xl max-h-[83vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300"
+                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-2xl max-h-[83vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-50 [&>button]:right-6 [&>button]:top-6 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground"
                     style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
                 >
                     {/* STICKY HEADER GÖRÜNÜMÜ */}

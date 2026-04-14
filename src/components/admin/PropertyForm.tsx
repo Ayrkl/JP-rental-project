@@ -226,12 +226,18 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                     <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">Fiziksel İmkanlar</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
                         {[
-                            { id: 'internet', label: 'Fiber İnternet', desc: 'Yüksek hızlı gigabit altyapısı' },
-                            { id: 'elevator', label: 'Asansör', desc: 'Bina içi yük/insan asansörü' },
-                            { id: 'autolock', label: 'Otomatik Kilit', desc: 'Şifreli ve kameralı güvenli giriş' },
+                            { id: 'internet', label: 'Fiber İnternet', desc: 'Yüksek hızlı ortak internet altyapısı' },
+                            { id: 'elevator', label: 'Asansör', desc: 'Bina içi yük ve insan asansörü' },
+                            { id: 'autolock', label: 'Otomatik Kilit', desc: 'Şifreli ve kameralı güvenli bina girişi' },
+                            { id: 'deliveryBox', label: 'Kargo Kutusu', desc: '7/24 güvenli kargo teslimat otomatı' },
                             { id: 'parking', label: 'Otopark Alanı', desc: 'Binada araca özel tahsisli alan' },
-                            { id: 'pets', label: 'Evcil Hayvan İzni', desc: 'Kedi ve köpek barındırılabilir' },
-                            { id: 'balcony', label: 'Balkon', desc: 'Açık hava özel kullanım alanı' },
+                            { id: 'intercom', label: 'Kameralı Diyafon', desc: 'Gelen ziyaretçiyi anında görüntüleme' },
+                            { id: 'pets', label: 'Evcil Hayvan İzni', desc: 'Kedi, köpek vb. barındırılabilir' },
+                            { id: 'aircon', label: 'Klima Alt Yapısı', desc: 'İklimlendirme için ön hazırlık/kurulum' },
+                            { id: 'washlet', label: 'Akıllı Tuvalet', desc: 'Isıtmalı ve fonksiyonel Washlet sistemi' },
+                            { id: 'systemKitchen', label: 'Ankastre Mutfak', desc: 'Özel entegre ocak ve davlumbaz sistemi' },
+                            { id: 'garbageStation', label: '7/24 Çöp İstasyonu', desc: 'Günün her saati çöp atılabilen özel alan' },
+                            { id: 'balcony', label: 'Özel Balkon', desc: 'Açık hava bireysel kullanım alanı' },
                         ].map(feat => {
                             const isChecked = Array.isArray(features) && features.includes(feat.id);
                             return (
