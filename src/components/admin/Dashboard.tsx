@@ -132,9 +132,9 @@ export const Dashboard = () => {
             </div>
 
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
-                <DialogContent className="max-w-5xl bg-background border-border shadow-2xl sm:rounded-2xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden">
+                <DialogContent className="max-w-5xl w-[95vw] bg-background border-border shadow-2xl sm:rounded-2xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden">
                     {/* STICKY HEADER GÖRÜNÜMÜ */}
-                    <div className="px-8 py-6 border-b border-border bg-card/50 z-10 shrink-0">
+                    <div className="px-6 md:px-8 py-5 border-b border-border bg-card/50 z-10 shrink-0">
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">Mülkü Görüntüle / Düzenle</DialogTitle>
                             <DialogDescription className="text-sm text-muted-foreground mt-1.5">
