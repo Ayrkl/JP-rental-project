@@ -7,18 +7,19 @@ export type Property = {
   area: number;
   buildYear: number;
   quakeStandard: string;
-  rooms: { id: string; type: string }[];
+  rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[];
   dateAdded: Date;
 };
 
 interface PropertyStore {
   properties: Property[];
   addProperty: (property: Omit<Property, 'id' | 'dateAdded'>) => void;
+  updateProperty: (id: string, property: Omit<Property, 'id' | 'dateAdded'>) => void;
   removeProperty: (id: string) => void;
 }
 
 export const usePropertyStore = create<PropertyStore>((set) => ({
-  properties: [], // Global verilerimiz burada boş dizi olarak başlar
+  properties: [],
   
   addProperty: (property) => set((state) => ({
     properties: [
@@ -27,8 +28,12 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
             id: Math.random().toString(36).substr(2, 9), 
             dateAdded: new Date() 
         },
-        ...state.properties, // Yeni ekleneni en başa koyarız
+        ...state.properties, 
     ]
+  })),
+
+  updateProperty: (id, updatedProp) => set((state) => ({
+    properties: state.properties.map(p => p.id === id ? { ...p, ...updatedProp } : p)
   })),
   
   removeProperty: (id) => set((state) => ({

@@ -10,6 +10,7 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="properties/new" element={<PropertyForm />} />
+        <Route path="properties/edit/:id" element={<PropertyForm />} />
       </Route>
     </Routes>
   );

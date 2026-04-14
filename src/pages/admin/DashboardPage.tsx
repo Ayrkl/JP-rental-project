@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePropertyStore } from '../../store/usePropertyStore';
 
@@ -80,8 +79,13 @@ export const DashboardPage = () => {
                                          <Calendar size={14} /> Yapım: {p.buildYear} •  Net: {p.area}m²
                                      </p>
                                  </div>
-                                 <div style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '10px 20px', borderRadius: '30px', fontWeight: '800', border: '1px solid rgba(99,102,241,0.3)', fontSize: '1.1rem' }}>
-                                     {p.roomType}
+                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                     <div style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '10px 20px', borderRadius: '30px', fontWeight: '800', border: '1px solid rgba(99,102,241,0.3)', fontSize: '1.1rem' }}>
+                                         {p.roomType}
+                                     </div>
+                                     <Link to={`/admin/properties/edit/${p.id}`} title="Düzenle" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', padding: '10px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-glass)' }}>
+                                         <Pencil size={18} />
+                                     </Link>
                                  </div>
                              </div>
                          ))}

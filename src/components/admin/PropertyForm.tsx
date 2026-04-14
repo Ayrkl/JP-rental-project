@@ -1,35 +1,44 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Layout, Trash2 } from 'lucide-react';
 import { usePropertyStore } from '../../store/usePropertyStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const PropertyForm = () => {
-    // Zustand'dan global 'Ekleme' fonksiyonumuzu alıyoruz
-    const addProperty = usePropertyStore(state => state.addProperty);
+    const { addProperty, updateProperty, properties } = usePropertyStore();
     const navigate = useNavigate();
+    const { id } = useParams(); // URL'den ID varsa çek
 
     // Temel Form Verileri
     const [address, setAddress] = useState('');
     const [area, setArea] = useState('');
     const [buildYear, setBuildYear] = useState('');
     const [quakeStandard, setQuakeStandard] = useState('new');
-    
-    // YENİ: Dinamik Oda Builder (Arayüz)
     const [rooms, setRooms] = useState<{ id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[]>([]);
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Odayı Array'e ekleme fonksiyonu
+    // Eğer ID varsa (Edit Mode), mevcut verileri form'a doldur
+    useEffect(() => {
+        if (id) {
+            const existingProp = properties.find(p => p.id === id);
+            if (existingProp) {
+                setAddress(existingProp.address);
+                setArea(existingProp.area.toString());
+                setBuildYear(existingProp.buildYear.toString());
+                setQuakeStandard(existingProp.quakeStandard);
+                setRooms(existingProp.rooms);
+            }
+        }
+    }, [id, properties]);
+
     const addRoom = (type: 'Room' | 'Living' | 'Dining' | 'Kitchen') => {
         setRooms([...rooms, { id: Math.random().toString(36).substr(2, 9), type }]);
     };
 
-    // İstenmeyen odayı Array'den çıkarma
     const removeRoom = (id: string) => {
         setRooms(rooms.filter(r => r.id !== id));
     };
 
-    // Dinamik "Final Oda Tipi" Hesaplayıcısı (Örn: 2LDK)
     const layoutString = useMemo(() => {
         const roomCount = rooms.filter(r => r.type === 'Room').length;
         const hasLiving = rooms.some(r => r.type === 'Living');
@@ -42,37 +51,41 @@ export const PropertyForm = () => {
         if (hasDining) suffix += 'D';
         if (hasKitchen) suffix += 'K';
 
-        if (prefix === '1' && suffix === '') return '1R'; // Default Studio
+        if (prefix === '1' && suffix === '') return '1R';
         if (prefix === '0' && suffix === '') return '1R'; 
         return prefix === '0' ? suffix : prefix + suffix;
     }, [rooms]);
 
-    // Sunucu/Store'a Gönderim
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Zustand store'a Frontend Verisini Kalıcı Yazdırıyoruz
-        addProperty({
+        const payload = {
             address,
             area: Number(area),
             buildYear: Number(buildYear),
             quakeStandard,
-            rooms, // detaylı oda yapısı JSON formatında da saklanır
-            roomType: layoutString // Final "1LDK" gibi hesaplanmış değer
-        });
+            rooms, 
+            roomType: layoutString 
+        };
+
+        if (id) {
+            updateProperty(id, payload);
+        } else {
+            addProperty(payload);
+        }
 
         setIsSubmitted(true);
         setTimeout(() => {
             setIsSubmitted(false);
-            navigate('/admin'); // Başarılı olunca Dashboard'a dön
+            navigate('/admin');
         }, 1200);
     };
 
     return (
         <div className="property-form-container glass-effect fade-in">
             <div className="form-header">
-                <h2>Yeni Mülk Tanımlama</h2>
-                <p>Oda bileşenlerini detaylı olarak seçin ve mülkü oluşturun.</p>
+                <h2>{id ? 'Mülkü Düzenle (Edit)' : 'Yeni Mülk Tanımlama'}</h2>
+                <p>{id ? 'Kayıtlı mülkün verilerini güncelleyin.' : 'Oda bileşenlerini detaylı olarak seçin ve mülkü oluşturun.'}</p>
             </div>
 
             <form className="admin-form" onSubmit={handleSubmit}>
@@ -89,7 +102,6 @@ export const PropertyForm = () => {
                         />
                     </div>
 
-                    {/* YENİ: DİNAMİK ODA OLUŞTURUCU */}
                     <div className="input-group full-width" style={{ background: 'rgba(0,0,0,0.2)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                             <label style={{ margin: 0 }}><Layout size={16}/> Dinamik Oda & Plan Oluşturucu (Madori)</label>
@@ -123,7 +135,6 @@ export const PropertyForm = () => {
                         </div>
                     </div>
 
-                    {/* Diğer Teknik Bilgiler */}
                     <div className="input-group">
                         <label><Ruler size={16}/> Net Alan (m²)</label>
                         <input 
@@ -132,7 +143,7 @@ export const PropertyForm = () => {
                             value={area}
                             onChange={(e) => {
                                 const val = e.target.value;
-                                if (val === '0') return; // '0' değerini yok say
+                                if (val === '0') return; 
                                 setArea(val);
                             }}
                             min="1"
@@ -150,7 +161,7 @@ export const PropertyForm = () => {
                             value={buildYear}
                             onChange={(e) => {
                                 const val = e.target.value;
-                                if (val === '0' || val.startsWith('0')) return; // '0' veya '0 ile başlayan' veriyi engeller
+                                if (val === '0' || val.startsWith('0')) return; 
                                 setBuildYear(val);
                             }}
                             required
@@ -176,7 +187,7 @@ export const PropertyForm = () => {
                 <div className="form-actions">
                     <button type="button" className="btn-cancel" onClick={() => navigate('/admin')}>İptal</button>
                     <button type="submit" className="btn-save">
-                        {isSubmitted ? <><CheckCircle2 size={18}/> Kaydedildi</> : 'Ağa Global Olarak Kaydet'}
+                        {isSubmitted ? <><CheckCircle2 size={18}/> {id ? 'Güncellendi' : 'Kaydedildi'}</> : (id ? 'Mülkü Güncelle' : 'Ağa Global Olarak Kaydet')}
                     </button>
                 </div>
             </form>
