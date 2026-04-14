@@ -161,6 +161,38 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                     <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Mutfak (K)
                                 </Button>
                             </div>
+
+                            {/* Seçilen Odaların Görüntülendiği Pano (Pill şeklinde) */}
+                            <div className="flex flex-wrap items-center gap-2.5 min-h-[50px] p-4 rounded-xl border border-dashed border-border/60 bg-muted/10">
+                                {rooms.length === 0 ? (
+                                    <span className="text-sm text-muted-foreground w-full text-center py-2 flex items-center justify-center gap-2">
+                                        <Layout className="w-4 h-4 opacity-50" /> Henüz oda eklenmedi. Seçimlerinizi yukarıdan yapabilirsiniz.
+                                    </span>
+                                ) : (
+                                    rooms.map((room, index) => (
+                                        <div key={room.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200">
+                                            <span className="text-xs font-semibold text-muted-foreground w-4 h-4 flex items-center justify-center rounded-full bg-muted/50">{index + 1}</span>
+                                            <span className="text-sm font-medium">
+                                                {room.type === 'Room' ? '🛏️ Yatak Odası' : 
+                                                 room.type === 'Living' ? '🛋️ Salon' : 
+                                                 room.type === 'Dining' ? '🍽️ Yemek Alanı' : 
+                                                 '🍳 Mutfak'}
+                                            </span>
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms(rooms.filter(r => r.id !== room.id))} className="h-5 w-5 ml-0.5 rounded-full text-muted-foreground hover:bg-destructive hover:text-destructive-foreground">
+                                                <X className="w-3 h-3" />
+                                            </Button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Nihai Layout Formatı (Sonuç: 3LDK vb.) */}
+                            <div className="flex items-center justify-between pt-1">
+                                <span className="text-sm font-medium text-foreground">Japonya Mülk Planı (マドリ):</span>
+                                <Badge variant="default" className="text-sm px-4 py-1.5 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30 font-bold shadow-none truncate transition-all">
+                                    {layoutString === '0' ? 'Tanımsız' : layoutString}
+                                </Badge>
+                            </div>
                         </div>
                     </div>
                 </div>
