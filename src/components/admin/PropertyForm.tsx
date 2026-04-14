@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Layout, Trash2, Home } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Layout, Trash2 } from 'lucide-react';
 import * as Switch from '@radix-ui/react-switch';
-import { usePropertyStore, InventoryItem } from '../../store/usePropertyStore';
+import { usePropertyStore, type InventoryItem } from '../../store/usePropertyStore';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export const PropertyForm = ({ propertyId, onComplete }: { propertyId?: string; onComplete?: () => void }) => {

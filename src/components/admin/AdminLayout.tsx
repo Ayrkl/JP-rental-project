@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { LayoutDashboard, Home, Users, FileText, Settings, Bell, ChevronDown, AlignLeft } from 'lucide-react';

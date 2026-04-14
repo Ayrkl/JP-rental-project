@@ -1,71 +1,78 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin, Pencil, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { usePropertyStore } from '../../store/usePropertyStore';
-import { PropertyForm } from '../../components/admin/PropertyForm';
+import { PropertyForm } from './PropertyForm';
 
-export const DashboardPage = () => {
-    // Zustand'dan global verilerimizi Canlı Dinliyoruz
+export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
     const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
     return (
         <div className="fade-in">
-            <div className="form-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h2>Genel Durum Özeti</h2>
-                    <p>Mülk Ekleme formundan "Zustand Global Store"a kaydettiğiniz güncel değerler paneli.</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '40px' }}>
+                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                        <div style={{ background: 'rgba(99, 102, 241, 0.2)', padding: '12px', borderRadius: '16px', color: 'var(--accent-primary)' }}>
+                            <Home size={24} />
+                        </div>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                            <ArrowUpRight size={16} /> 0%
+                        </span>
+                    </div>
+                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>{properties.length}</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Toplam Mülk</p>
                 </div>
-                <Link to="/admin/properties/new" className="btn-save" style={{ textDecoration: 'none' }}>
-                    + Yeni Mülk Ekle
-                </Link>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                        <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '16px', color: '#10b981' }}>
+                            <Building2 size={24} />
+                        </div>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                            <ArrowUpRight size={16} /> 0%
+                        </span>
+                    </div>
+                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>0</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Aktif Kiracı</p>
+                </div>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                        <div style={{ background: 'rgba(239, 68, 68, 0.2)', padding: '12px', borderRadius: '16px', color: '#ef4444' }}>
+                            <Calendar size={24} />
+                        </div>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                            <ArrowDownRight size={16} /> 0%
+                        </span>
+                    </div>
+                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>0</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Boşta Ev</p>
+                </div>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '160px' }}>
+                    <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                        <Map size={32} style={{ margin: '0 auto 12px' }} opacity={0.5} />
+                        <p style={{ fontSize: '0.9rem', margin: 0 }}>Harita Modülü<br/>Hazırlanıyor</p>
+                    </div>
+                </div>
             </div>
 
-            {/* Dinamik İlk Satır Skorları */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
-                <div style={{ padding: '24px', background: 'rgba(25,28,41,0.5)', borderRadius: '16px', border: '1px solid var(--border-glass)' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem' }}>Sistemdeki Evler (Canlı)</p>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--accent-primary)' }}>{properties.length}</h3>
-                    <p style={{ color: '#4ade80', fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
-                        Zustand Global Store Aktif
-                    </p>
-                </div>
-                
-                <div style={{ padding: '24px', background: 'rgba(25,28,41,0.5)', borderRadius: '16px', border: '1px solid var(--border-glass)' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem' }}>Toplam Görünen Alan</p>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0' }}>{properties.reduce((acc, p) => acc + p.area, 0)} m²</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
-                        Kayıtlı evlerin toplamı
-                    </p>
-                </div>
-                
-                <div style={{ padding: '24px', background: 'rgba(25,28,41,0.5)', borderRadius: '16px', border: '1px solid var(--border-glass)' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem' }}>1LDK Sayısı</p>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0' }}>{properties.filter(p => p.roomType === '1LDK').length}</h3>
-                    <p style={{ color: '#4ade80', fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
-                        Şehirdeki popüler plan
-                    </p>
-                </div>
-                
-                <div style={{ padding: '24px', background: 'rgba(25,28,41,0.5)', borderRadius: '16px', border: '1px solid var(--border-glass)' }}>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem' }}>Tahsilat Durumu</p>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0' }}>%94</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
-                        ¥12.4M tahsil edildi
-                    </p>
-                </div>
-            </div>
-
-            {/* FRONTEND VERİLERİNİN DÖKÜLECEĞİ DİNAMİK ALAN */}
-            <div style={{ marginTop: '40px' }}>
-                 <h3 style={{ marginBottom: '16px', fontSize: '1.4rem' }}>Portföyünüz: Eklenen Tüm Mülkler</h3>
-                 
+            <div>
+                 <h2 style={{ fontSize: '1.25rem', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                     Son Eklenen Mülkler
+                 </h2>
                  {properties.length === 0 ? (
-                     <div className="empty-state-glass" style={{ padding: '40px' }}>
-                        <Home size={48} style={{ color: 'var(--text-muted)', marginBottom: '16px' }} />
-                        <h3>Henüz hiç mülk eklenmedi</h3>
-                        <p>Sağ üstten veya sol menüden "+ Yeni Mülk Ekle" diyerek ilk varlığınızı ekleyin.<br/>Eklediğiniz anda veriler veritabanı gibi buraya düşecek.</p>
+                     <div className="empty-state-glass">
+                         <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '50%', marginBottom: '16px' }}>
+                             <Home size={32} color="var(--text-muted)" />
+                         </div>
+                         <h3 style={{ fontSize: '1.2rem', margin: '0 0 8px 0' }}>Sistemde Mülk Yok</h3>
+                         <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Henüz portföye bir mülk eklenmemiş. Hemen sağ üstteki butondan yeni mülk yaratabilirsiniz.</p>
+                         <Link to="/admin/properties/new" className="btn-save" style={{ textDecoration: 'none', display: 'inline-block' }}>
+                             Yeni Mülk Tanımla
+                         </Link>
                      </div>
                  ) : (
                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
@@ -76,9 +83,7 @@ export const DashboardPage = () => {
                                style={{ background: 'rgba(255,255,255,0.03)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', cursor: 'pointer' }}
                                onClick={() => setSelectedPropertyId(p.id)}
                              >
-                                 
                                  <div style={{ display: 'flex', gap: '16px', flex: 1 }}>
-                                     {/* Fotoğraf Thumbnail (Küçük Resim) Alanı */}
                                      {p.images && p.images.length > 0 ? (
                                         <div style={{ width: '80px', height: '80px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
                                             <img src={p.images[0]} alt="Property" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -117,7 +122,6 @@ export const DashboardPage = () => {
                  )}
             </div>
 
-            {/* RADIX MODAL (POPUP) DÜZENLEME EKRANI */}
             <Dialog.Root open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
                 <Dialog.Portal>
                     <Dialog.Overlay className="dialog-overlay" />
@@ -125,7 +129,6 @@ export const DashboardPage = () => {
                         <Dialog.Close asChild>
                             <button className="dialog-close" aria-label="Kapat"><X size={18} /></button>
                         </Dialog.Close>
-                        {/* Popup içerisinde Düzenleme Formu Çağırılır */}
                         <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} />
                     </Dialog.Content>
                 </Dialog.Portal>
