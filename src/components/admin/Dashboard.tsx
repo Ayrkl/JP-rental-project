@@ -1,138 +1,141 @@
 import { useState } from 'react';
-import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin, Pencil, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import * as Dialog from '@radix-ui/react-dialog';
+import { ArrowUpRight, ArrowDownRight, Map, Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { PropertyForm } from './PropertyForm';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
     const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
     return (
-        <div className="fade-in">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '40px' }}>
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                        <div style={{ background: 'rgba(99, 102, 241, 0.2)', padding: '12px', borderRadius: '16px', color: 'var(--accent-primary)' }}>
-                            <Home size={24} />
-                        </div>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                            <ArrowUpRight size={16} /> 0%
-                        </span>
-                    </div>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>{properties.length}</h3>
-                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Toplam Mülk</p>
-                </div>
+        <div className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                        <CardTitle className="text-sm font-medium">Toplam Mülk</CardTitle>
+                        <Home className="w-4 h-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{properties.length}</div>
+                        <p className="text-xs text-muted-foreground flex items-center mt-1">
+                            <ArrowUpRight className="w-3 h-3 text-emerald-500 mr-1" />
+                            <span className="text-emerald-500 font-medium">+12%</span> geçen aydan
+                        </p>
+                    </CardContent>
+                </Card>
 
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                        <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '16px', color: '#10b981' }}>
-                            <Building2 size={24} />
-                        </div>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                            <ArrowUpRight size={16} /> 0%
-                        </span>
-                    </div>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>0</h3>
-                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Aktif Kiracı</p>
-                </div>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                        <CardTitle className="text-sm font-medium">Aktif Kiracı</CardTitle>
+                        <Building2 className="w-4 h-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">0</div>
+                        <p className="text-xs text-muted-foreground flex items-center mt-1">
+                            <ArrowUpRight className="w-3 h-3 text-emerald-500 mr-1" />
+                            <span className="text-emerald-500 font-medium">+8%</span> geçen aydan
+                        </p>
+                    </CardContent>
+                </Card>
 
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                        <div style={{ background: 'rgba(239, 68, 68, 0.2)', padding: '12px', borderRadius: '16px', color: '#ef4444' }}>
-                            <Calendar size={24} />
-                        </div>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                            <ArrowDownRight size={16} /> 0%
-                        </span>
-                    </div>
-                    <h3 style={{ fontSize: '2rem', margin: '0 0 8px 0', color: 'var(--text-main)' }}>0</h3>
-                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Boşta Ev</p>
-                </div>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                        <CardTitle className="text-sm font-medium">Boşta Ev</CardTitle>
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">0</div>
+                        <p className="text-xs text-muted-foreground flex items-center mt-1">
+                            <ArrowDownRight className="w-3 h-3 text-rose-500 mr-1" />
+                            <span className="text-rose-500 font-medium">-2%</span> geçen aydan
+                        </p>
+                    </CardContent>
+                </Card>
 
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '160px' }}>
-                    <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                        <Map size={32} style={{ margin: '0 auto 12px' }} opacity={0.5} />
-                        <p style={{ fontSize: '0.9rem', margin: 0 }}>Harita Modülü<br/>Hazırlanıyor</p>
+                <Card className="flex items-center justify-center min-h-[120px] bg-muted/50 border-dashed">
+                    <div className="text-center text-muted-foreground flex flex-col items-center">
+                        <Map className="w-8 h-8 mb-2 opacity-50" />
+                        <p className="text-xs font-medium">Harita Modülü Bekleniyor</p>
                     </div>
-                </div>
+                </Card>
             </div>
 
             <div>
-                 <h2 style={{ fontSize: '1.25rem', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                     Son Eklenen Mülkler
-                 </h2>
-                 {properties.length === 0 ? (
-                     <div className="empty-state-glass">
-                         <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '50%', marginBottom: '16px' }}>
-                             <Home size={32} color="var(--text-muted)" />
-                         </div>
-                         <h3 style={{ fontSize: '1.2rem', margin: '0 0 8px 0' }}>Sistemde Mülk Yok</h3>
-                         <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Henüz portföye bir mülk eklenmemiş. Hemen sağ üstteki butondan yeni mülk yaratabilirsiniz.</p>
-                         <Link to="/admin/properties/new" className="btn-save" style={{ textDecoration: 'none', display: 'inline-block' }}>
-                             Yeni Mülk Tanımla
+                 <div className="flex items-center justify-between mb-4">
+                     <h2 className="text-xl font-bold tracking-tight">Son Eklenen Mülkler</h2>
+                     <Button asChild>
+                         <Link to="/admin/properties/new">
+                            <Home className="w-4 h-4 mr-2" /> Yeni Ekle
                          </Link>
-                     </div>
+                     </Button>
+                 </div>
+                 
+                 {properties.length === 0 ? (
+                     <Card className="flex flex-col items-center justify-center py-16 text-center border-dashed">
+                         <div className="p-4 bg-muted rounded-full mb-4">
+                             <Home className="w-8 h-8 text-muted-foreground" />
+                         </div>
+                         <h3 className="text-lg font-semibold mb-2">Sistemde Mülk Yok</h3>
+                         <p className="text-muted-foreground mb-6 max-w-[400px]">Henüz portföye bir mülk eklenmemiş. Lütfen yeni bir mülk tanımlayarak sistemi başlatın.</p>
+                         <Button asChild>
+                             <Link to="/admin/properties/new">Yeni Mülk Tanımla</Link>
+                         </Button>
+                     </Card>
                  ) : (
-                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                     <div className="grid gap-4 md:grid-cols-2">
                          {properties.map(p => (
-                             <div 
+                             <Card 
                                key={p.id} 
-                               className="property-card"
-                               style={{ background: 'rgba(255,255,255,0.03)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', cursor: 'pointer' }}
+                               className="cursor-pointer hover:border-primary/50 transition-colors"
                                onClick={() => setSelectedPropertyId(p.id)}
                              >
-                                 <div style={{ display: 'flex', gap: '16px', flex: 1 }}>
+                                 <CardContent className="p-4 flex gap-4">
                                      {p.images && p.images.length > 0 ? (
-                                        <div style={{ width: '80px', height: '80px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
-                                            <img src={p.images[0]} alt="Property" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0 border bg-muted">
+                                            <img src={p.images[0]} alt="Property" className="w-full h-full object-cover" />
                                         </div>
                                      ) : (
-                                        <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px dashed var(--border-glass)' }}>
-                                            <Home size={24} color="var(--text-muted)" />
+                                        <div className="w-20 h-20 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-dashed">
+                                            <Home className="w-6 h-6 text-muted-foreground" />
                                         </div>
                                      )}
 
-                                     <div>
-                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                             <Building2 size={18} color="var(--accent-primary)" />
-                                             <h4 style={{ fontSize: '1.1rem', margin: 0 }}>Mülk #{p.id.toUpperCase()}</h4>
+                                     <div className="flex-1 min-w-0">
+                                         <div className="flex items-center gap-2 mb-1.5">
+                                             <Building2 className="w-4 h-4 text-primary shrink-0" />
+                                             <h4 className="font-semibold text-base truncate">Mülk #{p.id.toUpperCase()}</h4>
                                          </div>
-                                         <p style={{ color: 'var(--text-main)', fontSize: '0.85rem', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                             <MapPin size={14} color="var(--text-muted)"/> {p.address}
+                                         <p className="text-sm text-foreground flex items-center gap-1.5 mb-1 truncate">
+                                             <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0"/> {p.address}
                                          </p>
-                                         <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                             <Calendar size={14} /> Yapım: {p.buildYear} • Net: {p.area}m² {p.images && p.images.length > 1 && `• +${p.images.length - 1} Fotoğraf`}
+                                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                             <Calendar className="w-3 h-3" /> Yapım: {p.buildYear} • Net: {p.area}m² {p.images && p.images.length > 1 && `• +${p.images.length - 1}`}
                                          </p>
                                      </div>
-                                 </div>
-                                 
-                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                     <div style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '10px 20px', borderRadius: '30px', fontWeight: '800', border: '1px solid rgba(99,102,241,0.3)', fontSize: '1.1rem' }}>
-                                         {p.roomType}
+                                     
+                                     <div className="flex flex-col items-end gap-2 justify-between">
+                                         <Badge variant="secondary" className="px-3 py-1 font-bold text-sm tracking-widest">{p.roomType}</Badge>
+                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={(e) => { e.stopPropagation(); setSelectedPropertyId(p.id); }}>
+                                             <Pencil className="w-4 h-4" />
+                                         </Button>
                                      </div>
-                                     <div onClick={(e) => { e.stopPropagation(); setSelectedPropertyId(p.id); }} style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', padding: '10px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-glass)', cursor: 'pointer' }}>
-                                         <Pencil size={18} />
-                                     </div>
-                                 </div>
-                             </div>
+                                 </CardContent>
+                             </Card>
                          ))}
                      </div>
                  )}
             </div>
 
-            <Dialog.Root open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
-                <Dialog.Portal>
-                    <Dialog.Overlay className="dialog-overlay" />
-                    <Dialog.Content className="dialog-content">
-                        <Dialog.Close asChild>
-                            <button className="dialog-close" aria-label="Kapat"><X size={18} /></button>
-                        </Dialog.Close>
-                        <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} />
-                    </Dialog.Content>
-                </Dialog.Portal>
-            </Dialog.Root>
+            <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
+                <DialogContent className="max-w-4xl p-0 overflow-hidden border-none bg-transparent shadow-none">
+                    <PropertyForm propertyId={selectedPropertyId || undefined} onComplete={() => setSelectedPropertyId(null)} />
+                </DialogContent>
+            </Dialog>
 
         </div>
     );
