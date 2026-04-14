@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { LayoutDashboard, Home, Users, FileText, Settings, Bell, ChevronDown, AlignLeft } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 
@@ -83,10 +84,17 @@ export const AdminLayout = () => {
            </div>
         </header>
 
-        {/* Page Content */}
-        <div className="admin-content-area">
-           <Outlet />
-        </div>
+        {/* Page Content wrapped in Radix Scroll Area */}
+        <ScrollArea.Root className="admin-scroll-root" type="auto">
+           <ScrollArea.Viewport className="admin-scroll-viewport">
+              <div className="admin-content-area">
+                 <Outlet />
+              </div>
+           </ScrollArea.Viewport>
+           <ScrollArea.Scrollbar className="admin-scrollbar" orientation="vertical">
+              <ScrollArea.Thumb className="admin-scroll-thumb" />
+           </ScrollArea.Scrollbar>
+        </ScrollArea.Root>
       </main>
     </div>
   );
