@@ -16,8 +16,8 @@ export const Dashboard = () => {
         <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <Home className="w-4 h-4 text-muted-foreground" />
+                    <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
+                        <Home className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">Toplam Mülk</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -26,8 +26,8 @@ export const Dashboard = () => {
                 </Card>
 
                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <Building2 className="w-4 h-4 text-muted-foreground" />
+                    <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
+                        <Building2 className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">Aktif Kiracı</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -36,8 +36,8 @@ export const Dashboard = () => {
                 </Card>
 
                 <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
+                        <Calendar className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">Boşta Ev</CardTitle>
                     </CardHeader>
                     <CardContent>
