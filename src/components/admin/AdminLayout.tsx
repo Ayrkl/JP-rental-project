@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Home, Users, FileText, Settings, Bell,
   ChevronLeft, ChevronRight, Menu, Search, Command,
-  BookOpen, Video, Megaphone, Box, Sliders
+  BookOpen, Video, Megaphone, Box, Sliders, PanelLeft, PanelLeftClose
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -56,10 +56,10 @@ export const AdminLayout = () => {
 
         <Button
           variant="outline" size="icon"
-          className="absolute -right-3 top-[26px] rounded-full h-6 w-6 z-50 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white"
+          className="absolute -right-9 top-[30px] rounded-full h-6 w-6 z-50 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#1e1e1e]"
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+          {collapsed ? <PanelLeft size={13} /> : <PanelLeftClose size={13} />}
         </Button>
 
         {/* Search Bar */}
@@ -114,11 +114,11 @@ export const AdminLayout = () => {
       <div className="flex-1 flex flex-col min-w-0 bg-[#0a0a0a]">
         {/* Header Navbar */}
         <header className="h-[72px] border-b border-[#1e1e1e] bg-[#0a0a0a] flex items-center justify-between px-8">
-          <div className="flex items-center">
+          <div className="flex items-center ml-5 sm:ml-4">
             <Button variant="ghost" size="icon" className="md:hidden mr-2 text-zinc-400" onClick={() => setCollapsed(!collapsed)}>
               <Menu size={20} />
             </Button>
-            <h2 className="text-[15px] font-medium text-zinc-300 tracking-tight">Merkez Yönetim</h2>
+            <h2 className="text-[22px] font-medium text-zinc-300 tracking-tight">Merkez Yönetim</h2>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="relative rounded-full text-zinc-400 hover:text-zinc-200 hover:bg-[#1a1a1a]">
