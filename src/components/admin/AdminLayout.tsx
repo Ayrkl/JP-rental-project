@@ -17,19 +17,23 @@ export const AdminLayout = () => {
     {
       title: null,
       items: [
-        { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
-        { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Property Management' },
-        { path: '#', icon: <FileText size={18} />, label: 'Contracts' },
+        { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Kontrol Paneli' },
+        { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Mülk Yönetimi' },
+        { path: '#', icon: <FileText size={18} />, label: 'Sözleşmeler' },
       ]
     },
     {
-      title: 'Management',
+      title: 'Yönetim',
       items: [
-        { path: '#', icon: <Users size={18} />, label: 'Users and Roles' },
-        { path: '#', icon: <Megaphone size={18} />, label: 'Announcements' },
+        { path: '#', icon: <Users size={18} />, label: 'Kullanıcılar ve Roller' },
+        { path: '#', icon: <Megaphone size={18} />, label: 'Duyurular' },
       ]
     }
   ];
+
+  const currentPageLabel = navCategories.flatMap(c => c.items).find(item => 
+    location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path.replace('#', 'NO_MATCH')))
+  )?.label || 'Merkez Yönetim';
 
   return (
     <div className="flex min-h-screen bg-background text-foreground dark" style={{ '--sidebar-width': collapsed ? '80px' : '230px' } as React.CSSProperties}>
@@ -54,13 +58,7 @@ export const AdminLayout = () => {
           )}
         </div>
 
-        <Button
-          variant="outline" size="icon"
-          className="absolute -right-9 top-[30px] rounded-full h-6 w-6 z-50 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#1e1e1e]"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <PanelLeft size={13} /> : <PanelLeftClose size={13} />}
-        </Button>
+
 
         {/* Search Bar */}
         {!collapsed && (
@@ -113,12 +111,31 @@ export const AdminLayout = () => {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col min-w-0 bg-[#0a0a0a]">
         {/* Header Navbar */}
-        <header className="h-[72px] border-b border-[#1e1e1e] bg-[#0a0a0a] flex items-center justify-between px-8">
-          <div className="flex items-center ml-5 sm:ml-4">
-            <Button variant="ghost" size="icon" className="md:hidden mr-2 text-zinc-400" onClick={() => setCollapsed(!collapsed)}>
+        <header className="h-[72px] border-b border-[#1e1e1e] bg-[#0a0a0a] flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            {/* INLINE TOGGLE BUTTON */}
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="hidden md:flex h-9 w-9 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#1e1e1e] transition-colors rounded-lg" 
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {collapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={18} />}
+            </Button>
+            
+            <Button variant="ghost" size="icon" className="md:hidden text-zinc-400" onClick={() => setCollapsed(!collapsed)}>
               <Menu size={20} />
             </Button>
-            <h2 className="text-[22px] font-medium text-zinc-300 tracking-tight">Merkez Yönetim</h2>
+
+            {/* SEPARATOR */}
+            <div className="hidden md:block h-6 w-px bg-[#2a2a2a]"></div>
+
+            {/* BREADCRUMB */}
+            <div className="flex items-center gap-2.5 text-[14px] font-medium text-zinc-400">
+              <Home size={16} className="text-zinc-400 hover:text-zinc-200 cursor-pointer transition-colors" />
+              <ChevronRight size={14} className="opacity-40" />
+              <span className="text-zinc-100">{currentPageLabel}</span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="relative rounded-full text-zinc-400 hover:text-zinc-200 hover:bg-[#1a1a1a]">
