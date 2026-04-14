@@ -15,7 +15,8 @@ export type Property = {
   area: number;
   buildYear: number;
   quakeStandard: string;
-  rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[];
+  tenantCapacity: number;
+  rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' | 'Bathroom' | 'Toilet' | 'Balcony' | 'Storage' }[];
   images: string[];
   features: string[]; // Yeni: İmkanlar (İnternet, Asansör vs)
   inventory: InventoryItem[]; // Yeni: Demirbaş Eşyalar

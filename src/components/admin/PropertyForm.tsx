@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X } from 'lucide-react';
+import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X, Users } from 'lucide-react';
 import { usePropertyStore, type InventoryItem } from '../../store/usePropertyStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const [area, setArea] = useState('');
     const [buildYear, setBuildYear] = useState('');
     const [quakeStandard, setQuakeStandard] = useState('new');
-    const [rooms, setRooms] = useState<{ id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' }[]>([]);
+    const [tenantCapacity, setTenantCapacity] = useState('1');
+    const [rooms, setRooms] = useState<{ id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' | 'Bathroom' | 'Toilet' | 'Balcony' | 'Storage' }[]>([]);
     const [images, setImages] = useState<string[]>([]);
     const [features, setFeatures] = useState<string[]>([]);
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
@@ -33,6 +34,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 setArea(existingProp.area.toString());
                 setBuildYear(existingProp.buildYear.toString());
                 setQuakeStandard(existingProp.quakeStandard);
+                if (existingProp.tenantCapacity) setTenantCapacity(existingProp.tenantCapacity.toString());
                 setRooms(existingProp.rooms);
                 setImages(existingProp.images || []);
                 setFeatures(existingProp.features || []);
@@ -53,7 +55,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
         });
     };
 
-    const addRoom = (type: 'Room' | 'Living' | 'Dining' | 'Kitchen') => {
+    const addRoom = (type: 'Room' | 'Living' | 'Dining' | 'Kitchen' | 'Bathroom' | 'Toilet' | 'Balcony' | 'Storage') => {
         setRooms([...rooms, { id: Math.random().toString(36).substring(2, 9), type }]);
     };
 
@@ -74,15 +76,16 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
         const hasL = rooms.some(r => r.type === 'Living');
         const hasD = rooms.some(r => r.type === 'Dining');
         const hasK = rooms.some(r => r.type === 'Kitchen');
+        const hasS = rooms.some(r => r.type === 'Storage');
 
         const prefix = roomCount > 0 ? roomCount.toString() : (rooms.length > 0 ? '0' : '1');
-        const suffix = `${hasL ? 'L' : ''}${hasD ? 'D' : ''}${hasK ? 'K' : ''}`;
+        const suffix = `${hasS ? 'S' : ''}${hasL ? 'L' : ''}${hasD ? 'D' : ''}${hasK ? 'K' : ''}`;
         return prefix === '0' ? suffix : (prefix === '1' && suffix === '' ? '1R' : prefix + suffix);
     }, [rooms]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const payload = { address, area: Number(area), buildYear: Number(buildYear), quakeStandard, rooms, roomType: layoutString, images, features, inventory };
+        const payload = { address, area: Number(area), buildYear: Number(buildYear), quakeStandard, tenantCapacity: Number(tenantCapacity), rooms, roomType: layoutString, images, features, inventory };
         if (id) updateProperty(id, payload);
         else addProperty(payload);
 
@@ -117,7 +120,12 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                             <Input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" placeholder="Örn: 2018" min="1950" max="2026" value={buildYear} onChange={e => (!e.target.value.startsWith('0') && e.target.value !== '0') && setBuildYear(e.target.value)} required />
                         </div>
 
-                        <div className="space-y-2 col-span-1 md:col-span-2">
+                        <div className="space-y-2">
+                            <Label className="flex items-center gap-2"><Users size={16} /> Kişi Kapasitesi</Label>
+                            <Input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" placeholder="Örn: 2" min="1" max="15" value={tenantCapacity} onChange={e => e.target.value !== '0' && setTenantCapacity(e.target.value)} required />
+                        </div>
+
+                        <div className="space-y-2">
                             <Label className="flex items-center gap-2"><ShieldCheck size={16} /> Deprem Sertifikası (耐震基準)</Label>
                             <Select value={quakeStandard} onValueChange={setQuakeStandard}>
                                 <SelectTrigger>
@@ -160,6 +168,18 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Kitchen')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
                                     <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Mutfak (K)
                                 </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Bathroom')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Banyo (B)
+                                </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Toilet')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Tuvalet (WC)
+                                </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Storage')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Depo/Kiler (S)
+                                </Button>
+                                <Button type="button" variant="outline" size="sm" onClick={() => addRoom('Balcony')} className="bg-background shadow-sm hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="w-4 h-4 mr-1.5 opacity-70" /> Balkon (BL)
+                                </Button>
                             </div>
 
                             {/* Seçilen Odaların Görüntülendiği Pano (Pill şeklinde) */}
@@ -176,7 +196,11 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                                 {room.type === 'Room' ? '🛏️ Yatak Odası' : 
                                                  room.type === 'Living' ? '🛋️ Salon' : 
                                                  room.type === 'Dining' ? '🍽️ Yemek Alanı' : 
-                                                 '🍳 Mutfak'}
+                                                 room.type === 'Kitchen' ? '🍳 Mutfak' :
+                                                 room.type === 'Bathroom' ? '🛁 Banyo' :
+                                                 room.type === 'Toilet' ? '🚽 Tuvalet' :
+                                                 room.type === 'Balcony' ? '🌅 Balkon' :
+                                                 '📦 Depo/Kiler'}
                                             </span>
                                             <Button type="button" variant="ghost" size="icon" onClick={() => setRooms(rooms.filter(r => r.id !== room.id))} className="h-5 w-5 ml-0.5 rounded-full text-muted-foreground hover:bg-destructive hover:text-destructive-foreground">
                                                 <X className="w-3 h-3" />
