@@ -164,7 +164,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                     center={[35.6762, 139.6503]}
                                     zoom={12}
                                     style={{ height: '100%', width: '100%' }}
-                                    scrollWheelZoom={false}
+                                    scrollWheelZoom={true}
                                 >
                                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                     <LocationPicker />
