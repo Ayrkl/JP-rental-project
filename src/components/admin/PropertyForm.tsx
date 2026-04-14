@@ -130,7 +130,13 @@ export const PropertyForm = () => {
                             type="number" 
                             placeholder="Örn: 45" 
                             value={area}
-                            onChange={(e) => setArea(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '0') return; // '0' değerini yok say
+                                setArea(val);
+                            }}
+                            min="1"
+                            step="any"
                             required
                         />
                     </div>
@@ -142,7 +148,11 @@ export const PropertyForm = () => {
                             placeholder="Örn: 2018" 
                             min="1950" max="2026"
                             value={buildYear}
-                            onChange={(e) => setBuildYear(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '0' || val.startsWith('0')) return; // '0' veya '0 ile başlayan' veriyi engeller
+                                setBuildYear(val);
+                            }}
                             required
                         />
                     </div>
