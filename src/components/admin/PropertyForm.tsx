@@ -187,8 +187,13 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                     </span>
                                 ) : (
                                     rooms.map((room, index) => (
-                                        <div key={room.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200">
-                                            <span className="text-xs font-semibold text-muted-foreground w-4 h-4 flex items-center justify-center rounded-full bg-muted/50">{index + 1}</span>
+                                        <button 
+                                            key={room.id} 
+                                            type="button"
+                                            onClick={() => setRooms(rooms.filter(r => r.id !== room.id))}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200 group hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                        >
+                                            <span className="text-xs font-semibold text-muted-foreground group-hover:text-destructive w-4 h-4 flex items-center justify-center rounded-full bg-muted/50 group-hover:bg-destructive/20">{index + 1}</span>
                                             <span className="text-sm font-medium">
                                                 {room.type === 'Room' ? '🛏️ Yatak Odası' :
                                                     room.type === 'Living' ? '🛋️ Salon' :
@@ -199,10 +204,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                                                         room.type === 'Balcony' ? '🌅 Balkon' :
                                                                             '📦 Depo/Kiler'}
                                             </span>
-                                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms(rooms.filter(r => r.id !== room.id))} className="h-5 w-5 ml-0.5 rounded-full text-muted-foreground hover:bg-destructive hover:text-destructive-foreground">
-                                                <X className="w-3 h-3" />
-                                            </Button>
-                                        </div>
+                                            <X className="w-3.5 h-3.5 ml-0.5 text-muted-foreground opacity-50 group-hover:text-destructive group-hover:opacity-100 transition-opacity" />
+                                        </button>
                                     ))
                                 )}
                             </div>
