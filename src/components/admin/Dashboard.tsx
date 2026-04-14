@@ -17,43 +17,31 @@ export const Dashboard = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">Toplam Mülk</CardTitle>
                         <Home className="w-4 h-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Toplam Mülk</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{properties.length}</div>
-                        <p className="text-xs text-muted-foreground flex items-center mt-1">
-                            <ArrowUpRight className="w-3 h-3 text-emerald-500 mr-1" />
-                            <span className="text-emerald-500 font-medium">+12%</span> geçen aydan
-                        </p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">Aktif Kiracı</CardTitle>
                         <Building2 className="w-4 h-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Aktif Kiracı</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground flex items-center mt-1">
-                            <ArrowUpRight className="w-3 h-3 text-emerald-500 mr-1" />
-                            <span className="text-emerald-500 font-medium">+8%</span> geçen aydan
-                        </p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">Boşta Ev</CardTitle>
                         <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Boşta Ev</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground flex items-center mt-1">
-                            <ArrowDownRight className="w-3 h-3 text-rose-500 mr-1" />
-                            <span className="text-rose-500 font-medium">-2%</span> geçen aydan
-                        </p>
                     </CardContent>
                 </Card>
 
@@ -134,7 +122,7 @@ export const Dashboard = () => {
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
                 <DialogContent
                     className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-2xl max-h-[83vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300"
-                    style={{ left: 'calc(50% + (var(--sidebar-width, 260px) / 2))' }}
+                    style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
                 >
                     {/* STICKY HEADER GÖRÜNÜMÜ */}
                     <div className="px-6 md:px-8 py-5 border-b border-border bg-card/50 z-10 shrink-0">

@@ -32,14 +32,14 @@ export const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground dark" style={{ '--sidebar-width': collapsed ? '80px' : '260px' } as React.CSSProperties}>
+    <div className="flex min-h-screen bg-background text-foreground dark" style={{ '--sidebar-width': collapsed ? '80px' : '230px' } as React.CSSProperties}>
       {/* SIDEBAR */}
-      <aside className={`${collapsed ? 'w-20' : 'w-[260px]'} flex-shrink-0 border-r border-[#1e1e1e] bg-[#121212] transition-all duration-300 flex flex-col z-[60] relative`}>
+      <aside className={`${collapsed ? 'w-20' : 'w-[220px]'} flex-shrink-0 border-r border-[#1e1e1e] bg-[#121212] transition-all duration-300 flex flex-col z-[60] relative`}>
         {/* Header / Logo Zone */}
-        <div className="h-[72px] flex items-center px-4 pt-2">
+        <div className="h-[50px] flex items-center px-3 pt-2">
           {!collapsed ? (
-            <div className="flex items-center gap-3 w-full">
-              <div className="w-[38px] h-[38px] bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm overflow-hidden p-[5px]">
+            <div className="flex items-center gap-2 w-full">
+              <div className="w-[36px] h-[36px] bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm overflow-hidden p-[0px]">
                 <img src="/edusama_icon.webp" alt="Edusama Icon" className="w-full h-full object-contain" />
               </div>
               <div className="flex flex-col min-w-0">
@@ -70,7 +70,7 @@ export const AdminLayout = () => {
               <input
                 type="text"
                 placeholder="Ara..."
-                className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg pl-8 pr-10 py-1.5 text-[13.5px] text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 transition-all"
+                className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg pl-7 pr-10 py-1.5 text-[12px] text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 transition-all"
               />
             </div>
           </div>
