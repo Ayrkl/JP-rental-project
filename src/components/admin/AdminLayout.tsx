@@ -32,9 +32,9 @@ export const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground dark">
+    <div className="flex min-h-screen bg-background text-foreground dark" style={{ '--sidebar-width': collapsed ? '80px' : '260px' } as React.CSSProperties}>
       {/* SIDEBAR */}
-      <aside className={`${collapsed ? 'w-20' : 'w-[260px]'} flex-shrink-0 border-r border-[#1e1e1e] bg-[#121212] transition-all duration-300 flex flex-col z-20 relative`}>
+      <aside className={`${collapsed ? 'w-20' : 'w-[260px]'} flex-shrink-0 border-r border-[#1e1e1e] bg-[#121212] transition-all duration-300 flex flex-col z-[60] relative`}>
         {/* Header / Logo Zone */}
         <div className="h-[72px] flex items-center px-4 pt-2">
           {!collapsed ? (
