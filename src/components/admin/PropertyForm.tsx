@@ -7,6 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// İkon düzeltmesi
+const icon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+});
 
 export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?: string; onComplete?: () => void; isModal?: boolean }) => {
     const { addProperty, updateProperty, properties } = usePropertyStore();
@@ -23,6 +34,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const [images, setImages] = useState<string[]>([]);
     const [features, setFeatures] = useState<string[]>([]);
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
+    const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     useEffect(() => {
@@ -38,9 +50,20 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 setImages(existingProp.images || []);
                 setFeatures(existingProp.features || []);
                 setInventory(existingProp.inventory || []);
+                if (existingProp.coordinates) setCoordinates(existingProp.coordinates);
             }
         }
     }, [id, properties]);
+
+    // Haritadan konum seçme bileşeni
+    function LocationPicker() {
+        useMapEvents({
+            click(e) {
+                setCoordinates({ lat: e.latlng.lat, lng: e.latlng.lng });
+            },
+        });
+        return coordinates ? <Marker position={[coordinates.lat, coordinates.lng]} icon={icon} /> : null;
+    }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -84,7 +107,19 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const payload = { address, area: Number(area), buildYear: Number(buildYear), quakeStandard, tenantCapacity: Number(tenantCapacity), rooms, roomType: layoutString, images, features, inventory };
+        const payload = {
+            address,
+            area: Number(area),
+            buildYear: Number(buildYear),
+            quakeStandard,
+            tenantCapacity: Number(tenantCapacity),
+            rooms,
+            roomType: layoutString,
+            images,
+            features,
+            inventory,
+            coordinates: coordinates || undefined
+        };
         if (id) updateProperty(id, payload);
         else addProperty(payload);
 
@@ -96,6 +131,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
         }, 1000);
     };
 
+    const ADDRESS_MAX_LENGTH = 200;
+
     const formContent = (
         <form className="space-y-10" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -104,9 +141,35 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 <div className="space-y-4 col-span-1 md:col-span-2">
                     <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">Temel Bilgiler</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                        <div className="space-y-2 col-span-1 md:col-span-2">
-                            <Label className="flex items-center gap-2"><MapPin size={16} /> Açık Adres</Label>
-                            <Input placeholder="Örn: Tokyo-to, Shibuya-ku..." value={address} onChange={e => setAddress(e.target.value)} required />
+                        <div className="space-y-3 col-span-1 md:col-span-2">
+                            <div className="flex items-center justify-between">
+                                <Label className="flex items-center gap-2"><MapPin size={24} /> Açık Adres</Label>
+                                <span className={`text-[10px] font-mono ${address.length > 180 ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
+                                    Kalan: {ADDRESS_MAX_LENGTH - address.length}
+                                </span>
+                            </div>
+                            <Input
+                                placeholder="Örn: Tokyo-to, Shibuya-ku..."
+                                value={address}
+                                onChange={e => e.target.value.length <= ADDRESS_MAX_LENGTH && setAddress(e.target.value)}
+                                required
+                            />
+
+                            {/* Konum Seçme Haritası */}
+                            <div className="mt-4 rounded-xl overflow-hidden border border-border h-[400px] w-full relative group">
+                                <div className="absolute top-2 left-2 z-[400] bg-background/90 backdrop-blur px-2 py-1 rounded border text-[10px] font-semibold pointer-events-none">
+                                    {coordinates ? `Konum Seçildi: ${coordinates.lat.toFixed(4)}, ${coordinates.lng.toFixed(4)}` : 'Haritaya tıklayarak konumu işaretleyin'}
+                                </div>
+                                <MapContainer
+                                    center={[35.6762, 139.6503]}
+                                    zoom={12}
+                                    style={{ height: '100%', width: '100%' }}
+                                    scrollWheelZoom={false}
+                                >
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                    <LocationPicker />
+                                </MapContainer>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -186,8 +249,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                     </span>
                                 ) : (
                                     rooms.map((room, index) => (
-                                        <button 
-                                            key={room.id} 
+                                        <button
+                                            key={room.id}
                                             type="button"
                                             onClick={() => setRooms(rooms.filter(r => r.id !== room.id))}
                                             className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200 group hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors"
