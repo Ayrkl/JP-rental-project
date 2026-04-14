@@ -21,6 +21,7 @@ export type Property = {
   features: string[]; // Yeni: İmkanlar (İnternet, Asansör vs)
   inventory: InventoryItem[]; // Yeni: Demirbaş Eşyalar
   dateAdded: string;
+  coordinates?: { lat: number; lng: number }; // Harita entegrasyonu için
 };
 
 interface PropertyStore {

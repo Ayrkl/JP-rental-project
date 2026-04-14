@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard, Home, Users, FileText, Settings, Bell,
-  ChevronLeft, ChevronRight, Menu, Search, Command,
-  BookOpen, Video, Megaphone, Box, Sliders, PanelLeft, PanelLeftClose
+  LayoutDashboard, Home, Users, FileText, Bell,
+  ChevronRight, Menu, Search,
+  Megaphone, PanelLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
