@@ -63,10 +63,10 @@ export const Dashboard = () => {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
                         <h2 className="text-xl font-bold tracking-tight">Mülk Portföyü</h2>
-                        
+
                         <div className="hidden sm:flex items-center bg-muted/40 p-1 rounded-lg border border-border h-8">
                             {[1, 2, 3, 4, 5].map(num => (
-                                <button 
+                                <button
                                     key={num}
                                     onClick={() => setGridCols(num)}
                                     className={`w-8 h-full flex items-center justify-center rounded-md text-xs font-bold transition-all ${gridCols === num ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
@@ -76,7 +76,7 @@ export const Dashboard = () => {
                             ))}
                         </div>
                     </div>
-                    
+
                     <Button asChild>
                         <Link to="/admin/properties/new">
                             <Home className="w-4 h-4 mr-2" /> Yeni Ekle
@@ -129,13 +129,13 @@ export const Dashboard = () => {
 
                                     <div className="flex flex-col items-end gap-2 justify-between">
                                         <Badge variant="secondary" className="px-3 py-1 font-bold text-[10px] tracking-widest">{p.roomType}</Badge>
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
-                                            className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" 
-                                            onClick={(e) => { 
-                                                e.stopPropagation(); 
-                                                setSelectedPropertyId(p.id); 
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedPropertyId(p.id);
                                             }}
                                         >
                                             <Pencil className="w-4 h-4" />
@@ -172,21 +172,21 @@ export const Dashboard = () => {
             {/* ÖNİZLEME MODALI */}
             <Dialog open={!!previewPropertyId} onOpenChange={(open) => !open && setPreviewPropertyId(null)}>
                 <DialogContent
-                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
+                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-4 [&>button]:top-4 [&>button]:bg-black/60 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-white z-[2000]"
                     style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
                 >
-                    <div className="px-10 py-10 overflow-y-auto flex-1">
+                    <div className="px-8 py-6 overflow-y-auto flex-1">
                         {previewProperty && <PropertyPreview property={previewProperty} />}
                     </div>
                     <div className="px-10 py-4 bg-muted/30 border-t border-border flex justify-end gap-3 shrink-0">
-                       <Button variant="outline" onClick={() => setPreviewPropertyId(null)}>Kapat</Button>
-                       <Button onClick={() => {
-                           const id = previewPropertyId;
-                           setPreviewPropertyId(null);
-                           setTimeout(() => setSelectedPropertyId(id), 100);
-                       }}>
-                           <Pencil className="w-4 h-4 mr-2" /> Düzenle
-                       </Button>
+                        <Button variant="outline" onClick={() => setPreviewPropertyId(null)}>Kapat</Button>
+                        <Button onClick={() => {
+                            const id = previewPropertyId;
+                            setPreviewPropertyId(null);
+                            setTimeout(() => setSelectedPropertyId(id), 100);
+                        }}>
+                            <Pencil className="w-4 h-4 mr-2" /> Düzenle
+                        </Button>
                     </div>
                 </DialogContent>
             </Dialog>

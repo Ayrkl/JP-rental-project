@@ -45,12 +45,12 @@ export const MapPage = () => {
 
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && handleClose()}>
                 <DialogContent
-                    className="sm:max-w-[850px] lg:max-w-[1200px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[85vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
+                    className="sm:max-w-[860px] lg:max-w-[1630px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[92vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
                     style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
                 >
                     {!isEditing ? (
                         <>
-                            <div className="px-10 py-10 overflow-y-auto flex-1">
+                            <div className="px-8 py-6 overflow-y-auto flex-1">
                                 {selectedProperty && <PropertyPreview property={selectedProperty} />}
                             </div>
                             <div className="px-10 py-5 bg-muted/30 border-t border-border flex justify-end gap-3 shrink-0">

@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import type { Property } from '../../store/usePropertyStore';
 import { Badge } from '@/components/ui/badge';
-import { 
-    Home, Ruler, Calendar, MapPin, 
-    Zap, DoorOpen, Package, ShowerHead, 
-    CheckCircle2, Building2, Users, Layout
+import {
+    Home, Ruler, Calendar, MapPin,
+    Zap, DoorOpen, Package, ShowerHead,
+    CheckCircle2, Building2, Users, Layout,
+    ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 interface PropertyPreviewProps {
@@ -11,6 +13,12 @@ interface PropertyPreviewProps {
 }
 
 export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
+    const images = property.images ?? [];
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const prev = () => setActiveIndex(i => (i - 1 + images.length) % images.length);
+    const next = () => setActiveIndex(i => (i + 1) % images.length);
+
     // Oda sayılarını hesapla
     const roomCounts = property.rooms.reduce((acc, room) => {
         acc[room.type] = (acc[room.type] || 0) + 1;
@@ -29,37 +37,89 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
     };
 
     return (
-        <div className="flex flex-col gap-6">
+        // gap-10 -> gap-16 yaparak genel boşluğu artırdık
+        <div className="flex flex-col gap-24 pb-10">
             {/* Görsel Galerisi */}
-            <div className="grid grid-cols-4 gap-3 h-[300px] sm:h-[400px]">
-                <div className="col-span-4 lg:col-span-3 rounded-2xl overflow-hidden border bg-muted relative group">
-                    {property.images && property.images.length > 0 ? (
-                        <img src={property.images[0]} alt="Main" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            {/* h-[350px] yerine lg:h-[400px] h-auto ve mb-10 ekledik */}
+            <div className="grid grid-cols-4 gap-4 lg:h-[400px] h-auto shrink-0 mb-10">
+                {/* Ana görsel + navigasyon */}
+                <div className="col-span-4 lg:col-span-3 rounded-2xl overflow-hidden border bg-muted relative group h-full">
+                    {images.length > 0 ? (
+                        <>
+                            <img
+                                key={activeIndex}
+                                src={images[activeIndex]}
+                                alt={`Görsel ${activeIndex + 1}`}
+                                className="w-full h-full object-cover transition-all duration-500"
+                            />
+                            {/* Önceki / Sonraki oklar */}
+                            {images.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={prev}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                                    >
+                                        <ChevronLeft className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={next}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                                    >
+                                        <ChevronRight className="w-5 h-5" />
+                                    </button>
+                                    {/* Nokta göstergesi */}
+                                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                                        {images.map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => setActiveIndex(i)}
+                                                className={`w-2 h-2 rounded-full transition-all duration-200 ${i === activeIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/70'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </>
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-muted/20">
                             <Home className="w-12 h-12 text-muted-foreground/30" />
                         </div>
                     )}
-                    <Badge className="absolute top-4 left-4 bg-primary px-4 py-1.5 text-[14px] font-bold shadow-xl border-none">
+                    <Badge className="absolute top-4 left-4 bg-primary px-4 py-1.5 text-[14px] font-bold shadow-xl border-none z-10">
                         {property.roomType} Plan
                     </Badge>
-                </div>
-                <div className="hidden lg:flex col-span-1 flex-col gap-3">
-                    {[1, 2, 3].map((idx) => (
-                        <div key={idx} className="flex-1 rounded-xl overflow-hidden border bg-muted relative">
-                            {property.images && property.images[idx] ? (
-                                <img src={property.images[idx]} alt={`Sub ${idx}`} className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center opacity-20">
-                                    <Home className="w-6 h-6" />
-                                </div>
-                            )}
-                            {idx === 3 && property.images && property.images.length > 4 && (
-                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-sm">
-                                    +{property.images.length - 3}
-                                </div>
-                            )}
+                    {images.length > 1 && (
+                        <div className="absolute top-4 right-4 bg-black/50 text-white text-xs font-bold px-2 py-1 rounded-lg z-10">
+                            {activeIndex + 1} / {images.length}
                         </div>
+                    )}
+                </div>
+
+                {/* Küçük resimler – tıklanabilir */}
+                <div className="hidden lg:flex col-span-1 flex-col gap-3 h-full">
+                    {[0, 1, 2].map((idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => images[idx] && setActiveIndex(idx)}
+                            className={`flex-1 rounded-xl overflow-hidden border bg-muted relative transition-all duration-200 ${activeIndex === idx
+                                ? 'border-primary ring-2 ring-primary/40 scale-[1.02]'
+                                : 'hover:border-primary/50 hover:scale-[1.01]'
+                                } ${!images[idx] ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
+                        >
+                            {images[idx] ? (
+                                <img src={images[idx]} alt={`Küçük ${idx + 1}`} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <Home className="w-6 h-6 text-muted-foreground/50" />
+                                </div>
+                            )}
+                            {/* Son thumbnail'da "+N daha" overlay */}
+                            {idx === 2 && images.length > 3 && (
+                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-bold text-sm">
+                                    +{images.length - 3}
+                                </div>
+                            )}
+                        </button>
                     ))}
                 </div>
             </div>
@@ -67,7 +127,7 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Sol Taraf: Açıklama ve Detaylar */}
                 <div className="md:col-span-2 space-y-8">
-                    <div>
+                    <div className="pt-4"> {/* Üstten biraz daha boşluk ekledik */}
                         <div className="flex items-center gap-2 text-primary mb-2">
                             <div className="p-1.5 bg-primary/10 rounded-lg">
                                 <Building2 size={18} />
