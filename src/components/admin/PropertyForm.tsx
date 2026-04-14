@@ -131,7 +131,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <SelectTrigger>
                                     <SelectValue placeholder="Bir standart seçin..." />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent position="popper" side="bottom" sideOffset={4} className="w-full">
                                     <SelectItem value="old">Eski Standart (旧耐震 - 1981 Öncesi)</SelectItem>
                                     <SelectItem value="new">Yeni Standart (新耐震 - 1981 Sonrası)</SelectItem>
                                     <SelectItem value="grade2">Grade 2 (耐震等級2)</SelectItem>
@@ -284,7 +284,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                         <SelectTrigger className="h-9 shadow-none">
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent position="popper" side="bottom" sideOffset={4}>
                                             <SelectItem value="Yeni">Yeni / Sıfır</SelectItem>
                                             <SelectItem value="Kullanılmış">İyi Durumda</SelectItem>
                                             <SelectItem value="Hasarlı">Eski / Hasarlı</SelectItem>
