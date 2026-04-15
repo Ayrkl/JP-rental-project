@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { FileText, Plus, Trash2, User, CalendarDays, Wallet } from 'lucide-react';
+import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X } from 'lucide-react';
 import { useContractStore, type ContractStatus } from './useContractStore';
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,8 @@ export const ContractsPage = () => {
   const properties = usePropertyStore((s) => s.properties);
   const { contracts, addContract, removeContract, updateContract } = useContractStore();
   const [form, setForm] = useState(initialForm);
+  const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
+  const [editingContractId, setEditingContractId] = useState<string | null>(null);
 
   const contractsWithProperty = useMemo(
     () =>
@@ -37,11 +39,51 @@ export const ContractsPage = () => {
     [contracts, properties]
   );
 
+  const occupiedPropertyIds = useMemo(
+    () =>
+      new Set(
+        contracts
+          .filter((c) => c.status === 'Taslak' || c.status === 'Aktif')
+          .map((c) => c.propertyId)
+      ),
+    [contracts]
+  );
+
+  const pendingProperties = useMemo(
+    () => properties.filter((p) => !occupiedPropertyIds.has(p.id)),
+    [properties, occupiedPropertyIds]
+  );
+
+  const startEdit = (contractId: string) => {
+    const c = contracts.find((x) => x.id === contractId);
+    if (!c) return;
+    setEditingContractId(contractId);
+    setForm({
+      propertyId: c.propertyId,
+      tenantName: c.tenantName,
+      tenantPhone: c.tenantPhone,
+      tenantEmail: c.tenantEmail ?? '',
+      startDate: c.startDate,
+      endDate: c.endDate,
+      monthlyRent: String(c.monthlyRent),
+      deposit: String(c.deposit),
+      paymentDay: String(c.paymentDay),
+      status: c.status,
+      notes: c.notes ?? '',
+    });
+    setActiveTab('pending');
+  };
+
+  const resetForm = () => {
+    setEditingContractId(null);
+    setForm(initialForm);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.propertyId) return;
 
-    addContract({
+    const payload = {
       propertyId: form.propertyId,
       tenantName: form.tenantName.trim(),
       tenantPhone: form.tenantPhone.trim(),
@@ -53,9 +95,16 @@ export const ContractsPage = () => {
       paymentDay: Number(form.paymentDay),
       status: form.status,
       notes: form.notes.trim() || undefined,
-    });
+    };
 
-    setForm(initialForm);
+    if (editingContractId) {
+      updateContract(editingContractId, payload);
+    } else {
+      addContract(payload);
+    }
+
+    resetForm();
+    setActiveTab('contracted');
   };
 
   return (
@@ -67,11 +116,30 @@ export const ContractsPage = () => {
         </div>
       </div>
 
+      <div className="flex items-center gap-2 border-b border-border pb-3">
+        <Button
+          type="button"
+          variant={activeTab === 'pending' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveTab('pending')}
+        >
+          Sözleşme Bekleyen Mülkler
+        </Button>
+        <Button
+          type="button"
+          variant={activeTab === 'contracted' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveTab('contracted')}
+        >
+          Sözleşmeli Mülkler
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <Card className="xl:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Plus className="w-4 h-4 text-primary" /> Yeni Sözleşme
+              <Plus className="w-4 h-4 text-primary" /> {editingContractId ? 'Sözleşme Düzenle' : 'Yeni Sözleşme'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -83,7 +151,7 @@ export const ContractsPage = () => {
                     <SelectValue placeholder="Mülk seçin..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {properties.map((p) => (
+                    {(editingContractId ? properties : pendingProperties).map((p) => (
                       <SelectItem key={p.id} value={p.id}>
                         #{p.id.toUpperCase()} - {p.address}
                       </SelectItem>
@@ -208,10 +276,16 @@ export const ContractsPage = () => {
               </div>
 
               <Button type="submit" className="w-full" disabled={properties.length === 0}>
-                <Plus className="w-4 h-4 mr-2" /> Sözleşme Oluştur
+                <Plus className="w-4 h-4 mr-2" /> {editingContractId ? 'Değişiklikleri Kaydet' : 'Sözleşme Oluştur'}
               </Button>
-              {properties.length === 0 && (
-                <p className="text-xs text-muted-foreground">Önce en az bir mülk eklemeniz gerekir.</p>
+              {editingContractId && (
+                <Button type="button" variant="outline" className="w-full" onClick={resetForm}>
+                  <X className="w-4 h-4 mr-2" /> Düzenlemeyi İptal Et
+                </Button>
+              )}
+              {properties.length === 0 && <p className="text-xs text-muted-foreground">Önce en az bir mülk eklemeniz gerekir.</p>}
+              {!editingContractId && properties.length > 0 && pendingProperties.length === 0 && (
+                <p className="text-xs text-muted-foreground">Tüm mülklerde aktif/taslak sözleşme var. Yeni sözleşme için önce birini tamamlayın.</p>
               )}
             </form>
           </CardContent>
@@ -220,14 +294,31 @@ export const ContractsPage = () => {
         <Card className="xl:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-primary" /> Sözleşme Listesi
+              <FileText className="w-4 h-4 text-primary" /> {activeTab === 'pending' ? 'Sözleşme Bekleyen Mülkler' : 'Sözleşmeli Mülkler'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {contractsWithProperty.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Henüz sözleşme yok. Soldan yeni sözleşme oluşturabilirsiniz.</p>
+            {activeTab === 'pending' ? (
+              pendingProperties.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Bekleyen mülk yok. Tüm mülkler sözleşmeli görünüyor.</p>
+              ) : (
+                pendingProperties.map((p) => (
+                  <div key={p.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
+                    <h3 className="font-semibold text-base">Mülk #{p.id.toUpperCase()}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">{p.address}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Badge variant="outline">{p.roomType}</Badge>
+                      <Badge variant="outline">{p.area} m²</Badge>
+                      <Badge>Sözleşme Bekliyor</Badge>
+                    </div>
+                  </div>
+                ))
+              )
             ) : (
-              contractsWithProperty.map((contract) => (
+              contractsWithProperty.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Henüz sözleşme yok. Soldan yeni sözleşme oluşturabilirsiniz.</p>
+              ) : (
+                contractsWithProperty.map((contract) => (
                 <div key={contract.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -237,6 +328,15 @@ export const ContractsPage = () => {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                        onClick={() => startEdit(contract.id)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
                       <Select
                         value={contract.status}
                         onValueChange={(v) =>
@@ -304,6 +404,7 @@ export const ContractsPage = () => {
                   {contract.notes && <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{contract.notes}</p>}
                 </div>
               ))
+              )
             )}
           </CardContent>
         </Card>
