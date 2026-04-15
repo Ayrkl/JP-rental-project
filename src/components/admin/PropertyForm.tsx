@@ -382,9 +382,9 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                         title={item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}
                                     >
                                         {item.image ? (
-                                            <img src={item.image} alt={`${item.name || 'Demirbaş'} foto`} className="h-full w-full object-cover" />
+                                            <img src={item.image} alt={`${item.name || 'Demirbaş'} foto`} className="h-full w-full object-cover pointer-events-none select-none" />
                                         ) : (
-                                            <ImageIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                            <ImageIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors pointer-events-none" />
                                         )}
                                         <input
                                             type="file"
