@@ -31,6 +31,45 @@ type CountryCodeOption = {
 };
 
 const COUNTRY_CODE_OPTIONS: CountryCodeOption[] = [
+  { iso: 'AF', code: '+93', name: 'Afganistan' },
+  { iso: 'AL', code: '+355', name: 'Arnavutluk' },
+  { iso: 'DZ', code: '+213', name: 'Cezayir' },
+  { iso: 'AD', code: '+376', name: 'Andorra' },
+  { iso: 'AO', code: '+244', name: 'Angola' },
+  { iso: 'AR', code: '+54', name: 'Arjantin' },
+  { iso: 'AM', code: '+374', name: 'Ermenistan' },
+  { iso: 'AT', code: '+43', name: 'Avusturya' },
+  { iso: 'AZ', code: '+994', name: 'Azerbaycan' },
+  { iso: 'BH', code: '+973', name: 'Bahreyn' },
+  { iso: 'BD', code: '+880', name: 'Banglades' },
+  { iso: 'BY', code: '+375', name: 'Belarus' },
+  { iso: 'BA', code: '+387', name: 'Bosna Hersek' },
+  { iso: 'BR', code: '+55', name: 'Brezilya' },
+  { iso: 'BG', code: '+359', name: 'Bulgaristan' },
+  { iso: 'KH', code: '+855', name: 'Kambocya' },
+  { iso: 'CM', code: '+237', name: 'Kamerun' },
+  { iso: 'CA', code: '+1', name: 'Kanada' },
+  { iso: 'CL', code: '+56', name: 'Sili' },
+  { iso: 'CO', code: '+57', name: 'Kolombiya' },
+  { iso: 'CR', code: '+506', name: 'Kosta Rika' },
+  { iso: 'HR', code: '+385', name: 'Hirvatistan' },
+  { iso: 'CU', code: '+53', name: 'Kuba' },
+  { iso: 'CY', code: '+357', name: 'Kibris' },
+  { iso: 'CZ', code: '+420', name: 'Cekya' },
+  { iso: 'EG', code: '+20', name: 'Misir' },
+  { iso: 'EE', code: '+372', name: 'Estonya' },
+  { iso: 'ET', code: '+251', name: 'Etiyopya' },
+  { iso: 'FI', code: '+358', name: 'Finlandiya' },
+  { iso: 'GE', code: '+995', name: 'Gurcistan' },
+  { iso: 'GH', code: '+233', name: 'Gana' },
+  { iso: 'HK', code: '+852', name: 'Hong Kong' },
+  { iso: 'HU', code: '+36', name: 'Macaristan' },
+  { iso: 'IS', code: '+354', name: 'Izlanda' },
+  { iso: 'ID', code: '+62', name: 'Endonezya' },
+  { iso: 'IR', code: '+98', name: 'Iran' },
+  { iso: 'IQ', code: '+964', name: 'Irak' },
+  { iso: 'IE', code: '+353', name: 'Irlanda' },
+  { iso: 'IL', code: '+972', name: 'Israil' },
   { iso: 'JP', code: '+81', name: 'Japonya' },
   { iso: 'TR', code: '+90', name: 'Turkiye' },
   { iso: 'US', code: '+1', name: 'ABD/Kanada' },
@@ -55,6 +94,52 @@ const COUNTRY_CODE_OPTIONS: CountryCodeOption[] = [
   { iso: 'TH', code: '+66', name: 'Tayland' },
   { iso: 'SG', code: '+65', name: 'Singapur' },
   { iso: 'AU', code: '+61', name: 'Avustralya' },
+  { iso: 'JO', code: '+962', name: 'Urdun' },
+  { iso: 'KZ', code: '+7', name: 'Kazakistan' },
+  { iso: 'KE', code: '+254', name: 'Kenya' },
+  { iso: 'KW', code: '+965', name: 'Kuveyt' },
+  { iso: 'KG', code: '+996', name: 'Kirgizistan' },
+  { iso: 'LA', code: '+856', name: 'Laos' },
+  { iso: 'LV', code: '+371', name: 'Letonya' },
+  { iso: 'LB', code: '+961', name: 'Luban' },
+  { iso: 'LY', code: '+218', name: 'Libya' },
+  { iso: 'LT', code: '+370', name: 'Litvanya' },
+  { iso: 'LU', code: '+352', name: 'Luksemburg' },
+  { iso: 'MO', code: '+853', name: 'Makao' },
+  { iso: 'MK', code: '+389', name: 'Kuzey Makedonya' },
+  { iso: 'MY', code: '+60', name: 'Malezya' },
+  { iso: 'MX', code: '+52', name: 'Meksika' },
+  { iso: 'MD', code: '+373', name: 'Moldova' },
+  { iso: 'MN', code: '+976', name: 'Mogolistan' },
+  { iso: 'ME', code: '+382', name: 'Karadag' },
+  { iso: 'MA', code: '+212', name: 'Fas' },
+  { iso: 'NP', code: '+977', name: 'Nepal' },
+  { iso: 'NZ', code: '+64', name: 'Yeni Zelanda' },
+  { iso: 'NG', code: '+234', name: 'Nijerya' },
+  { iso: 'PK', code: '+92', name: 'Pakistan' },
+  { iso: 'PA', code: '+507', name: 'Panama' },
+  { iso: 'PE', code: '+51', name: 'Peru' },
+  { iso: 'PH', code: '+63', name: 'Filipinler' },
+  { iso: 'QA', code: '+974', name: 'Katar' },
+  { iso: 'RO', code: '+40', name: 'Romanya' },
+  { iso: 'RU', code: '+7', name: 'Rusya' },
+  { iso: 'RS', code: '+381', name: 'Sirbistan' },
+  { iso: 'SK', code: '+421', name: 'Slovakya' },
+  { iso: 'SI', code: '+386', name: 'Slovenya' },
+  { iso: 'ZA', code: '+27', name: 'Guney Afrika' },
+  { iso: 'LK', code: '+94', name: 'Sri Lanka' },
+  { iso: 'CH', code: '+41', name: 'Isvicre' },
+  { iso: 'TW', code: '+886', name: 'Tayvan' },
+  { iso: 'TJ', code: '+992', name: 'Tacikistan' },
+  { iso: 'TN', code: '+216', name: 'Tunus' },
+  { iso: 'TM', code: '+993', name: 'Turkmenistan' },
+  { iso: 'UA', code: '+380', name: 'Ukrayna' },
+  { iso: 'UY', code: '+598', name: 'Uruguay' },
+  { iso: 'UZ', code: '+998', name: 'Ozbekistan' },
+  { iso: 'VE', code: '+58', name: 'Venezuela' },
+  { iso: 'VN', code: '+84', name: 'Vietnam' },
+  { iso: 'YE', code: '+967', name: 'Yemen' },
+  { iso: 'ZW', code: '+263', name: 'Zimbabve' },
 ];
 
 export const ContractsPage = () => {
@@ -102,6 +187,11 @@ export const ContractsPage = () => {
     return COUNTRY_CODE_OPTIONS.filter(
       (c) => c.name.toLowerCase().includes(q) || c.code.includes(q) || c.iso.toLowerCase().includes(q)
     );
+  }, [countrySearch]);
+
+  const customCountryCode = useMemo(() => {
+    const q = countrySearch.trim();
+    return /^\+\d{1,4}$/.test(q) ? q : '';
   }, [countrySearch]);
 
   useEffect(() => {
@@ -270,6 +360,19 @@ export const ContractsPage = () => {
                           </div>
                         </div>
                         <div className="max-h-[240px] overflow-y-auto p-1">
+                          {customCountryCode && !COUNTRY_CODE_OPTIONS.some((c) => c.code === customCountryCode) && (
+                            <button
+                              type="button"
+                              className="w-full text-left px-2 py-2 rounded-md text-sm hover:bg-accent/60 border border-dashed border-border mb-1"
+                              onClick={() => {
+                                setForm((prev) => ({ ...prev, countryCode: customCountryCode }));
+                                setCountryDropdownOpen(false);
+                                setCountrySearch('');
+                              }}
+                            >
+                              Ozel kodu kullan: {customCountryCode}
+                            </button>
+                          )}
                           {filteredCountryOptions.length === 0 ? (
                             <p className="text-xs text-muted-foreground px-2 py-3">Sonuc bulunamadi.</p>
                           ) : (
