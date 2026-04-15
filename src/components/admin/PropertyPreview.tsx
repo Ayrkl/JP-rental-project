@@ -199,7 +199,13 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
                         <div className="space-y-3">
                             {property.inventory && property.inventory.length > 0 ? property.inventory.map(item => (
                                 <div key={item.id} className="flex items-start gap-4 p-3 bg-background rounded-xl border border-border/40 text-xs shadow-sm">
-                                    <div className="w-2 h-2 rounded-full bg-primary/40 mt-1.5 animate-pulse shrink-0" />
+                                    {item.image ? (
+                                        <div className="w-10 h-10 rounded-lg overflow-hidden border bg-muted shrink-0">
+                                            <img src={item.image} alt={`${item.name} foto`} className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-2 h-2 rounded-full bg-primary/40 mt-1.5 animate-pulse shrink-0" />
+                                    )}
                                     <div className="flex flex-col gap-1">
                                         <span className="font-extrabold text-[13px] text-foreground">{item.name}</span>
                                         {item.description ? (

@@ -377,23 +377,35 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <Input className="h-9 flex-1 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
                                 <Input className="h-9 flex-[2] shadow-none" placeholder="Açıklama (örn: 2014 yılında alınmış, 14 ekran...)" value={item.description} onChange={e => updateInventoryItem(item.id, 'description', e.target.value)} />
                                 <div className="flex items-center gap-2 shrink-0">
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon"
-                                            className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 peer-hover:bg-primary/10 peer-hover:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40"
-                                        title={item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}
-                                    >
-                                        <span className="sr-only">{item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}</span>
-                                        <ImageIcon className="w-4 h-4" />
-                                    </Button>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                        onChange={(e) => updateInventoryImage(item.id, e.target.files?.[0] ?? null)}
-                                        aria-label="Demirbaş fotoğrafı ekle"
-                                    />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 peer-hover:bg-primary/10 peer-hover:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 overflow-hidden"
+                                            title={item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}
+                                        >
+                                            <span className="sr-only">{item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}</span>
+                                            {item.image ? (
+                                                <img
+                                                    src={item.image}
+                                                    alt={`${item.name || 'Demirbaş'} foto`}
+                                                    className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
+                                                />
+                                            ) : (
+                                                <ImageIcon className="w-4 h-4 pointer-events-none" />
+                                            )}
+                                        </Button>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0] ?? null;
+                                                updateInventoryImage(item.id, file);
+                                                e.target.value = '';
+                                            }}
+                                            aria-label="Demirbaş fotoğrafı ekle"
+                                        />
                                     {item.image && (
                                         <Button
                                             type="button"
