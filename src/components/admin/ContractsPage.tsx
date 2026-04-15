@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
 const initialForm = {
@@ -152,7 +152,10 @@ export const ContractsPage = () => {
   const [formError, setFormError] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [propertyDropdownOpen, setPropertyDropdownOpen] = useState(false);
+  const [propertySearch, setPropertySearch] = useState('');
   const countryDropdownRef = useRef<HTMLDivElement | null>(null);
+  const propertyDropdownRef = useRef<HTMLDivElement | null>(null);
   const formCardRef = useRef<HTMLDivElement | null>(null);
 
   const contractsWithProperty = useMemo(
@@ -201,6 +204,12 @@ export const ContractsPage = () => {
       (c) => c.name.toLowerCase().includes(q) || c.code.includes(q) || c.iso.toLowerCase().includes(q)
     );
   }, [countrySearch]);
+
+  const filteredProperties = useMemo(() => {
+    const q = propertySearch.trim().toLowerCase();
+    if (!q) return pendingProperties;
+    return pendingProperties.filter((p) => p.address.toLowerCase().includes(q));
+  }, [pendingProperties, propertySearch]);
 
   const getPhoneRule = (countryCode: string) => {
     const rules: Record<string, { min: number; max: number; example: string }> = {
@@ -270,9 +279,11 @@ export const ContractsPage = () => {
 
   useEffect(() => {
     const onMouseDown = (event: MouseEvent) => {
-      if (!countryDropdownRef.current) return;
-      if (!countryDropdownRef.current.contains(event.target as Node)) {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
         setCountryDropdownOpen(false);
+      }
+      if (propertyDropdownRef.current && !propertyDropdownRef.current.contains(event.target as Node)) {
+        setPropertyDropdownOpen(false);
       }
     };
 
@@ -418,25 +429,60 @@ export const ContractsPage = () => {
                       : 'Mülk seçilmedi'}
                   </div>
                 ) : (
-                  <Select value={form.propertyId} onValueChange={(v) => setForm((prev) => ({ ...prev, propertyId: v }))}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Mülk seçin..." />
-                    </SelectTrigger>
-                    <SelectContent position="popper" side="bottom" sideOffset={4} className="w-[--radix-select-trigger-width]">
-                      {pendingProperties.length === 0 ? (
-                        <div className="px-3 py-2 text-sm text-muted-foreground">Veri yok</div>
-                      ) : (
-                        pendingProperties.map((p, index) => (
-                          <div key={p.id}>
-                            {index > 0 && <SelectSeparator />}
-                            <SelectItem value={p.id}>
-                              {p.address}
-                            </SelectItem>
+                  <div ref={propertyDropdownRef} className="relative w-full">
+                    <button
+                      type="button"
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-left text-sm flex items-center justify-between hover:bg-accent/40 transition-colors"
+                      onClick={() => {
+                        setPropertyDropdownOpen((prev) => !prev);
+                        setPropertySearch('');
+                      }}
+                    >
+                      <span className="truncate text-sm">
+                        {selectedProperty ? selectedProperty.address : <span className="text-muted-foreground">Mülk seçin...</span>}
+                      </span>
+                      <ChevronDown className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
+                    </button>
+
+                    {propertyDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-1 w-full rounded-md border border-border bg-popover shadow-xl z-50">
+                        <div className="p-2 border-b border-border">
+                          <div className="relative">
+                            <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              value={propertySearch}
+                              onChange={(e) => setPropertySearch(e.target.value)}
+                              placeholder="Adrese göre ara..."
+                              className="pl-8 h-9"
+                              autoFocus
+                            />
                           </div>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
+                        </div>
+                        <div className="max-h-[200px] overflow-y-auto p-1">
+                          {filteredProperties.length === 0 ? (
+                            <p className="text-xs text-muted-foreground px-2 py-3">Veri yok</p>
+                          ) : (
+                            filteredProperties.map((p) => (
+                              <button
+                                key={p.id}
+                                type="button"
+                                className={`w-full text-left px-2 py-2 rounded-md text-sm transition-colors ${
+                                  form.propertyId === p.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/60'
+                                }`}
+                                onClick={() => {
+                                  setForm((prev) => ({ ...prev, propertyId: p.id }));
+                                  setPropertyDropdownOpen(false);
+                                  setPropertySearch('');
+                                }}
+                              >
+                                {p.address}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
