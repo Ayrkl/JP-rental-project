@@ -211,6 +211,39 @@ export const ContractsPage = () => {
 
   const phoneRule = useMemo(() => getPhoneRule(form.countryCode), [form.countryCode]);
 
+  const formatPhoneByCountry = (countryCode: string, digits: string) => {
+    const patterns: Record<string, number[]> = {
+      '+90': [3, 3, 2, 2],
+      '+81': [2, 4, 4],
+      '+1': [3, 3, 4],
+      '+44': [4, 3, 3],
+      '+49': [3, 3, 4],
+      '+33': [1, 2, 2, 2, 2],
+      '+39': [3, 3, 4],
+      '+34': [3, 2, 2, 2],
+      '+86': [3, 4, 4],
+      '+82': [2, 4, 4],
+      '+91': [5, 5],
+      '+7': [3, 3, 2, 2],
+    };
+
+    const pattern = patterns[countryCode] ?? [3, 3, 3, 3, 3];
+    const chunks: string[] = [];
+    let i = 0;
+    for (const size of pattern) {
+      if (i >= digits.length) break;
+      chunks.push(digits.slice(i, i + size));
+      i += size;
+    }
+    if (i < digits.length) chunks.push(digits.slice(i));
+    return chunks.join(' ');
+  };
+
+  const phoneDisplayValue = useMemo(
+    () => formatPhoneByCountry(form.countryCode, form.tenantPhone),
+    [form.countryCode, form.tenantPhone]
+  );
+
   const customCountryCode = useMemo(() => {
     const q = countrySearch.trim();
     return /^\+\d{1,4}$/.test(q) ? q : '';
@@ -237,7 +270,7 @@ export const ContractsPage = () => {
       propertyId: c.propertyId,
       tenantName: c.tenantName,
       countryCode: phoneMatch?.[1] ?? '+81',
-      tenantPhone: phoneMatch?.[2] ?? c.tenantPhone,
+      tenantPhone: (phoneMatch?.[2] ?? c.tenantPhone).replace(/\D/g, ''),
       tenantEmail: c.tenantEmail ?? '',
       startDate: c.startDate,
       endDate: c.endDate,
@@ -437,7 +470,7 @@ export const ContractsPage = () => {
                       type="tel"
                       inputMode="tel"
                       placeholder={phoneRule.example}
-                      value={form.tenantPhone}
+                      value={phoneDisplayValue}
                       onChange={(e) => {
                         setPhoneError('');
                         setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }));
