@@ -3,6 +3,7 @@
     "basicInfo": "Basic Information",
     "roomPlanner": "Room & Floor Planner",
     "features": "Physical Amenities",
+    "logistics": "Logistics Information",
     "inventory": "Furniture & Fixture Inventory",
     "inventoryDesc": "Add fixtures one by one. Item name and short description can be entered.",
     "images": "Property Images"
@@ -71,7 +72,48 @@
     "descPlaceholder": "Description (e.g. purchased in 2014, 14-inch screen...)",
     "addPhoto": "Add photo",
     "changePhoto": "Change photo",
-    "removePhoto": "Remove"
+    "removePhoto": "Remove",
+    "condition": "Condition",
+    "conditionNew": "New",
+    "conditionUsed": "Used",
+    "conditionDamaged": "Damaged",
+    "warrantyExpiry": "Warranty Expiry",
+    "warrantyPast": "Warranty expired",
+    "deliveryPhoto": "Delivery Photo",
+    "deliveryPhotoAdd": "Add delivery photo",
+    "fileTooLarge": "File exceeds 5MB limit."
+  },
+  "logistics": {
+    "keyHandoverNote": "Key Handover Note",
+    "keyHandoverPlaceholder": "Enter delivered keys and notes...",
+    "smartLockCode": "Smart Lock Code",
+    "smartLockPlaceholder": "Lock code",
+    "smartLockShow": "Show",
+    "smartLockHide": "Hide",
+    "mailboxNumber": "Mailbox Number",
+    "mailboxPlaceholder": "e.g. 201",
+    "garbageSchedule": "Garbage Collection Schedule",
+    "burnable": "燃えるゴミ — Burnable Garbage",
+    "nonBurnable": "燃えないゴミ — Non-Burnable Garbage",
+    "recyclable": "資源 — Recyclable",
+    "days": {
+      "Monday": "Mon",
+      "Tuesday": "Tue",
+      "Wednesday": "Wed",
+      "Thursday": "Thu",
+      "Friday": "Fri",
+      "Saturday": "Sat",
+      "Sunday": "Sun"
+    }
+  },
+  "status": {
+    "label": "Property Status",
+    "available": "Available",
+    "leased": "Leased",
+    "overdue": "Overdue",
+    "eviction": "Eviction",
+    "maintenance": "Maintenance",
+    "changeTo": "Change Status"
   },
   "images": {
     "uploadHint": "Drop or Click to Upload",

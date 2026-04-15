@@ -3,6 +3,7 @@
     "basicInfo": "Temel Bilgiler",
     "roomPlanner": "Oda & Plan Çizicisi",
     "features": "Fiziksel İmkanlar",
+    "logistics": "Lojistik Bilgiler",
     "inventory": "Eşya & Demirbaş Envanteri",
     "inventoryDesc": "Demirbaşları tek tek ekleyin. Eşya adı ve kısa açıklama girilebilir.",
     "images": "Mülk Görselleri"
@@ -71,7 +72,48 @@
     "descPlaceholder": "Açıklama (örn: 2014 yılında alınmış, 14 ekran...)",
     "addPhoto": "Fotoğraf ekle",
     "changePhoto": "Fotoğrafı değiştir",
-    "removePhoto": "Kaldır"
+    "removePhoto": "Kaldır",
+    "condition": "Kondisyon",
+    "conditionNew": "Yeni",
+    "conditionUsed": "Kullanılmış",
+    "conditionDamaged": "Hasarlı",
+    "warrantyExpiry": "Garanti Bitiş",
+    "warrantyPast": "Garanti süresi geçmiş",
+    "deliveryPhoto": "Teslim Fotoğrafı",
+    "deliveryPhotoAdd": "Teslim fotoğrafı ekle",
+    "fileTooLarge": "Dosya 5MB sınırını aşıyor."
+  },
+  "logistics": {
+    "keyHandoverNote": "Anahtar Teslim Tutanağı",
+    "keyHandoverPlaceholder": "Teslim edilen anahtarları ve notları girin...",
+    "smartLockCode": "Akıllı Kilit Kodu",
+    "smartLockPlaceholder": "Kilit kodu",
+    "smartLockShow": "Göster",
+    "smartLockHide": "Gizle",
+    "mailboxNumber": "Posta Kutusu No",
+    "mailboxPlaceholder": "Örn: 201",
+    "garbageSchedule": "Çöp Toplama Takvimi",
+    "burnable": "燃えるゴミ — Yanabilir Çöp",
+    "nonBurnable": "燃えないゴミ — Yanmaz Çöp",
+    "recyclable": "資源 — Geri Dönüşüm",
+    "days": {
+      "Monday": "Pzt",
+      "Tuesday": "Sal",
+      "Wednesday": "Çar",
+      "Thursday": "Per",
+      "Friday": "Cum",
+      "Saturday": "Cmt",
+      "Sunday": "Paz"
+    }
+  },
+  "status": {
+    "label": "Mülk Durumu",
+    "available": "Müsait",
+    "leased": "Kiracılı",
+    "overdue": "Gecikmiş",
+    "eviction": "Tahliye",
+    "maintenance": "Bakımda",
+    "changeTo": "Durumu Değiştir"
   },
   "images": {
     "uploadHint": "Bırakarak veya Tıklayarak Yükleyin",

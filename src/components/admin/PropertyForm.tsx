@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X, Users, Image as ImageIcon } from 'lucide-react';
-import { usePropertyStore, type InventoryItem } from '../../store/usePropertyStore';
+import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X, Users, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
+import { usePropertyStore, type InventoryItem, type PropertyLogistics, type GarbageSchedule, type PropertyStatus, type GarbageDay } from '../../store/usePropertyStore';
+import { getValidTransitions } from '../../lib/propertyStatusMachine';
+import { encryptSmartLockCode } from '../../lib/crypto';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,13 +14,22 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTranslation } from 'react-i18next';
 
-// İkon düzeltmesi
 const icon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
+
+const statusColors: Record<PropertyStatus, string> = {
+    available:   'bg-green-500/20 text-green-400 border-green-500/30',
+    leased:      'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    overdue:     'bg-orange-500/20 text-orange-400 border-orange-500/30',
+    eviction:    'bg-red-500/20 text-red-400 border-red-500/30',
+    maintenance: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+};
+
+const GARBAGE_DAYS: GarbageDay[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?: string; onComplete?: () => void; isModal?: boolean }) => {
     const { addProperty, updateProperty, properties } = usePropertyStore();
@@ -27,9 +38,9 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const id = propertyId || routeId;
     const { t } = useTranslation('properties');
     const { t: tMap } = useTranslation('map');
-    // Tip güvenliği için yardımcı fonksiyonlar
     const tp = (key: string, opts?: Record<string, unknown>) => t(key as any, opts as any);
     const tm = (key: string, opts?: Record<string, unknown>) => tMap(key as any, opts as any);
+
     const [address, setAddress] = useState('');
     const [area, setArea] = useState('');
     const [buildYear, setBuildYear] = useState('');
@@ -41,6 +52,16 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    // Lojistik state
+    const [logistics, setLogistics] = useState<PropertyLogistics>({});
+    const [garbageSchedule, setGarbageSchedule] = useState<GarbageSchedule>({ burnable: [], nonBurnable: [], recyclable: [] });
+    const [showLockCode, setShowLockCode] = useState(false);
+    const [lockCodeInput, setLockCodeInput] = useState('');
+
+    // Durum state
+    const [status, setStatus] = useState<PropertyStatus>('available');
+    const [statusChangedAt, setStatusChangedAt] = useState<string>(new Date().toISOString());
 
     useEffect(() => {
         if (id) {
@@ -56,20 +77,26 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 setFeatures(existingProp.features || []);
                 setInventory(existingProp.inventory || []);
                 if (existingProp.coordinates) setCoordinates(existingProp.coordinates);
+                if (existingProp.logistics) {
+                    setLogistics(existingProp.logistics);
+                    if (existingProp.logistics.garbageSchedule) {
+                        setGarbageSchedule(existingProp.logistics.garbageSchedule);
+                    }
+                    // Şifreli kilit kodunu gösterme — sadece placeholder
+                    setLockCodeInput('');
+                }
+                if (existingProp.status) setStatus(existingProp.status);
+                if (existingProp.statusChangedAt) setStatusChangedAt(existingProp.statusChangedAt);
             }
         }
     }, [id, properties]);
 
-    // Haritadan konum seçme bileşeni
     function LocationPicker() {
         const [isFetchingAddress, setIsFetchingAddress] = useState(false);
-
         useMapEvents({
             async click(e) {
                 const newCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
                 setCoordinates(newCoords);
-
-                // Reverse Geocoding (Nominatim - Ücretsiz)
                 setIsFetchingAddress(true);
                 try {
                     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${newCoords.lat}&lon=${newCoords.lng}&accept-language=tr,en,ja`);
@@ -113,7 +140,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     };
 
     const addInventoryItem = () => {
-        setInventory([...inventory, { id: Math.random().toString(), name: '', description: '', image: undefined }]);
+        setInventory([...inventory, { id: Math.random().toString(), name: '', description: '', image: undefined, condition: 'new' }]);
     };
 
     const updateInventoryItem = (itemId: string, field: keyof InventoryItem, value: string) => {
@@ -133,20 +160,57 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
         reader.readAsDataURL(file);
     };
 
+    const updateDeliveryPhoto = (itemId: string, file: File | null) => {
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            alert(tp('inventory.fileTooLarge'));
+            return;
+        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setInventory(prev => prev.map(item => item.id === itemId ? { ...item, deliveryPhoto: reader.result as string } : item));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const toggleGarbageDay = (type: keyof GarbageSchedule, day: GarbageDay) => {
+        setGarbageSchedule(prev => {
+            const current = prev[type];
+            const updated = current.includes(day) ? current.filter(d => d !== day) : [...current, day];
+            return { ...prev, [type]: updated };
+        });
+    };
+
+    const handleStatusChange = (newStatus: PropertyStatus) => {
+        setStatus(newStatus);
+        setStatusChangedAt(new Date().toISOString());
+    };
+
     const layoutString = useMemo(() => {
         const roomCount = rooms.filter(r => r.type === 'Room').length;
         const hasL = rooms.some(r => r.type === 'Living');
         const hasD = rooms.some(r => r.type === 'Dining');
         const hasK = rooms.some(r => r.type === 'Kitchen');
         const hasS = rooms.some(r => r.type === 'Storage');
-
         const prefix = roomCount > 0 ? roomCount.toString() : (rooms.length > 0 ? '0' : '1');
         const suffix = `${hasS ? 'S' : ''}${hasL ? 'L' : ''}${hasD ? 'D' : ''}${hasK ? 'K' : ''}`;
         return prefix === '0' ? suffix : (prefix === '1' && suffix === '' ? '1R' : prefix + suffix);
     }, [rooms]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        let finalSmartLockCode = logistics.smartLockCode;
+        if (lockCodeInput) {
+            finalSmartLockCode = await encryptSmartLockCode(lockCodeInput);
+        }
+
+        const finalLogistics: PropertyLogistics = {
+            ...logistics,
+            smartLockCode: finalSmartLockCode,
+            garbageSchedule,
+        };
+
         const payload = {
             address,
             area: Number(area),
@@ -158,8 +222,12 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
             images,
             features,
             inventory,
-            coordinates: coordinates || undefined
+            coordinates: coordinates || undefined,
+            logistics: finalLogistics,
+            status,
+            statusChangedAt,
         };
+
         if (id) updateProperty(id, payload);
         else addProperty(payload);
 
@@ -172,6 +240,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     };
 
     const ADDRESS_MAX_LENGTH = 200;
+    const keyHandoverNote = logistics.keyHandoverNote ?? '';
+    const KEY_HANDOVER_MAX = 500;
 
     const formContent = (
         <form className="space-y-10" onSubmit={handleSubmit}>
@@ -179,7 +249,14 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
 
                 {/* TEMEL BİLGİLER */}
                 <div className="space-y-4 col-span-1 md:col-span-2">
-                    <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">{tp('sections.basicInfo')}</h3>
+                    <div className="flex items-center justify-between border-b border-border pb-2">
+                        <h3 className="text-lg font-medium tracking-tight">{tp('sections.basicInfo')}</h3>
+                        {id && (
+                            <Badge className={`border text-xs px-2 py-0.5 ${statusColors[status]}`}>
+                                {tp(`status.${status}` as any)}
+                            </Badge>
+                        )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                         <div className="space-y-3 col-span-1 md:col-span-2">
                             <div className="flex items-center justify-between">
@@ -194,20 +271,13 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 onChange={e => e.target.value.length <= ADDRESS_MAX_LENGTH && setAddress(e.target.value)}
                                 required
                             />
-
-                            {/* Konum Seçme Haritası */}
                             <div className="mt-4 rounded-xl overflow-hidden border border-border h-[400px] w-full relative group">
                                 <div className="absolute top-2 left-2 z-[400] bg-background/90 backdrop-blur px-2 py-1 rounded border text-[10px] font-semibold pointer-events-none">
                                     {coordinates
                                         ? tm('locationPicker.selected', { lat: coordinates.lat.toFixed(4), lng: coordinates.lng.toFixed(4) })
                                         : tm('locationPicker.hint')}
                                 </div>
-                                <MapContainer
-                                    center={[35.6762, 139.6503]}
-                                    zoom={12}
-                                    style={{ height: '100%', width: '100%' }}
-                                    scrollWheelZoom={true}
-                                >
+                                <MapContainer center={[35.6762, 139.6503]} zoom={12} style={{ height: '100%', width: '100%' }} scrollWheelZoom={true}>
                                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                     <LocationPicker />
                                 </MapContainer>
@@ -232,9 +302,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2"><ShieldCheck size={16} /> {tp('fields.quakeStandard')}</Label>
                             <Select value={quakeStandard} onValueChange={setQuakeStandard}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Bir standart seçin..." />
-                                </SelectTrigger>
+                                <SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent position="popper" side="bottom" sideOffset={4} className="w-full">
                                     <SelectItem value="old">{tp('quakeOptions.old')}</SelectItem>
                                     <SelectItem value="new">{tp('quakeOptions.new')}</SelectItem>
@@ -243,13 +311,29 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 </SelectContent>
                             </Select>
                         </div>
+
+                        {/* Durum değiştirme — sadece edit modunda */}
+                        {id && (
+                            <div className="space-y-2 col-span-1 md:col-span-2">
+                                <Label>{tp('status.changeTo')}</Label>
+                                <Select value="" onValueChange={(val) => handleStatusChange(val as PropertyStatus)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={tp('status.changeTo')} />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper" side="bottom" sideOffset={4}>
+                                        {getValidTransitions(status).map(s => (
+                                            <SelectItem key={s} value={s}>{tp(`status.${s}` as any)}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* PLAN VE ODALAR */}
                 <div className="space-y-4 col-span-1 md:col-span-2">
                     <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">{tp('sections.roomPlanner')}</h3>
-
                     <div className="rounded-xl border border-border bg-card overflow-hidden mt-2">
                         <div className="flex items-center justify-between bg-muted/20 p-4 border-b border-border">
                             <div className="space-y-0.5">
@@ -257,26 +341,14 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <span className="text-xs text-muted-foreground">{tp('rooms.plannerDesc')}</span>
                             </div>
                         </div>
-
                         <div className="p-5 flex flex-col gap-6">
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                {(
-                                    ['Room', 'Living', 'Dining', 'Kitchen', 'Bathroom', 'Toilet', 'Storage', 'Balcony'] as const
-                                ).map((type) => (
-                                    <button
-                                        key={type}
-                                        type="button"
-                                        onClick={() => addRoom(type)}
-                                        className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-card hover:bg-primary/5 hover:border-primary/40 transition-all text-center gap-2 group w-full"
-                                    >
-                                        <div className="flex flex-col items-center">
-                                            <span className="text-sm font-semibold">{tp(`rooms.${type}`)}</span>
-                                        </div>
+                                {(['Room', 'Living', 'Dining', 'Kitchen', 'Bathroom', 'Toilet', 'Storage', 'Balcony'] as const).map((type) => (
+                                    <button key={type} type="button" onClick={() => addRoom(type)} className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-card hover:bg-primary/5 hover:border-primary/40 transition-all text-center gap-2 group w-full">
+                                        <span className="text-sm font-semibold">{tp(`rooms.${type}`)}</span>
                                     </button>
                                 ))}
                             </div>
-
-                            {/* Seçilen Odaların Görüntülendiği Pano (Pill şeklinde) */}
                             <div className="flex flex-wrap items-center gap-2.5 min-h-[50px] p-4 rounded-xl border border-dashed border-border/60 bg-muted/10">
                                 {rooms.length === 0 ? (
                                     <span className="text-sm text-muted-foreground w-full text-center py-2 flex items-center justify-center gap-2">
@@ -284,30 +356,16 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                     </span>
                                 ) : (
                                     rooms.map((room, index) => (
-                                        <button
-                                            key={room.id}
-                                            type="button"
-                                            onClick={() => setRooms(rooms.filter(r => r.id !== room.id))}
-                                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200 group hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors"
-                                        >
+                                        <button key={room.id} type="button" onClick={() => setRooms(rooms.filter(r => r.id !== room.id))} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-background shadow-sm animate-in zoom-in-95 duration-200 group hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive transition-colors">
                                             <span className="text-xs font-semibold text-muted-foreground group-hover:text-destructive w-4 h-4 flex items-center justify-center rounded-full bg-muted/50 group-hover:bg-destructive/20">{index + 1}</span>
                                             <span className="text-sm font-medium">
-                                                {room.type === 'Room' ? `🛏️ ${tp('rooms.Room')}` :
-                                                    room.type === 'Living' ? `🛋️ ${tp('rooms.Living')}` :
-                                                        room.type === 'Dining' ? `🍽️ ${tp('rooms.Dining')}` :
-                                                            room.type === 'Kitchen' ? `🍳 ${tp('rooms.Kitchen')}` :
-                                                                room.type === 'Bathroom' ? `🛁 ${tp('rooms.Bathroom')}` :
-                                                                    room.type === 'Toilet' ? `🚽 ${tp('rooms.Toilet')}` :
-                                                                        room.type === 'Balcony' ? `🌅 ${tp('rooms.Balcony')}` :
-                                                                            `📦 ${tp('rooms.Storage')}`}
+                                                {room.type === 'Room' ? `🛏️ ${tp('rooms.Room')}` : room.type === 'Living' ? `🛋️ ${tp('rooms.Living')}` : room.type === 'Dining' ? `🍽️ ${tp('rooms.Dining')}` : room.type === 'Kitchen' ? `🍳 ${tp('rooms.Kitchen')}` : room.type === 'Bathroom' ? `🛁 ${tp('rooms.Bathroom')}` : room.type === 'Toilet' ? `🚽 ${tp('rooms.Toilet')}` : room.type === 'Balcony' ? `🌅 ${tp('rooms.Balcony')}` : `📦 ${tp('rooms.Storage')}`}
                                             </span>
                                             <X className="w-3.5 h-3.5 ml-0.5 text-muted-foreground opacity-50 group-hover:text-destructive group-hover:opacity-100 transition-opacity" />
                                         </button>
                                     ))
                                 )}
                             </div>
-
-                            {/* Nihai Layout Formatı */}
                             <div className="flex items-center justify-between pt-1">
                                 <span className="text-sm font-medium text-foreground">{tp('rooms.layoutLabel')}</span>
                                 <Badge variant="default" className="text-sm px-4 py-1.5 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30 font-bold shadow-none truncate transition-all">
@@ -323,37 +381,96 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                     <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">{tp('sections.features')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
                         {[
-                            { id: 'internet' },
-                            { id: 'elevator' },
-                            { id: 'autolock' },
-                            { id: 'deliveryBox' },
-                            { id: 'parking' },
-                            { id: 'intercom' },
-                            { id: 'pets' },
-                            { id: 'aircon' },
-                            { id: 'washlet' },
-                            { id: 'systemKitchen' },
-                            { id: 'garbageStation' },
-                            { id: 'balcony' },
+                            { id: 'internet' }, { id: 'elevator' }, { id: 'autolock' }, { id: 'deliveryBox' },
+                            { id: 'parking' }, { id: 'intercom' }, { id: 'pets' }, { id: 'aircon' },
+                            { id: 'washlet' }, { id: 'systemKitchen' }, { id: 'garbageStation' }, { id: 'balcony' },
                         ].map(feat => {
                             const isChecked = Array.isArray(features) && features.includes(feat.id);
                             return (
-                                <button
-                                    key={feat.id}
-                                    type="button"
-                                    onClick={() => {
-                                        setFeatures(prev => {
-                                            const current = Array.isArray(prev) ? prev : [];
-                                            return current.includes(feat.id) ? current.filter(f => f !== feat.id) : [...current, feat.id];
-                                        });
-                                    }}
-                                    className={`flex flex-col items-start justify-center text-left rounded-xl border p-4 transition-all duration-200 w-full ${isChecked ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}
-                                >
+                                <button key={feat.id} type="button" onClick={() => setFeatures(prev => { const current = Array.isArray(prev) ? prev : []; return current.includes(feat.id) ? current.filter(f => f !== feat.id) : [...current, feat.id]; })} className={`flex flex-col items-start justify-center text-left rounded-xl border p-4 transition-all duration-200 w-full ${isChecked ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-muted/10 hover:bg-muted/30'}`}>
                                     <span className={`text-sm font-semibold leading-none ${isChecked ? 'text-primary' : 'text-foreground'}`}>{tp(`featureList.${feat.id}` as any)}</span>
                                     <span className="text-xs text-muted-foreground/80 leading-snug mt-1.5">{tp(`featureList.${feat.id}Desc` as any)}</span>
                                 </button>
                             );
                         })}
+                    </div>
+                </div>
+
+
+                {/* LOJİSTİK BİLGİLER */}
+                <div className="space-y-4 col-span-1 md:col-span-2">
+                    <h3 className="text-lg font-medium tracking-tight border-b border-border pb-2">{tp('sections.logistics')}</h3>
+                    <div className="rounded-xl border border-border bg-card p-5 space-y-5">
+
+                        {/* Anahtar Teslim Tutanağı */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <Label>{tp('logistics.keyHandoverNote')}</Label>
+                                <span className={`text-[10px] font-mono ${keyHandoverNote.length > 480 ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
+                                    {KEY_HANDOVER_MAX - keyHandoverNote.length}
+                                </span>
+                            </div>
+                            <textarea
+                                className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+                                placeholder={tp('logistics.keyHandoverPlaceholder')}
+                                maxLength={KEY_HANDOVER_MAX}
+                                value={keyHandoverNote}
+                                onChange={e => setLogistics(prev => ({ ...prev, keyHandoverNote: e.target.value }))}
+                            />
+                        </div>
+
+                        {/* Akıllı Kilit Kodu */}
+                        <div className="space-y-2">
+                            <Label>{tp('logistics.smartLockCode')}</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    type={showLockCode ? 'text' : 'password'}
+                                    placeholder={id && logistics.smartLockCode ? '••••••••' : tp('logistics.smartLockPlaceholder')}
+                                    value={lockCodeInput}
+                                    onChange={e => setLockCodeInput(e.target.value)}
+                                    className="flex-1"
+                                />
+                                <Button type="button" variant="outline" size="icon" onClick={() => setShowLockCode(v => !v)} title={showLockCode ? tp('logistics.smartLockHide') : tp('logistics.smartLockShow')}>
+                                    {showLockCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* Posta Kutusu Numarası */}
+                        <div className="space-y-2">
+                            <Label>{tp('logistics.mailboxNumber')}</Label>
+                            <Input
+                                maxLength={20}
+                                placeholder={tp('logistics.mailboxPlaceholder')}
+                                value={logistics.mailboxNumber ?? ''}
+                                onChange={e => setLogistics(prev => ({ ...prev, mailboxNumber: e.target.value }))}
+                            />
+                        </div>
+
+                        {/* Çöp Takvimi */}
+                        <div className="space-y-3">
+                            <Label>{tp('logistics.garbageSchedule')}</Label>
+                            {(['burnable', 'nonBurnable', 'recyclable'] as const).map(type => (
+                                <div key={type} className="space-y-2">
+                                    <span className="text-xs font-medium text-muted-foreground">{tp(`logistics.${type}` as any)}</span>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {GARBAGE_DAYS.map(day => {
+                                            const isSelected = garbageSchedule[type].includes(day);
+                                            return (
+                                                <button
+                                                    key={day}
+                                                    type="button"
+                                                    onClick={() => toggleGarbageDay(type, day)}
+                                                    className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all ${isSelected ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-muted-foreground border-border hover:border-primary/50'}`}
+                                                >
+                                                    {tp(`logistics.days.${day}` as any)}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -372,57 +489,95 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                     <div className="flex flex-col gap-3 pt-2">
                         {inventory.length === 0 && <p className="text-sm text-muted-foreground">{tp('inventory.empty')}</p>}
                         {inventory.map((item, idx) => (
-                            <div key={item.id} className="flex gap-3 items-center p-3 rounded-lg border border-border/50 bg-background/50">
-                                <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx + 1}.</span>
-                                <Input className="h-9 flex-1 shadow-none" placeholder={tp('inventory.namePlaceholder')} value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
-                                <Input className="h-9 flex-[2] shadow-none" placeholder={tp('inventory.descPlaceholder')} value={item.description} onChange={e => updateInventoryItem(item.id, 'description', e.target.value)} />
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <div className="relative h-9 w-9 shrink-0">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            onChange={(e) => {
-                                                const file = e.target.files?.[0] ?? null;
-                                                updateInventoryImage(item.id, file);
-                                                e.target.value = '';
-                                            }}
-                                            aria-label={tp('inventory.addPhoto')}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 peer-hover:bg-primary/10 peer-hover:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 overflow-hidden"
-                                            title={item.image ? tp('inventory.changePhoto') : tp('inventory.addPhoto')}
-                                        >
-                                            <span className="sr-only">{item.image ? tp('inventory.changePhoto') : tp('inventory.addPhoto')}</span>
-                                            {item.image ? (
-                                                <img
-                                                    src={item.image}
-                                                    alt={`${item.name || 'Demirbaş'} foto`}
-                                                    className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none"
-                                                />
-                                            ) : (
-                                                <ImageIcon className="w-4 h-4 pointer-events-none" />
-                                            )}
-                                        </Button>
+                            <div key={item.id} className="flex flex-col gap-2 p-3 rounded-lg border border-border/50 bg-background/50">
+                                <div className="flex gap-3 items-center">
+                                    <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx + 1}.</span>
+                                    <Input className="h-9 flex-1 shadow-none" placeholder={tp('inventory.namePlaceholder')} value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
+                                    <Input className="h-9 flex-[2] shadow-none" placeholder={tp('inventory.descPlaceholder')} value={item.description} onChange={e => updateInventoryItem(item.id, 'description', e.target.value)} />
+
+                                    {/* Kondisyon */}
+                                    <Select value={item.condition} onValueChange={val => updateInventoryItem(item.id, 'condition', val)}>
+                                        <SelectTrigger className="h-9 w-32 shrink-0">
+                                            <SelectValue placeholder={tp('inventory.condition')} />
+                                        </SelectTrigger>
+                                        <SelectContent position="popper" side="bottom" sideOffset={4}>
+                                            <SelectItem value="new">{tp('inventory.conditionNew')}</SelectItem>
+                                            <SelectItem value="used">{tp('inventory.conditionUsed')}</SelectItem>
+                                            <SelectItem value="damaged">{tp('inventory.conditionDamaged')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    {/* Demirbaş fotoğrafı */}
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <div className="relative h-9 w-9 shrink-0">
+                                            <input type="file" accept="image/*" className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => { const file = e.target.files?.[0] ?? null; updateInventoryImage(item.id, file); e.target.value = ''; }} aria-label={tp('inventory.addPhoto')} />
+                                            <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 peer-hover:bg-primary/10 peer-hover:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 overflow-hidden" title={item.image ? tp('inventory.changePhoto') : tp('inventory.addPhoto')}>
+                                                <span className="sr-only">{item.image ? tp('inventory.changePhoto') : tp('inventory.addPhoto')}</span>
+                                                {item.image ? (
+                                                    <img src={item.image} alt={`${item.name || 'Demirbaş'} foto`} className="absolute inset-0 h-full w-full object-cover pointer-events-none select-none" />
+                                                ) : (
+                                                    <ImageIcon className="w-4 h-4 pointer-events-none" />
+                                                )}
+                                            </Button>
+                                        </div>
+                                        {item.image && (
+                                            <Button type="button" variant="outline" size="sm" className="h-9 px-2 text-xs" onClick={() => setInventory(prev => prev.map(it => it.id === item.id ? { ...it, image: undefined } : it))}>
+                                                {tp('inventory.removePhoto')}
+                                            </Button>
+                                        )}
                                     </div>
-                                    {item.image && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            className="h-9 px-2 text-xs"
-                                            onClick={() => setInventory(prev => prev.map(it => it.id === item.id ? { ...it, image: undefined } : it))}
-                                        >
-                                            {tp('inventory.removePhoto')}
-                                        </Button>
-                                    )}
+
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeInventoryItem(item.id)} className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0">
+                                        <Trash2 className="w-4 h-4 ml-0.5" />
+                                    </Button>
                                 </div>
-                                <Button type="button" variant="ghost" size="icon" onClick={() => removeInventoryItem(item.id)} className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0">
-                                    <Trash2 className="w-4 h-4 ml-0.5" />
-                                </Button>
+
+                                {/* Garanti bitiş tarihi + Teslim fotoğrafı */}
+                                <div className="flex gap-3 items-center pl-9">
+                                    <div className="flex flex-col gap-1 flex-1">
+                                        <Label className="text-xs text-muted-foreground">{tp('inventory.warrantyExpiry')}</Label>
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                type="date"
+                                                className="h-8 text-xs w-40"
+                                                value={item.warrantyExpiry ?? ''}
+                                                onChange={e => updateInventoryItem(item.id, 'warrantyExpiry', e.target.value)}
+                                            />
+                                            {item.warrantyExpiry && new Date(item.warrantyExpiry) < new Date() && (
+                                                <Badge className="text-[10px] px-1.5 py-0.5 bg-yellow-500/20 text-yellow-500 border-yellow-500/30 border">
+                                                    {tp('inventory.warrantyPast')}
+                                                </Badge>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Teslim fotoğrafı */}
+                                    <div className="flex flex-col gap-1">
+                                        <Label className="text-xs text-muted-foreground">{tp('inventory.deliveryPhoto')}</Label>
+                                        <div className="flex items-center gap-2">
+                                            {item.deliveryPhoto ? (
+                                                <>
+                                                    <img src={item.deliveryPhoto} alt="delivery" className="h-8 w-8 rounded object-cover border" />
+                                                    <Button type="button" variant="outline" size="sm" className="h-8 px-2 text-xs" onClick={() => setInventory(prev => prev.map(it => it.id === item.id ? { ...it, deliveryPhoto: undefined } : it))}>
+                                                        <X className="w-3 h-3" />
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <div className="relative">
+                                                    <input
+                                                        type="file"
+                                                        accept="image/jpeg,image/png,image/webp"
+                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        onChange={e => { const file = e.target.files?.[0] ?? null; updateDeliveryPhoto(item.id, file); e.target.value = ''; }}
+                                                    />
+                                                    <Button type="button" variant="outline" size="sm" className="h-8 px-2 text-xs pointer-events-none">
+                                                        <Plus className="w-3 h-3 mr-1" /> {tp('inventory.deliveryPhotoAdd')}
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -437,7 +592,6 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                         <p className="text-sm font-medium">{tp('images.uploadHint')}</p>
                         <p className="text-xs text-muted-foreground mt-1">{tp('images.uploadFormats')}</p>
                     </div>
-
                     {images.length > 0 && (
                         <div className="flex gap-4 flex-wrap pt-2">
                             {images.map((img, idx) => (
@@ -456,7 +610,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
             <div className="flex justify-end gap-3 pt-4 border-t border-border mt-8">
                 {!isModal && <Button type="button" variant="outline" onClick={() => navigate('/admin')}>{tp('actions.back')}</Button>}
                 <Button type="submit" className="min-w-[140px]">
-                    {isSubmitted ? <><CheckCircle2 className="w-4 h-4 mr-2" /> {id ? tp('actions.updated') : tp('actions.added')}</> : (id ? tp('actions.saveChanges') : tp('actions.addNew'))} </Button>
+                    {isSubmitted ? <><CheckCircle2 className="w-4 h-4 mr-2" /> {id ? tp('actions.updated') : tp('actions.added')}</> : (id ? tp('actions.saveChanges') : tp('actions.addNew'))}
+                </Button>
             </div>
         </form>
     );
@@ -471,7 +626,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 <h1 className="text-2xl font-bold tracking-tight mb-1">{id ? tp('page.editTitle') : tp('page.addTitle')}</h1>
                 <p className="text-muted-foreground text-sm">{tp('page.subtitle')}</p>
             </div>
-            <div className="bg-card border border-border shadow-sm rounded-xl p-8">
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-8">
                 {formContent}
             </div>
         </div>
