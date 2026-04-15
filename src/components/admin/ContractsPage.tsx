@@ -412,9 +412,9 @@ export const ContractsPage = () => {
                 {activeTab === 'contracted' ? (
                   <div className="h-9 w-full rounded-md border border-input bg-muted px-3 flex items-center text-sm text-muted-foreground select-none">
                     {selectedProperty
-                      ? `#${selectedProperty.id.toUpperCase()} - ${selectedProperty.address}`
+                      ? selectedProperty.address
                       : form.propertyId
-                      ? `(Arşiv/Eski) #${form.propertyId.toUpperCase()}`
+                      ? '(Arşiv/Eski) Mülk'
                       : 'Mülk seçilmedi'}
                   </div>
                 ) : (
@@ -428,7 +428,7 @@ export const ContractsPage = () => {
                       ) : (
                         pendingProperties.map((p) => (
                           <SelectItem key={p.id} value={p.id}>
-                            #{p.id.toUpperCase()} - {p.address}
+                            {p.address}
                           </SelectItem>
                         ))
                       )}
@@ -664,7 +664,7 @@ export const ContractsPage = () => {
               ) : (
                 pendingProperties.map((p) => (
                   <div key={p.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
-                    <h3 className="font-semibold text-base">Mülk #{p.id.toUpperCase()}</h3>
+                    <h3 className="font-semibold text-base">Mülk</h3>
                     <p className="text-xs text-muted-foreground mt-1">{p.address}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Badge variant="outline">{p.roomType}</Badge>
@@ -682,7 +682,7 @@ export const ContractsPage = () => {
                 <div key={contract.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="font-semibold text-base">Sözleşme #{contract.id.toUpperCase()}</h3>
+                      <h3 className="font-semibold text-base">Sözleşme</h3>
                       <p className="text-xs text-muted-foreground mt-1">
                         {contract.property ? contract.property.address : 'Mülk silinmiş veya bulunamadı'}
                       </p>
