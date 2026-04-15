@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X, Phone } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X, Phone, ChevronDown, Search } from 'lucide-react';
 import { useContractStore, type ContractStatus } from './useContractStore';
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,12 +24,48 @@ const initialForm = {
   notes: '',
 };
 
+type CountryCodeOption = {
+  iso: string;
+  code: string;
+  name: string;
+};
+
+const COUNTRY_CODE_OPTIONS: CountryCodeOption[] = [
+  { iso: 'JP', code: '+81', name: 'Japonya' },
+  { iso: 'TR', code: '+90', name: 'Turkiye' },
+  { iso: 'US', code: '+1', name: 'ABD/Kanada' },
+  { iso: 'GB', code: '+44', name: 'Birlesik Krallik' },
+  { iso: 'DE', code: '+49', name: 'Almanya' },
+  { iso: 'FR', code: '+33', name: 'Fransa' },
+  { iso: 'IT', code: '+39', name: 'Italya' },
+  { iso: 'ES', code: '+34', name: 'Ispanya' },
+  { iso: 'NL', code: '+31', name: 'Hollanda' },
+  { iso: 'BE', code: '+32', name: 'Belcika' },
+  { iso: 'SE', code: '+46', name: 'Isvec' },
+  { iso: 'NO', code: '+47', name: 'Norvec' },
+  { iso: 'DK', code: '+45', name: 'Danimarka' },
+  { iso: 'PL', code: '+48', name: 'Polonya' },
+  { iso: 'PT', code: '+351', name: 'Portekiz' },
+  { iso: 'GR', code: '+30', name: 'Yunanistan' },
+  { iso: 'AE', code: '+971', name: 'Birlesik Arap Emirlikleri' },
+  { iso: 'SA', code: '+966', name: 'Suudi Arabistan' },
+  { iso: 'IN', code: '+91', name: 'Hindistan' },
+  { iso: 'CN', code: '+86', name: 'Cin' },
+  { iso: 'KR', code: '+82', name: 'Guney Kore' },
+  { iso: 'TH', code: '+66', name: 'Tayland' },
+  { iso: 'SG', code: '+65', name: 'Singapur' },
+  { iso: 'AU', code: '+61', name: 'Avustralya' },
+];
+
 export const ContractsPage = () => {
   const properties = usePropertyStore((s) => s.properties);
   const { contracts, addContract, removeContract, updateContract } = useContractStore();
   const [form, setForm] = useState(initialForm);
   const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
   const [editingContractId, setEditingContractId] = useState<string | null>(null);
+  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
+  const countryDropdownRef = useRef<HTMLDivElement | null>(null);
 
   const contractsWithProperty = useMemo(
     () =>
@@ -54,6 +90,31 @@ export const ContractsPage = () => {
     () => properties.filter((p) => !occupiedPropertyIds.has(p.id)),
     [properties, occupiedPropertyIds]
   );
+
+  const selectedCountry = useMemo(
+    () => COUNTRY_CODE_OPTIONS.find((c) => c.code === form.countryCode),
+    [form.countryCode]
+  );
+
+  const filteredCountryOptions = useMemo(() => {
+    const q = countrySearch.trim().toLowerCase();
+    if (!q) return COUNTRY_CODE_OPTIONS;
+    return COUNTRY_CODE_OPTIONS.filter(
+      (c) => c.name.toLowerCase().includes(q) || c.code.includes(q) || c.iso.toLowerCase().includes(q)
+    );
+  }, [countrySearch]);
+
+  useEffect(() => {
+    const onMouseDown = (event: MouseEvent) => {
+      if (!countryDropdownRef.current) return;
+      if (!countryDropdownRef.current.contains(event.target as Node)) {
+        setCountryDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
+  }, []);
 
   const startEdit = (contractId: string) => {
     const c = contracts.find((x) => x.id === contractId);
@@ -80,6 +141,8 @@ export const ContractsPage = () => {
   const resetForm = () => {
     setEditingContractId(null);
     setForm(initialForm);
+    setCountrySearch('');
+    setCountryDropdownOpen(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -178,46 +241,84 @@ export const ContractsPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label>Ülke Kodu</Label>
-                  <Select value={form.countryCode} onValueChange={(v) => setForm((prev) => ({ ...prev, countryCode: v }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent position="popper" side="bottom" sideOffset={4}>
-                      <SelectItem value="+81">🇯🇵 +81 (Japonya)</SelectItem>
-                      <SelectItem value="+90">🇹🇷 +90 (Türkiye)</SelectItem>
-                      <SelectItem value="+1">🇺🇸 +1 (ABD/Kanada)</SelectItem>
-                      <SelectItem value="+44">🇬🇧 +44 (Birleşik Krallık)</SelectItem>
-                      <SelectItem value="+49">🇩🇪 +49 (Almanya)</SelectItem>
-                      <SelectItem value="+33">🇫🇷 +33 (Fransa)</SelectItem>
-                      <SelectItem value="+39">🇮🇹 +39 (İtalya)</SelectItem>
-                      <SelectItem value="+34">🇪🇸 +34 (İspanya)</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-2">
+                <Label>Telefon Numarasi</Label>
+                <div className="flex items-start gap-2">
+                  <div ref={countryDropdownRef} className="relative w-[190px] shrink-0">
+                    <button
+                      type="button"
+                      className="h-10 w-full rounded-md border border-input bg-background px-3 text-left text-sm flex items-center justify-between hover:bg-accent/40 transition-colors"
+                      onClick={() => setCountryDropdownOpen((prev) => !prev)}
+                    >
+                      <span className="truncate">
+                        {selectedCountry ? `${selectedCountry.iso} ${selectedCountry.code}` : form.countryCode}
+                      </span>
+                      <ChevronDown className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
+                    </button>
+
+                    {countryDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-1 w-[300px] rounded-md border border-border bg-popover shadow-xl z-50">
+                        <div className="p-2 border-b border-border">
+                          <div className="relative">
+                            <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              value={countrySearch}
+                              onChange={(e) => setCountrySearch(e.target.value)}
+                              placeholder="Ulke, kod veya ISO ara..."
+                              className="pl-8 h-9"
+                            />
+                          </div>
+                        </div>
+                        <div className="max-h-[240px] overflow-y-auto p-1">
+                          {filteredCountryOptions.length === 0 ? (
+                            <p className="text-xs text-muted-foreground px-2 py-3">Sonuc bulunamadi.</p>
+                          ) : (
+                            filteredCountryOptions.map((country) => (
+                              <button
+                                key={`${country.iso}-${country.code}`}
+                                type="button"
+                                className={`w-full text-left px-2 py-2 rounded-md text-sm flex items-center justify-between transition-colors ${
+                                  form.countryCode === country.code ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/60'
+                                }`}
+                                onClick={() => {
+                                  setForm((prev) => ({ ...prev, countryCode: country.code }));
+                                  setCountryDropdownOpen(false);
+                                  setCountrySearch('');
+                                }}
+                              >
+                                <span className="truncate">
+                                  {country.iso} {country.code} {country.name}
+                                </span>
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="w-full">
+                    <Input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="Telefon numarasi girin"
+                      value={form.tenantPhone}
+                      onChange={(e) => setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }))}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Telefon Numarası</Label>
-                  <Input
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="90 1234 5678"
-                    value={form.tenantPhone}
-                    onChange={(e) => setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }))}
-                    required
-                  />
-                  <p className="text-[11px] text-muted-foreground">Sadece numara girin, ülke kodunu soldan seçin.</p>
-                </div>
-                <div className="space-y-2">
-                  <Label>E-posta</Label>
-                  <Input
-                    type="email"
-                    placeholder="mail@ornek.com"
-                    value={form.tenantEmail}
-                    onChange={(e) => setForm((prev) => ({ ...prev, tenantEmail: e.target.value }))}
-                  />
-                </div>
+                <p className="text-[11px] text-muted-foreground">Soldan ulke kodu secin, saga telefon numarasini girin.</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>E-posta</Label>
+                <Input
+                  type="email"
+                  placeholder="mail@ornek.com"
+                  value={form.tenantEmail}
+                  onChange={(e) => setForm((prev) => ({ ...prev, tenantEmail: e.target.value }))}
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
