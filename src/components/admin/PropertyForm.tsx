@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X, Users, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
 import { usePropertyStore, type InventoryItem, type PropertyLogistics, type GarbageSchedule, type PropertyStatus, type GarbageDay } from '../../store/usePropertyStore';
 import { getValidTransitions } from '../../lib/propertyStatusMachine';
-import { encryptSmartLockCode } from '../../lib/crypto';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +56,6 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const [logistics, setLogistics] = useState<PropertyLogistics>({});
     const [garbageSchedule, setGarbageSchedule] = useState<GarbageSchedule>({ burnable: [], nonBurnable: [], recyclable: [] });
     const [showLockCode, setShowLockCode] = useState(false);
-    const [lockCodeInput, setLockCodeInput] = useState('');
 
     // Durum state
     const [status, setStatus] = useState<PropertyStatus>('available');
@@ -82,8 +80,6 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                     if (existingProp.logistics.garbageSchedule) {
                         setGarbageSchedule(existingProp.logistics.garbageSchedule);
                     }
-                    // Şifreli kilit kodunu gösterme — sadece placeholder
-                    setLockCodeInput('');
                 }
                 if (existingProp.status) setStatus(existingProp.status);
                 if (existingProp.statusChangedAt) setStatusChangedAt(existingProp.statusChangedAt);
@@ -200,14 +196,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        let finalSmartLockCode = logistics.smartLockCode;
-        if (lockCodeInput) {
-            finalSmartLockCode = await encryptSmartLockCode(lockCodeInput);
-        }
-
         const finalLogistics: PropertyLogistics = {
             ...logistics,
-            smartLockCode: finalSmartLockCode,
             garbageSchedule,
         };
 
@@ -425,9 +415,9 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                             <div className="flex gap-2">
                                 <Input
                                     type={showLockCode ? 'text' : 'password'}
-                                    placeholder={id && logistics.smartLockCode ? '••••••••' : tp('logistics.smartLockPlaceholder')}
-                                    value={lockCodeInput}
-                                    onChange={e => setLockCodeInput(e.target.value)}
+                                    placeholder={tp('logistics.smartLockPlaceholder')}
+                                    value={logistics.smartLockCode ?? ''}
+                                    onChange={e => setLogistics(prev => ({ ...prev, smartLockCode: e.target.value }))}
                                     className="flex-1"
                                 />
                                 <Button type="button" variant="outline" size="icon" onClick={() => setShowLockCode(v => !v)} title={showLockCode ? tp('logistics.smartLockHide') : tp('logistics.smartLockShow')}>
