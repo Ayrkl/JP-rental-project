@@ -202,12 +202,13 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
                                     <div className="w-2 h-2 rounded-full bg-primary/40 mt-1.5 animate-pulse shrink-0" />
                                     <div className="flex flex-col gap-1">
                                         <span className="font-extrabold text-[13px] text-foreground">{item.name}</span>
-                                        <div className="flex flex-col gap-0.5 text-muted-foreground">
-                                            <span>{item.brandModel || 'Genel Marka'}</span>
-                                            <Badge className="w-fit mt-1 px-1.5 py-0 text-[9px] uppercase font-bold bg-muted text-muted-foreground border-none">
-                                                {item.condition}
-                                            </Badge>
-                                        </div>
+                                        {item.description ? (
+                                            <div className="text-muted-foreground text-xs leading-snug">
+                                                {item.description}
+                                            </div>
+                                        ) : (
+                                            <div className="text-muted-foreground text-xs italic">Açıklama eklenmemiş.</div>
+                                        )}
                                     </div>
                                 </div>
                             )) : (

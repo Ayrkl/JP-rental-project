@@ -108,7 +108,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     };
 
     const addInventoryItem = () => {
-        setInventory([...inventory, { id: Math.random().toString(), name: '', brandModel: '', condition: 'Yeni' }]);
+        setInventory([...inventory, { id: Math.random().toString(), name: '', description: '' }]);
     };
 
     const updateInventoryItem = (itemId: string, field: keyof InventoryItem, value: string) => {
@@ -353,7 +353,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                     <div className="flex items-center justify-between border-b border-border pb-2">
                         <div>
                             <h3 className="text-lg font-medium tracking-tight">Eşya & Demirbaş Envanteri</h3>
-                            <p className="text-xs text-muted-foreground mt-1">Kiracının girişinde teslim edilecek demirbaşları işaretleyin.</p>
+                            <p className="text-xs text-muted-foreground mt-1">Demirbaşları tek tek ekleyin. Eşya adı ve kısa açıklama girilebilir.</p>
                         </div>
                         <Button type="button" variant="outline" size="sm" onClick={addInventoryItem}>
                             <Plus className="w-4 h-4 mr-1.5" /> Eşya Ekle
@@ -366,19 +366,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                             <div key={item.id} className="flex gap-3 items-center p-3 rounded-lg border border-border/50 bg-background/50">
                                 <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx + 1}.</span>
                                 <Input className="h-9 flex-1 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
-                                <Input className="h-9 flex-[1.5] shadow-none" placeholder="Marka / Model" value={item.brandModel} onChange={e => updateInventoryItem(item.id, 'brandModel', e.target.value)} />
-                                <div className="w-[140px]">
-                                    <Select value={item.condition} onValueChange={v => updateInventoryItem(item.id, 'condition', v)}>
-                                        <SelectTrigger className="h-9 shadow-none">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent position="popper" side="bottom" sideOffset={4}>
-                                            <SelectItem value="Yeni">Yeni / Sıfır</SelectItem>
-                                            <SelectItem value="Kullanılmış">İyi Durumda</SelectItem>
-                                            <SelectItem value="Hasarlı">Eski / Hasarlı</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                <Input className="h-9 flex-[2] shadow-none" placeholder="Açıklama (örn: 2014 yılında alınmış, 14 ekran...)" value={item.description} onChange={e => updateInventoryItem(item.id, 'description', e.target.value)} />
                                 <Button type="button" variant="ghost" size="icon" onClick={() => removeInventoryItem(item.id)} className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0">
                                     <Trash2 className="w-4 h-4 ml-0.5" />
                                 </Button>

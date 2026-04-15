@@ -4,8 +4,7 @@ import { persist } from 'zustand/middleware';
 export type InventoryItem = {
   id: string;
   name: string;
-  brandModel: string;
-  condition: string;
+  description: string;
 };
 
 export type Property = {
