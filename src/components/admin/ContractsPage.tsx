@@ -422,7 +422,7 @@ export const ContractsPage = () => {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Mülk seçin..." />
                     </SelectTrigger>
-                    <SelectContent position="popper" side="bottom" sideOffset={4}>
+                    <SelectContent position="popper" side="bottom" sideOffset={4} className="w-[--radix-select-trigger-width]">
                       {pendingProperties.length === 0 ? (
                         <div className="px-3 py-2 text-sm text-muted-foreground">Veri yok</div>
                       ) : (
