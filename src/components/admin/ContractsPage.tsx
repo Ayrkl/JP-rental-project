@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X, Phone, ChevronDown, Search } from 'lucide-react';
+import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X, Phone, ChevronDown, Search, Package, Mailbox, Lock, Trash, KeyRound } from 'lucide-react';
 import { useContractStore, type ContractStatus } from './useContractStore';
-import { usePropertyStore } from '../../store/usePropertyStore';
+import { usePropertyStore, type Property } from '../../store/usePropertyStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -143,6 +143,83 @@ const COUNTRY_CODE_OPTIONS: CountryCodeOption[] = [
   { iso: 'ZW', code: '+263', name: 'Zimbabve' },
 ];
 
+const STATUS_COLORS: Record<string, string> = {
+  available:   'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+  leased:      'bg-blue-500/15 text-blue-700 dark:text-blue-400',
+  overdue:     'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  eviction:    'bg-red-500/15 text-red-700 dark:text-red-400',
+  maintenance: 'bg-slate-500/15 text-slate-700 dark:text-slate-400',
+};
+
+function PropertyDetailsPanel({ property, t, tp }: {
+  property: Property;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+  tp: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  const logistics = property.logistics ?? {};
+  const garbageDayCount = [
+    ...(logistics.garbageSchedule?.burnable ?? []),
+    ...(logistics.garbageSchedule?.nonBurnable ?? []),
+    ...(logistics.garbageSchedule?.recyclable ?? []),
+  ].length;
+  const hasAnyLogistics = !!(
+    logistics.keyHandoverNote ||
+    logistics.smartLockCode ||
+    logistics.mailboxNumber ||
+    garbageDayCount > 0
+  );
+
+  return (
+    <div className="mt-3 space-y-2 border-t border-border/50 pt-3">
+      {/* Mülk durumu */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs text-muted-foreground">{t('list.propertyStatus')}:</span>
+        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[property.status] ?? ''}`}>
+          {tp(`status.${property.status}`)}
+        </span>
+        {property.inventory.length > 0 && (
+          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+            <Package className="w-3 h-3" />
+            {t('list.inventoryCount', { count: property.inventory.length })}
+          </span>
+        )}
+      </div>
+
+      {/* Lojistik özet */}
+      {hasAnyLogistics ? (
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          {logistics.mailboxNumber && (
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Mailbox className="w-3 h-3" />
+              {t('list.mailbox')}: <span className="font-medium text-foreground">{logistics.mailboxNumber}</span>
+            </span>
+          )}
+          {logistics.smartLockCode && (
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Lock className="w-3 h-3" />
+              {t('list.smartLock')}: <span className="font-medium text-foreground">{t('list.smartLockSet')}</span>
+            </span>
+          )}
+          {garbageDayCount > 0 && (
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Trash className="w-3 h-3" />
+              {t('list.garbageSchedule')}: <span className="font-medium text-foreground">{t('list.garbageDays', { count: garbageDayCount })}</span>
+            </span>
+          )}
+          {logistics.keyHandoverNote && (
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <KeyRound className="w-3 h-3" />
+              {t('list.keyNote')}
+            </span>
+          )}
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground italic">{t('list.noLogistics')}</p>
+      )}
+    </div>
+  );
+}
+
 export const ContractsPage = () => {
   const properties = usePropertyStore((s) => s.properties);
   const { contracts, addContract, removeContract, updateContract } = useContractStore();
@@ -160,6 +237,8 @@ export const ContractsPage = () => {
   const formCardRef = useRef<HTMLDivElement | null>(null);
   const { t: tRaw } = useTranslation('contracts');
   const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+  const { t: tpRaw } = useTranslation('properties');
+  const tp = tpRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
 
   const contractsWithProperty = useMemo(
     () =>
@@ -735,6 +814,7 @@ export const ContractsPage = () => {
                       <Badge variant="outline">{p.area} m²</Badge>
                       <Badge>{t('tabs.pending')}</Badge>
                     </div>
+                    <PropertyDetailsPanel property={p} t={t} tp={tp} />
                   </div>
                 ))
               )
@@ -830,6 +910,7 @@ export const ContractsPage = () => {
                   </div>
 
                   {contract.notes && <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{contract.notes}</p>}
+                  {contract.property && <PropertyDetailsPanel property={contract.property} t={t} tp={tp} />}
                 </div>
               ))
               )

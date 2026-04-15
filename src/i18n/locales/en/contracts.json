@@ -53,7 +53,16 @@
     "noContracts": "No contracts yet. You can create a new one from the left.",
     "deposit": "Deposit",
     "paymentDay": "Payment Day",
-    "perMonth": "/ month"
+    "perMonth": "/ month",
+    "propertyStatus": "Property Status",
+    "inventoryCount": "{{count}} items",
+    "mailbox": "Mailbox",
+    "smartLock": "Smart Lock",
+    "smartLockSet": "Configured",
+    "garbageSchedule": "Garbage Schedule",
+    "garbageDays": "{{count}} days",
+    "keyNote": "Key Handover Note",
+    "noLogistics": "No logistics info entered"
   },
   "phone": {
     "hint": "Enter {{min}}-{{max}} digit number based on country code.",

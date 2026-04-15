@@ -53,7 +53,16 @@
     "noContracts": "Henüz sözleşme yok. Soldan yeni sözleşme oluşturabilirsiniz.",
     "deposit": "Depozito",
     "paymentDay": "Ödeme Günü",
-    "perMonth": "/ ay"
+    "perMonth": "/ ay",
+    "propertyStatus": "Mülk Durumu",
+    "inventoryCount": "{{count}} demirbaş",
+    "mailbox": "Posta Kutusu",
+    "smartLock": "Akıllı Kilit",
+    "smartLockSet": "Tanımlı",
+    "garbageSchedule": "Çöp Takvimi",
+    "garbageDays": "{{count}} gün",
+    "keyNote": "Anahtar Tutanağı",
+    "noLogistics": "Lojistik bilgi girilmemiş"
   },
   "phone": {
     "hint": "Ülke koduna göre {{min}}-{{max}} hane numara girin.",
