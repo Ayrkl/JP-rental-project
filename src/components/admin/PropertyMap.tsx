@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import type { Property } from '../../store/usePropertyStore';
 import type { ContractStatus } from './useContractStore';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Sözleşme durumuna göre pin renkleri
 const getMarkerColor = (status: ContractStatus | null): string => {
@@ -47,6 +48,7 @@ interface PropertyMapProps {
 
 export const PropertyMap = ({ properties, onSelectProperty, contractStatuses }: PropertyMapProps) => {
   const [isMounted, setIsMounted] = useState(false);
+  const { t } = useTranslation('map');
 
   useEffect(() => {
     setIsMounted(true);
@@ -91,18 +93,18 @@ export const PropertyMap = ({ properties, onSelectProperty, contractStatuses }: 
             <Marker key={p.id} position={pos} icon={coloredIcon}>
               <Popup>
                 <div className="p-1 min-w-[120px]">
-                  <h4 className="font-bold text-sm">Mülk</h4>
+                  <h4 className="font-bold text-sm">{t('popup.property')}</h4>
                   <p className="text-[11px] mb-2 opacity-80">{p.address}</p>
                   {contractStatus && (
                     <p className="text-[10px] mb-2 font-semibold" style={{ color: markerColor }}>
-                      Durum: {contractStatus}
+                      {t('popup.status', { status: contractStatus })}
                     </p>
                   )}
-                  <button 
+                  <button
                     onClick={() => onSelectProperty(p.id)}
                     className="text-[10px] bg-primary text-primary-foreground px-2 py-1.5 rounded-md hover:opacity-90 w-full transition-all"
                   >
-                    Detayları Gör
+                    {t('popup.viewDetails')}
                   </button>
                 </div>
               </Popup>

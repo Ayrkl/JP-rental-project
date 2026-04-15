@@ -1,0 +1,10 @@
+{
+  "required": "This field is required.",
+  "invalidEmail": "Please enter a valid email address.",
+  "phoneLength": "Enter {{min}}-{{max}} digit number based on country code.",
+  "minLength": "Must be at least {{count}} characters.",
+  "maxLength": "Must be at most {{count}} characters.",
+  "invalidDate": "Please enter a valid date.",
+  "endBeforeStart": "End date cannot be before start date.",
+  "positiveNumber": "Please enter a value greater than zero."
+}

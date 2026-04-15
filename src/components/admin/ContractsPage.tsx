@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 const initialForm = {
   propertyId: '',
@@ -157,6 +158,8 @@ export const ContractsPage = () => {
   const countryDropdownRef = useRef<HTMLDivElement | null>(null);
   const propertyDropdownRef = useRef<HTMLDivElement | null>(null);
   const formCardRef = useRef<HTMLDivElement | null>(null);
+  const { t: tRaw } = useTranslation('contracts');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
 
   const contractsWithProperty = useMemo(
     () =>
@@ -180,11 +183,6 @@ export const ContractsPage = () => {
   const pendingProperties = useMemo(
     () => properties.filter((p) => !occupiedPropertyIds.has(p.id)),
     [properties, occupiedPropertyIds]
-  );
-
-  const selectedPropertyExists = useMemo(
-    () => properties.some((p) => p.id === form.propertyId),
-    [properties, form.propertyId]
   );
 
   const selectedProperty = useMemo(
@@ -337,11 +335,11 @@ export const ContractsPage = () => {
   const saveContract = () => {
     setFormError('');
     if (!form.propertyId) {
-      setFormError('Lutfen bir mulk secin.');
+      setFormError(t('errors.noProperty'));
       return;
     }
     if (!form.tenantName.trim()) {
-      setFormError('Kiraci adi zorunludur.');
+      setFormError(t('errors.noTenantName'));
       return;
     }
 
@@ -387,8 +385,8 @@ export const ContractsPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Sözleşmeler</h1>
-          <p className="text-sm text-muted-foreground mt-1">Mülke bağlı kira sözleşmelerini oluşturun ve yönetin.</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -399,7 +397,7 @@ export const ContractsPage = () => {
           size="sm"
           onClick={() => setActiveTab('pending')}
         >
-          Sözleşme Bekleyen Mülkler
+          {t('tabs.pending')}
         </Button>
         <Button
           type="button"
@@ -407,7 +405,7 @@ export const ContractsPage = () => {
           size="sm"
           onClick={() => setActiveTab('contracted')}
         >
-          Sözleşmeli Mülkler
+          {t('tabs.contracted')}
         </Button>
       </div>
 
@@ -415,25 +413,25 @@ export const ContractsPage = () => {
         <Card className="xl:col-span-1" ref={formCardRef}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Plus className="w-4 h-4 text-primary" /> {editingContractId ? 'Sözleşme Düzenle' : 'Yeni Sözleşme'}
+              <Plus className="w-4 h-4 text-primary" /> {editingContractId ? t('form.editTitle') : t('form.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {activeTab === 'contracted' && !editingContractId && (
               <div className="mb-4 rounded-md border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-                Düzenlemek için sağ taraftan bir sözleşme seçin.
+                {t('form.selectContractHint')}
               </div>
             )}
             <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               <div className="space-y-2">
-                <Label>Mülk</Label>
+                <Label>{t('form.property')}</Label>
                 {activeTab === 'contracted' ? (
                   <div className="h-9 w-full rounded-md border border-input bg-muted px-3 flex items-center text-sm text-muted-foreground select-none">
                     {selectedProperty
                       ? selectedProperty.address
                       : form.propertyId
-                      ? '(Arşiv/Eski) Mülk'
-                      : 'Mülk seçilmedi'}
+                      ? t('form.archivedProperty')
+                      : t('form.noPropertySelected')}
                   </div>
                 ) : (
                   <div ref={propertyDropdownRef} className="relative w-full">
@@ -446,7 +444,7 @@ export const ContractsPage = () => {
                       }}
                     >
                       <span className="truncate text-sm">
-                        {selectedProperty ? selectedProperty.address : <span className="text-muted-foreground">Mülk seçin...</span>}
+                        {selectedProperty ? selectedProperty.address : <span className="text-muted-foreground">{t('form.propertyPlaceholder')}</span>}
                       </span>
                       <ChevronDown className="w-4 h-4 text-muted-foreground ml-2 shrink-0" />
                     </button>
@@ -459,7 +457,7 @@ export const ContractsPage = () => {
                             <Input
                               value={propertySearch}
                               onChange={(e) => setPropertySearch(e.target.value)}
-                              placeholder="Adrese göre ara..."
+                              placeholder={t('form.propertySearch')}
                               className="pl-8 h-9"
                               autoFocus
                             />
@@ -467,7 +465,7 @@ export const ContractsPage = () => {
                         </div>
                         <div className="max-h-[200px] overflow-y-auto p-1">
                           {filteredProperties.length === 0 ? (
-                            <p className="text-xs text-muted-foreground px-2 py-3">Veri yok</p>
+                            <p className="text-xs text-muted-foreground px-2 py-3">{t('list.noPending')}</p>
                           ) : (
                             filteredProperties.map((p) => (
                               <button
@@ -494,9 +492,9 @@ export const ContractsPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Kiracı Adı</Label>
+                <Label>{t('form.tenantName')}</Label>
                 <Input
-                  placeholder="Ad Soyad"
+                  placeholder={t('form.tenantNamePlaceholder')}
                   value={form.tenantName}
                   onChange={(e) => setForm((prev) => ({ ...prev, tenantName: e.target.value }))}
                   disabled={isFormLocked}
@@ -505,7 +503,7 @@ export const ContractsPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Telefon Numarasi</Label>
+                <Label>{t('form.phone')}</Label>
                 <div className="grid grid-cols-[190px_minmax(0,1fr)] items-center gap-2">
                   <div ref={countryDropdownRef} className="relative w-[190px] shrink-0">
                     <button
@@ -528,7 +526,7 @@ export const ContractsPage = () => {
                             <Input
                               value={countrySearch}
                               onChange={(e) => setCountrySearch(e.target.value)}
-                              placeholder="Ulke, kod veya ISO ara..."
+                              placeholder={t('phone.searchPlaceholder')}
                               className="pl-8 h-9"
                             />
                           </div>
@@ -544,11 +542,11 @@ export const ContractsPage = () => {
                                 setCountrySearch('');
                               }}
                             >
-                              Ozel kodu kullan: {customCountryCode}
+                              {t('phone.customCode', { code: customCountryCode })}
                             </button>
                           )}
                           {filteredCountryOptions.length === 0 ? (
-                            <p className="text-xs text-muted-foreground px-2 py-3">Sonuc bulunamadi.</p>
+                            <p className="text-xs text-muted-foreground px-2 py-3">{t('phone.noResult')}</p>
                           ) : (
                             filteredCountryOptions.map((country) => (
                               <button
@@ -591,16 +589,16 @@ export const ContractsPage = () => {
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Ulke koduna gore {phoneRule.min}-{phoneRule.max} hane numara girin.
+                  {t('phone.hint', { min: phoneRule.min, max: phoneRule.max })}
                 </p>
                 {phoneError && <p className="text-[11px] text-destructive">{phoneError}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label>E-posta</Label>
+                <Label>{t('form.email')}</Label>
                 <Input
                   type="email"
-                  placeholder="mail@ornek.com"
+                  placeholder={t('form.emailPlaceholder')}
                   value={form.tenantEmail}
                   disabled={isFormLocked}
                   onChange={(e) => setForm((prev) => ({ ...prev, tenantEmail: e.target.value }))}
@@ -609,7 +607,7 @@ export const ContractsPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>Başlangıç</Label>
+                  <Label>{t('form.startDate')}</Label>
                   <Input
                     type="date"
                     value={form.startDate}
@@ -619,7 +617,7 @@ export const ContractsPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Bitiş</Label>
+                  <Label>{t('form.endDate')}</Label>
                   <Input
                     type="date"
                     value={form.endDate}
@@ -632,7 +630,7 @@ export const ContractsPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>Aylık Kira</Label>
+                  <Label>{t('form.monthlyRent')}</Label>
                   <Input
                     className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
@@ -645,7 +643,7 @@ export const ContractsPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Depozito</Label>
+                  <Label>{t('form.deposit')}</Label>
                   <Input
                     className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
@@ -661,7 +659,7 @@ export const ContractsPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>Ödeme Günü</Label>
+                  <Label>{t('form.paymentDay')}</Label>
                   <Input
                     className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
@@ -674,26 +672,26 @@ export const ContractsPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Durum</Label>
+                  <Label>{t('form.status')}</Label>
                   <Select value={form.status} disabled={isFormLocked} onValueChange={(v) => setForm((prev) => ({ ...prev, status: v as ContractStatus }))}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent position="popper" side="bottom" sideOffset={4}>
-                      <SelectItem value="Taslak">Taslak</SelectItem>
-                      <SelectItem value="Aktif">Aktif</SelectItem>
-                      <SelectItem value="Sona Erdi">Sona Erdi</SelectItem>
-                      <SelectItem value="Feshedildi">Feshedildi</SelectItem>
+                      <SelectItem value="Taslak">{t('status.Taslak')}</SelectItem>
+                      <SelectItem value="Aktif">{t('status.Aktif')}</SelectItem>
+                      <SelectItem value="Sona Erdi">{t('status.Sona Erdi')}</SelectItem>
+                      <SelectItem value="Feshedildi">{t('status.Feshedildi')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Notlar</Label>
+                <Label>{t('form.notes')}</Label>
                 <textarea
                   className="w-full min-h-[90px] rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Özel şartlar, ödeme notları..."
+                  placeholder={t('form.notesPlaceholder')}
                   value={form.notes}
                   disabled={isFormLocked}
                   onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
@@ -701,16 +699,16 @@ export const ContractsPage = () => {
               </div>
 
               <Button type="button" onClick={saveContract} className="w-full" disabled={properties.length === 0 || isFormLocked}>
-                <Plus className="w-4 h-4 mr-2" /> {editingContractId ? 'Değişiklikleri Kaydet' : 'Sözleşme Oluştur'}
+                <Plus className="w-4 h-4 mr-2" /> {editingContractId ? t('actions.saveChanges') : t('actions.create')}
               </Button>
               {editingContractId && (
                 <Button type="button" variant="outline" className="w-full" onClick={resetForm}>
-                  <X className="w-4 h-4 mr-2" /> Düzenlemeyi İptal Et
+                  <X className="w-4 h-4 mr-2" /> {t('actions.cancelEdit')}
                 </Button>
               )}
-              {properties.length === 0 && <p className="text-xs text-muted-foreground">Önce en az bir mülk eklemeniz gerekir.</p>}
+              {properties.length === 0 && <p className="text-xs text-muted-foreground">{t('errors.noProperties')}</p>}
               {!editingContractId && properties.length > 0 && pendingProperties.length === 0 && (
-                <p className="text-xs text-muted-foreground">Tüm mülklerde aktif/taslak sözleşme var. Yeni sözleşme için önce birini tamamlayın.</p>
+                <p className="text-xs text-muted-foreground">{t('errors.allOccupied')}</p>
               )}
               {formError && <p className="text-xs text-destructive">{formError}</p>}
             </form>
@@ -720,37 +718,37 @@ export const ContractsPage = () => {
         <Card className="xl:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-primary" /> {activeTab === 'pending' ? 'Sözleşme Bekleyen Mülkler' : 'Sözleşmeli Mülkler'}
+              <FileText className="w-4 h-4 text-primary" /> {activeTab === 'pending' ? t('tabs.pending') : t('tabs.contracted')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {activeTab === 'pending' ? (
               pendingProperties.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Bekleyen mülk yok. Tüm mülkler sözleşmeli görünüyor.</p>
+                <p className="text-sm text-muted-foreground">{t('list.noPending')}</p>
               ) : (
                 pendingProperties.map((p) => (
                   <div key={p.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
-                    <h3 className="font-semibold text-base">Mülk</h3>
+                    <h3 className="font-semibold text-base">{t('list.property')}</h3>
                     <p className="text-xs text-muted-foreground mt-1">{p.address}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Badge variant="outline">{p.roomType}</Badge>
                       <Badge variant="outline">{p.area} m²</Badge>
-                      <Badge>Sözleşme Bekliyor</Badge>
+                      <Badge>{t('tabs.pending')}</Badge>
                     </div>
                   </div>
                 ))
               )
             ) : (
               contractsWithProperty.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Henüz sözleşme yok. Soldan yeni sözleşme oluşturabilirsiniz.</p>
+                <p className="text-sm text-muted-foreground">{t('list.noContracts')}</p>
               ) : (
                 contractsWithProperty.map((contract) => (
                 <div key={contract.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="font-semibold text-base">Sözleşme</h3>
+                      <h3 className="font-semibold text-base">{t('list.contract')}</h3>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {contract.property ? contract.property.address : 'Mülk silinmiş veya bulunamadı'}
+                        {contract.property ? contract.property.address : t('list.deletedProperty')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -785,10 +783,10 @@ export const ContractsPage = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent position="popper" side="bottom" sideOffset={4}>
-                          <SelectItem value="Taslak">Taslak</SelectItem>
-                          <SelectItem value="Aktif">Aktif</SelectItem>
-                          <SelectItem value="Sona Erdi">Sona Erdi</SelectItem>
-                          <SelectItem value="Feshedildi">Feshedildi</SelectItem>
+                          <SelectItem value="Taslak">{t('status.Taslak')}</SelectItem>
+                          <SelectItem value="Aktif">{t('status.Aktif')}</SelectItem>
+                          <SelectItem value="Sona Erdi">{t('status.Sona Erdi')}</SelectItem>
+                          <SelectItem value="Feshedildi">{t('status.Feshedildi')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button
@@ -820,15 +818,15 @@ export const ContractsPage = () => {
                     </div>
                     <div className="flex items-center gap-2 md:col-span-3">
                       <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <span>¥{contract.monthlyRent.toLocaleString()} / ay</span>
+                      <span>¥{contract.monthlyRent.toLocaleString()} {t('list.perMonth')}</span>
                     </div>
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <Badge variant="outline">Depozito: ¥{contract.deposit.toLocaleString()}</Badge>
-                    <Badge variant="outline">Ödeme Günü: {contract.paymentDay}</Badge>
+                    <Badge variant="outline">{t('list.deposit')}: ¥{contract.deposit.toLocaleString()}</Badge>
+                    <Badge variant="outline">{t('list.paymentDay')}: {contract.paymentDay}</Badge>
                     {contract.tenantEmail && <Badge variant="secondary">{contract.tenantEmail}</Badge>}
-                    <Badge>{contract.status}</Badge>
+                    <Badge>{t(`status.${contract.status}` as any)}</Badge>
                   </div>
 
                   {contract.notes && <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{contract.notes}</p>}

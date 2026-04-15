@@ -1,0 +1,22 @@
+{
+  "stats": {
+    "totalProperties": "Total Properties",
+    "activeTenants": "Active Tenants",
+    "vacantHomes": "Vacant Homes"
+  },
+  "portfolio": {
+    "title": "Property Portfolio",
+    "addNew": "Add New",
+    "empty": {
+      "title": "No Properties in System",
+      "description": "No properties have been added to the portfolio yet. Please define a new property to get started.",
+      "cta": "Define New Property"
+    }
+  },
+  "dialogs": {
+    "editTitle": "Edit Property",
+    "editDescription": "Update property data, floor plan details, and images.",
+    "previewClose": "Close",
+    "previewEdit": "Edit"
+  }
+}

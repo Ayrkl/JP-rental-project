@@ -1,0 +1,32 @@
+{
+  "title": "Property Map",
+  "subtitle": "Track the locations of all properties on an interactive map.",
+  "stats": {
+    "properties": "{{count}} Properties",
+    "city": "City: Tokyo"
+  },
+  "pinLegend": {
+    "title": "Pin Color System",
+    "blue": "Blue: Occupied/Tenanted",
+    "green": "Green: Available (vacant)",
+    "orange": "Orange: Payment overdue",
+    "red": "Red: Eviction in progress",
+    "gray": "Gray: Under maintenance"
+  },
+  "popup": {
+    "property": "Property",
+    "status": "Status: {{status}}",
+    "viewDetails": "View Details"
+  },
+  "locationPicker": {
+    "selected": "Location Selected: {{lat}}, {{lng}}",
+    "hint": "Click on the map to mark the location",
+    "resolving": "Resolving Address..."
+  },
+  "dialogs": {
+    "editTitle": "Edit Property",
+    "editDescription": "Update property information and location.",
+    "close": "Close",
+    "edit": "Edit"
+  }
+}

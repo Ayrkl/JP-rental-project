@@ -7,34 +7,36 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation('navigation');
 
-  // The user wanted the sidebar to look like Edusama UI.
   const navCategories = [
     {
       title: null,
       items: [
-        { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Kontrol Paneli' },
-        { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Mülk Yönetimi' },
-        { path: '/admin/map', icon: <Map size={18} />, label: 'Harita' },
-        { path: '/admin/contracts', icon: <FileText size={18} />, label: 'Sözleşmeler' },
+        { path: '/admin', icon: <LayoutDashboard size={18} />, label: t('dashboard') },
+        { path: '/admin/properties/new', icon: <Home size={18} />, label: t('properties') },
+        { path: '/admin/map', icon: <Map size={18} />, label: t('map') },
+        { path: '/admin/contracts', icon: <FileText size={18} />, label: t('contracts') },
       ]
     },
     {
-      title: 'Yönetim',
+      title: t('management'),
       items: [
-        { path: '#', icon: <Users size={18} />, label: 'Kullanıcılar ve Roller' },
-        { path: '#', icon: <Megaphone size={18} />, label: 'Duyurular' },
+        { path: '#', icon: <Users size={18} />, label: t('users') },
+        { path: '#', icon: <Megaphone size={18} />, label: t('announcements') },
       ]
     }
   ];
 
-  const currentPageLabel = navCategories.flatMap(c => c.items).find(item => 
+  const currentPageLabel = navCategories.flatMap(c => c.items).find(item =>
     location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path.replace('#', 'NO_MATCH')))
-  )?.label || 'Merkez Yönetim';
+  )?.label || t('centerManagement');
 
   return (
     <div className="flex min-h-screen bg-background text-foreground dark" style={{ '--sidebar-width': collapsed ? '80px' : '230px' } as React.CSSProperties}>
@@ -59,8 +61,6 @@ export const AdminLayout = () => {
           )}
         </div>
 
-
-
         {/* Search Bar */}
         {!collapsed && (
           <div className="px-4 mt-1 mb-3">
@@ -68,7 +68,7 @@ export const AdminLayout = () => {
               <Search className="absolute left-2.5 top-[9px] h-4 w-4 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
               <input
                 type="text"
-                placeholder="Ara..."
+                placeholder={t('search')}
                 className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg pl-7 pr-10 py-1.5 text-[12px] text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 transition-all"
               />
             </div>
@@ -114,16 +114,15 @@ export const AdminLayout = () => {
         {/* Header Navbar */}
         <header className="h-[72px] border-b border-[#1e1e1e] bg-[#0a0a0a] flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
-              {/* INLINE TOGGLE BUTTON */}
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="hidden md:flex h-9 w-9 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#1e1e1e] transition-colors rounded-lg" 
+            <Button
+              variant="outline"
+              size="icon"
+              className="hidden md:flex h-9 w-9 bg-[#121212] border-[#2a2a2a] text-zinc-400 hover:text-white hover:bg-[#1e1e1e] transition-colors rounded-lg"
               onClick={() => setCollapsed(!collapsed)}
             >
               <PanelLeft size={18} />
             </Button>
-            
+
             <Button variant="ghost" size="icon" className="md:hidden text-zinc-400" onClick={() => setCollapsed(!collapsed)}>
               <Menu size={20} />
             </Button>
@@ -143,6 +142,7 @@ export const AdminLayout = () => {
               <Bell size={18} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full" />
             </Button>
+            <LanguageSwitcher />
             <div className="h-8 w-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400 cursor-pointer">
               AD
             </div>

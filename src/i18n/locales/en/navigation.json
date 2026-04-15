@@ -1,0 +1,11 @@
+{
+  "dashboard": "Dashboard",
+  "properties": "Property Management",
+  "map": "Map",
+  "contracts": "Contracts",
+  "users": "Users & Roles",
+  "announcements": "Announcements",
+  "management": "Management",
+  "search": "Search...",
+  "centerManagement": "Center Management"
+}

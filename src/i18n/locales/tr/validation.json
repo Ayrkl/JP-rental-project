@@ -1,0 +1,10 @@
+{
+  "required": "Bu alan zorunludur.",
+  "invalidEmail": "Geçerli bir e-posta adresi girin.",
+  "phoneLength": "Ülke koduna göre {{min}}-{{max}} hane numara girin.",
+  "minLength": "En az {{count}} karakter girilmelidir.",
+  "maxLength": "En fazla {{count}} karakter girilebilir.",
+  "invalidDate": "Geçerli bir tarih girin.",
+  "endBeforeStart": "Bitiş tarihi başlangıç tarihinden önce olamaz.",
+  "positiveNumber": "Sıfırdan büyük bir değer girin."
+}

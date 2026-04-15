@@ -8,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
     const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
     const [previewPropertyId, setPreviewPropertyId] = useState<string | null>(null);
     const [gridCols, setGridCols] = useState<number>(3);
+    const { t } = useTranslation('dashboard');
 
     const gridClassMap: Record<number, string> = {
         1: 'grid-cols-1',
@@ -31,7 +33,7 @@ export const Dashboard = () => {
                 <Card className="hover:border-primary/50 transition-colors">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0 text-muted-foreground">
                         <Home className="w-4 h-4 text-primary" />
-                        <CardTitle className="text-sm font-medium">Toplam Mülk</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('stats.totalProperties')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{properties.length}</div>
@@ -41,7 +43,7 @@ export const Dashboard = () => {
                 <Card className="hover:border-primary/50 transition-colors text-muted-foreground">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Building2 className="w-4 h-4 text-primary" />
-                        <CardTitle className="text-sm font-medium">Aktif Kiracı</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('stats.activeTenants')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">0</div>
@@ -51,7 +53,7 @@ export const Dashboard = () => {
                 <Card className="hover:border-primary/50 transition-colors text-muted-foreground">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Calendar className="w-4 h-4 text-primary" />
-                        <CardTitle className="text-sm font-medium">Boşta Ev</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('stats.vacantHomes')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">0</div>
@@ -62,7 +64,7 @@ export const Dashboard = () => {
             <div>
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-bold tracking-tight">Mülk Portföyü</h2>
+                        <h2 className="text-xl font-bold tracking-tight">{t('portfolio.title')}</h2>
 
                         <div className="hidden sm:flex items-center bg-muted/40 p-1 rounded-lg border border-border h-8">
                             {[1, 2, 3, 4, 5].map(num => (
@@ -79,7 +81,7 @@ export const Dashboard = () => {
 
                     <Button asChild>
                         <Link to="/admin/properties/new">
-                            <Home className="w-4 h-4 mr-2" /> Yeni Ekle
+                            <Home className="w-4 h-4 mr-2" /> {t('portfolio.addNew')}
                         </Link>
                     </Button>
                 </div>
@@ -89,10 +91,10 @@ export const Dashboard = () => {
                         <div className="p-4 bg-muted rounded-full mb-4">
                             <Home className="w-8 h-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-lg font-semibold mb-2">Sistemde Mülk Yok</h3>
-                        <p className="text-muted-foreground mb-6 max-w-[400px]">Henüz portföye bir mülk eklenmemiş. Lütfen yeni bir mülk tanımlayarak sistemi başlatın.</p>
+                        <h3 className="text-lg font-semibold mb-2">{t('portfolio.empty.title')}</h3>
+                        <p className="text-muted-foreground mb-6 max-w-[400px]">{t('portfolio.empty.description')}</p>
                         <Button asChild>
-                            <Link to="/admin/properties/new">Yeni Mülk Tanımla</Link>
+                            <Link to="/admin/properties/new">{t('portfolio.empty.cta')}</Link>
                         </Button>
                     </Card>
                 ) : (
@@ -156,9 +158,9 @@ export const Dashboard = () => {
                 >
                     <div className="px-6 md:px-8 py-5 border-b border-border bg-card/50 z-10 shrink-0">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">Mülkü Düzenle</DialogTitle>
+                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">{t('dialogs.editTitle')}</DialogTitle>
                             <DialogDescription className="text-sm text-muted-foreground mt-1.5">
-                                Mülk verilerini, plan detaylarını ve görselleri güncelleyin.
+                                {t('dialogs.editDescription')}
                             </DialogDescription>
                         </DialogHeader>
                     </div>
@@ -179,13 +181,13 @@ export const Dashboard = () => {
                         {previewProperty && <PropertyPreview property={previewProperty} />}
                     </div>
                     <div className="px-10 py-4 bg-muted/30 border-t border-border flex justify-end gap-3 shrink-0">
-                        <Button variant="outline" onClick={() => setPreviewPropertyId(null)}>Kapat</Button>
+                        <Button variant="outline" onClick={() => setPreviewPropertyId(null)}>{t('dialogs.previewClose')}</Button>
                         <Button onClick={() => {
                             const id = previewPropertyId;
                             setPreviewPropertyId(null);
                             setTimeout(() => setSelectedPropertyId(id), 100);
                         }}>
-                            <Pencil className="w-4 h-4 mr-2" /> Düzenle
+                            <Pencil className="w-4 h-4 mr-2" /> {t('dialogs.previewEdit')}
                         </Button>
                     </div>
                 </DialogContent>

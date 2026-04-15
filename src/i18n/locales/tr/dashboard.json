@@ -1,0 +1,22 @@
+{
+  "stats": {
+    "totalProperties": "Toplam Mülk",
+    "activeTenants": "Aktif Kiracı",
+    "vacantHomes": "Boşta Ev"
+  },
+  "portfolio": {
+    "title": "Mülk Portföyü",
+    "addNew": "Yeni Ekle",
+    "empty": {
+      "title": "Sistemde Mülk Yok",
+      "description": "Henüz portföye bir mülk eklenmemiş. Lütfen yeni bir mülk tanımlayarak sistemi başlatın.",
+      "cta": "Yeni Mülk Tanımla"
+    }
+  },
+  "dialogs": {
+    "editTitle": "Mülkü Düzenle",
+    "editDescription": "Mülk verilerini, plan detaylarını ve görselleri güncelleyin.",
+    "previewClose": "Kapat",
+    "previewEdit": "Düzenle"
+  }
+}

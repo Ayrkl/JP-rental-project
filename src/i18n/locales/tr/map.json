@@ -1,0 +1,32 @@
+{
+  "title": "Emlak Haritası",
+  "subtitle": "Tüm mülklerin lokasyonlarını interaktif harita üzerinden takip edin.",
+  "stats": {
+    "properties": "{{count}} Mülk",
+    "city": "Şehir: Tokyo"
+  },
+  "pinLegend": {
+    "title": "Pin Renk Sistemi",
+    "blue": "Mavi: Kiracılı/dolu",
+    "green": "Yeşil: Müsait (boş)",
+    "orange": "Turuncu: Ödeme gecikmiş",
+    "red": "Kırmızı: Tahliye süreci aktif",
+    "gray": "Gri: Bakımda"
+  },
+  "popup": {
+    "property": "Mülk",
+    "status": "Durum: {{status}}",
+    "viewDetails": "Detayları Gör"
+  },
+  "locationPicker": {
+    "selected": "Konum Seçildi: {{lat}}, {{lng}}",
+    "hint": "Haritaya tıklayarak konumu işaretleyin",
+    "resolving": "Adres Çözümleniyor..."
+  },
+  "dialogs": {
+    "editTitle": "Mülkü Düzenle",
+    "editDescription": "Mülk bilgilerini ve konumunu güncelleyin.",
+    "close": "Kapat",
+    "edit": "Düzenle"
+  }
+}

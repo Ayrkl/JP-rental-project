@@ -1,0 +1,64 @@
+{
+  "title": "Contracts",
+  "subtitle": "Create and manage rental contracts linked to properties.",
+  "tabs": {
+    "pending": "Properties Awaiting Contract",
+    "contracted": "Contracted Properties"
+  },
+  "form": {
+    "title": "New Contract",
+    "editTitle": "Edit Contract",
+    "property": "Property",
+    "propertyPlaceholder": "Select property...",
+    "propertySearch": "Search by address...",
+    "tenantName": "Tenant Name",
+    "tenantNamePlaceholder": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email",
+    "emailPlaceholder": "mail@example.com",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "monthlyRent": "Monthly Rent",
+    "deposit": "Deposit",
+    "paymentDay": "Payment Day",
+    "status": "Status",
+    "notes": "Notes",
+    "notesPlaceholder": "Special terms, payment notes...",
+    "selectContractHint": "Select a contract from the right to edit.",
+    "noPropertySelected": "No property selected",
+    "archivedProperty": "(Archived/Old) Property"
+  },
+  "status": {
+    "Taslak": "Draft",
+    "Aktif": "Active",
+    "Sona Erdi": "Expired",
+    "Feshedildi": "Terminated"
+  },
+  "actions": {
+    "create": "Create Contract",
+    "saveChanges": "Save Changes",
+    "cancelEdit": "Cancel Edit"
+  },
+  "errors": {
+    "noProperty": "Please select a property.",
+    "noTenantName": "Tenant name is required.",
+    "noProperties": "You need to add at least one property first.",
+    "allOccupied": "All properties have active/draft contracts. Complete one first to create a new contract."
+  },
+  "list": {
+    "property": "Property",
+    "contract": "Contract",
+    "deletedProperty": "Property deleted or not found",
+    "noPending": "No pending properties. All properties appear to be contracted.",
+    "noContracts": "No contracts yet. You can create a new one from the left.",
+    "deposit": "Deposit",
+    "paymentDay": "Payment Day",
+    "perMonth": "/ month"
+  },
+  "phone": {
+    "hint": "Enter {{min}}-{{max}} digit number based on country code.",
+    "searchPlaceholder": "Search country, code or ISO...",
+    "customCode": "Use custom code: {{code}}",
+    "noResult": "No results found."
+  }
+}

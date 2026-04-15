@@ -1,0 +1,64 @@
+{
+  "title": "Sözleşmeler",
+  "subtitle": "Mülke bağlı kira sözleşmelerini oluşturun ve yönetin.",
+  "tabs": {
+    "pending": "Sözleşme Bekleyen Mülkler",
+    "contracted": "Sözleşmeli Mülkler"
+  },
+  "form": {
+    "title": "Yeni Sözleşme",
+    "editTitle": "Sözleşme Düzenle",
+    "property": "Mülk",
+    "propertyPlaceholder": "Mülk seçin...",
+    "propertySearch": "Adrese göre ara...",
+    "tenantName": "Kiracı Adı",
+    "tenantNamePlaceholder": "Ad Soyad",
+    "phone": "Telefon Numarası",
+    "email": "E-posta",
+    "emailPlaceholder": "mail@ornek.com",
+    "startDate": "Başlangıç",
+    "endDate": "Bitiş",
+    "monthlyRent": "Aylık Kira",
+    "deposit": "Depozito",
+    "paymentDay": "Ödeme Günü",
+    "status": "Durum",
+    "notes": "Notlar",
+    "notesPlaceholder": "Özel şartlar, ödeme notları...",
+    "selectContractHint": "Düzenlemek için sağ taraftan bir sözleşme seçin.",
+    "noPropertySelected": "Mülk seçilmedi",
+    "archivedProperty": "(Arşiv/Eski) Mülk"
+  },
+  "status": {
+    "Taslak": "Taslak",
+    "Aktif": "Aktif",
+    "Sona Erdi": "Sona Erdi",
+    "Feshedildi": "Feshedildi"
+  },
+  "actions": {
+    "create": "Sözleşme Oluştur",
+    "saveChanges": "Değişiklikleri Kaydet",
+    "cancelEdit": "Düzenlemeyi İptal Et"
+  },
+  "errors": {
+    "noProperty": "Lütfen bir mülk seçin.",
+    "noTenantName": "Kiracı adı zorunludur.",
+    "noProperties": "Önce en az bir mülk eklemeniz gerekir.",
+    "allOccupied": "Tüm mülklerde aktif/taslak sözleşme var. Yeni sözleşme için önce birini tamamlayın."
+  },
+  "list": {
+    "property": "Mülk",
+    "contract": "Sözleşme",
+    "deletedProperty": "Mülk silinmiş veya bulunamadı",
+    "noPending": "Bekleyen mülk yok. Tüm mülkler sözleşmeli görünüyor.",
+    "noContracts": "Henüz sözleşme yok. Soldan yeni sözleşme oluşturabilirsiniz.",
+    "deposit": "Depozito",
+    "paymentDay": "Ödeme Günü",
+    "perMonth": "/ ay"
+  },
+  "phone": {
+    "hint": "Ülke koduna göre {{min}}-{{max}} hane numara girin.",
+    "searchPlaceholder": "Ülke, kod veya ISO ara...",
+    "customCode": "Özel kodu kullan: {{code}}",
+    "noResult": "Sonuç bulunamadı."
+  }
+}

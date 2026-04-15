@@ -1,0 +1,89 @@
+{
+  "sections": {
+    "basicInfo": "Basic Information",
+    "roomPlanner": "Room & Floor Planner",
+    "features": "Physical Amenities",
+    "inventory": "Furniture & Fixture Inventory",
+    "inventoryDesc": "Add fixtures one by one. Item name and short description can be entered.",
+    "images": "Property Images"
+  },
+  "fields": {
+    "address": "Full Address",
+    "addressPlaceholder": "e.g. Tokyo-to, Shibuya-ku...",
+    "area": "Net Area (m²)",
+    "areaPlaceholder": "e.g. 45",
+    "buildYear": "Build Year",
+    "buildYearPlaceholder": "e.g. 2018",
+    "capacity": "Tenant Capacity",
+    "capacityPlaceholder": "e.g. 2",
+    "quakeStandard": "Earthquake Certificate (耐震基準)",
+    "remaining": "Remaining: {{count}}"
+  },
+  "rooms": {
+    "Room": "Bedroom",
+    "Living": "Living Room",
+    "Dining": "Dining Area",
+    "Kitchen": "Kitchen",
+    "Bathroom": "Bathroom",
+    "Toilet": "Toilet",
+    "Storage": "Storage",
+    "Balcony": "Balcony",
+    "empty": "No rooms added yet. Make your selections above.",
+    "layoutLabel": "Japan Property Layout (マドリ):",
+    "undefined": "Undefined",
+    "plannerTitle": "Floor Plan Builder",
+    "plannerDesc": "Design the property layout by adding room blocks in order."
+  },
+  "featureList": {
+    "internet": "Fiber Internet",
+    "internetDesc": "High-speed shared internet infrastructure",
+    "elevator": "Elevator",
+    "elevatorDesc": "Freight and passenger elevator in building",
+    "autolock": "Auto Lock",
+    "autolockDesc": "Secure building entry with code and camera",
+    "deliveryBox": "Delivery Box",
+    "deliveryBoxDesc": "24/7 secure parcel delivery locker",
+    "parking": "Parking Space",
+    "parkingDesc": "Dedicated vehicle parking space in building",
+    "intercom": "Video Intercom",
+    "intercomDesc": "Instant video view of incoming visitors",
+    "pets": "Pets Allowed",
+    "petsDesc": "Cats, dogs, etc. are permitted",
+    "aircon": "Air Conditioning",
+    "airconDesc": "Pre-installation for climate control",
+    "washlet": "Smart Toilet",
+    "washletDesc": "Heated and functional Washlet system",
+    "systemKitchen": "System Kitchen",
+    "systemKitchenDesc": "Custom integrated stove and hood system",
+    "garbageStation": "24/7 Garbage Station",
+    "garbageStationDesc": "Dedicated area for garbage disposal at any time",
+    "balcony": "Private Balcony",
+    "balconyDesc": "Open-air individual use area"
+  },
+  "inventory": {
+    "empty": "No extra fixtures registered in the system.",
+    "namePlaceholder": "Item (TV, etc.)",
+    "descPlaceholder": "Description (e.g. purchased in 2014, 14-inch screen...)",
+    "addPhoto": "Add photo",
+    "changePhoto": "Change photo",
+    "removePhoto": "Remove"
+  },
+  "images": {
+    "uploadHint": "Drop or Click to Upload",
+    "uploadFormats": "Supported: JPG, PNG, WEBP"
+  },
+  "actions": {
+    "addNew": "Add New Property",
+    "saveChanges": "Save Changes",
+    "added": "Added",
+    "updated": "Updated",
+    "back": "Go Back",
+    "addItem": "Add Item"
+  },
+  "quakeOptions": {
+    "old": "Old Standard (旧耐震 - Pre-1981)",
+    "new": "New Standard (新耐震 - Post-1981)",
+    "grade2": "Grade 2 (耐震等級2)",
+    "grade3": "Grade 3 (耐震等級3)"
+  }
+}

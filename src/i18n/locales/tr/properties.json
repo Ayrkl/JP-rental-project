@@ -1,0 +1,89 @@
+{
+  "sections": {
+    "basicInfo": "Temel Bilgiler",
+    "roomPlanner": "Oda & Plan Çizicisi",
+    "features": "Fiziksel İmkanlar",
+    "inventory": "Eşya & Demirbaş Envanteri",
+    "inventoryDesc": "Demirbaşları tek tek ekleyin. Eşya adı ve kısa açıklama girilebilir.",
+    "images": "Mülk Görselleri"
+  },
+  "fields": {
+    "address": "Açık Adres",
+    "addressPlaceholder": "Örn: Tokyo-to, Shibuya-ku...",
+    "area": "Net Alan (m²)",
+    "areaPlaceholder": "Örn: 45",
+    "buildYear": "Yapım Yılı",
+    "buildYearPlaceholder": "Örn: 2018",
+    "capacity": "Kişi Kapasitesi",
+    "capacityPlaceholder": "Örn: 2",
+    "quakeStandard": "Deprem Sertifikası (耐震基準)",
+    "remaining": "Kalan: {{count}}"
+  },
+  "rooms": {
+    "Room": "Yatak Odası",
+    "Living": "Salon",
+    "Dining": "Yemek Alanı",
+    "Kitchen": "Mutfak",
+    "Bathroom": "Banyo",
+    "Toilet": "Tuvalet",
+    "Storage": "Depo/Kiler",
+    "Balcony": "Balkon",
+    "empty": "Henüz oda eklenmedi. Seçimlerinizi yukarıdan yapabilirsiniz.",
+    "layoutLabel": "Japonya Mülk Planı (マドリ):",
+    "undefined": "Tanımsız",
+    "plannerTitle": "Kat Planı Oluşturucu",
+    "plannerDesc": "Oda bloklarını sırayla ekleyerek gayrimenkulün planını dizayn edin."
+  },
+  "featureList": {
+    "internet": "Fiber İnternet",
+    "internetDesc": "Yüksek hızlı ortak internet altyapısı",
+    "elevator": "Asansör",
+    "elevatorDesc": "Bina içi yük ve insan asansörü",
+    "autolock": "Otomatik Kilit",
+    "autolockDesc": "Şifreli ve kameralı güvenli bina girişi",
+    "deliveryBox": "Kargo Kutusu",
+    "deliveryBoxDesc": "7/24 güvenli kargo teslimat otomatı",
+    "parking": "Otopark Alanı",
+    "parkingDesc": "Binada araca özel tahsisli alan",
+    "intercom": "Kameralı Diyafon",
+    "intercomDesc": "Gelen ziyaretçiyi anında görüntüleme",
+    "pets": "Evcil Hayvan İzni",
+    "petsDesc": "Kedi, köpek vb. barındırılabilir",
+    "aircon": "Klima Alt Yapısı",
+    "airconDesc": "İklimlendirme için ön hazırlık/kurulum",
+    "washlet": "Akıllı Tuvalet",
+    "washletDesc": "Isıtmalı ve fonksiyonel Washlet sistemi",
+    "systemKitchen": "Ankastre Mutfak",
+    "systemKitchenDesc": "Özel entegre ocak ve davlumbaz sistemi",
+    "garbageStation": "7/24 Çöp İstasyonu",
+    "garbageStationDesc": "Günün her saati çöp atılabilen özel alan",
+    "balcony": "Özel Balkon",
+    "balconyDesc": "Açık hava bireysel kullanım alanı"
+  },
+  "inventory": {
+    "empty": "Sistemde kayıtlı ekstra demirbaş bulunmuyor.",
+    "namePlaceholder": "Eşya (TV vs.)",
+    "descPlaceholder": "Açıklama (örn: 2014 yılında alınmış, 14 ekran...)",
+    "addPhoto": "Fotoğraf ekle",
+    "changePhoto": "Fotoğrafı değiştir",
+    "removePhoto": "Kaldır"
+  },
+  "images": {
+    "uploadHint": "Bırakarak veya Tıklayarak Yükleyin",
+    "uploadFormats": "Desteklenen: JPG, PNG, WEBP"
+  },
+  "actions": {
+    "addNew": "Yeni Mülkü Ekle",
+    "saveChanges": "Değişiklikleri Kaydet",
+    "added": "Eklendi",
+    "updated": "Güncellendi",
+    "back": "Geri Dön",
+    "addItem": "Eşya Ekle"
+  },
+  "quakeOptions": {
+    "old": "Eski Standart (旧耐震 - 1981 Öncesi)",
+    "new": "Yeni Standart (新耐震 - 1981 Sonrası)",
+    "grade2": "Grade 2 (耐震等級2)",
+    "grade3": "Grade 3 (耐震等級3)"
+  }
+}
