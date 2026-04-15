@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { CalendarDays, ChevronDown, FileText, KeyRound, Lock, Mailbox, Package, Pencil, Phone, Plus, Search, Trash, Trash2, User, Wallet, X } from 'lucide-react';
+import { CalendarDays, ChevronDown, FileText, KeyRound, Lock, Mailbox, Pencil, Phone, Plus, Search, Trash, Trash2, User, Wallet, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
@@ -772,26 +772,96 @@ export const ContractsPage = () => {
                     </button>
 
                     {/* Accordion iÃ§eriÄŸi */}
+                    {/* Accordion icerigi */}
                     {isExpanded && (
-                      <div className="border-t border-border/60 px-4 py-4 space-y-3 bg-muted/10">
-                        {/* Durum & Envanter sayÄ±sÄ± */}
+                      <div className="border-t border-border/60 px-4 py-4 space-y-4 bg-muted/10">
+
+                        {/* Durum badge */}
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium border ${STATUS_COLORS[p.status] ?? ''}`}>
                             {tp(`status.${p.status}`)}
                           </span>
-                          {p.inventory.length > 0 && (
-                            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <Package className="w-3.5 h-3.5" />
-                              {t('list.inventoryCount', { count: p.inventory.length })}
-                            </span>
-                          )}
                         </div>
+
+                        {/* Temel bilgiler grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {[
+                            { label: 'Net Alan', value: `${p.area} m\u00b2` },
+                            { label: 'Yapim Yili', value: p.buildYear },
+                            { label: 'Kapasite', value: `${p.tenantCapacity} Kisi` },
+                            { label: 'Plan (madori)', value: p.roomType },
+                            { label: 'Deprem Std.', value: p.quakeStandard === 'new' ? 'Yeni Standart' : p.quakeStandard === 'old' ? 'Eski Standart' : 'Grade 2/3' },
+                          ].map((item, i) => (
+                            <div key={i} className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                              <p className="text-sm font-semibold">{item.value}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Oda dagilimi */}
+                        {p.rooms.length > 0 && (() => {
+                          const roomLabels: Record<string, string> = { Room: 'Yatak Odasi', Living: 'Salon', Dining: 'Yemek Alani', Kitchen: 'Mutfak', Bathroom: 'Banyo', Toilet: 'Tuvalet', Balcony: 'Balkon', Storage: 'Depo/Kiler' };
+                          const counts = p.rooms.reduce((acc, r) => { acc[r.type] = (acc[r.type] || 0) + 1; return acc; }, {} as Record<string, number>);
+                          return (
+                            <div className="space-y-1.5">
+                              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Oda Dagilimi</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {Object.entries(counts).map(([type, count]) => (
+                                  <Badge key={type} variant="outline" className="text-xs">{roomLabels[type] || type}: {count}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {/* Fiziksel imkanlar */}
+                        {p.features && p.features.length > 0 && (
+                          <div className="space-y-1.5">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Fiziksel Imkanlar</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {p.features.map(f => (
+                                <Badge key={f} variant="secondary" className="text-xs capitalize">
+                                  {f.replace(/([A-Z])/g, ' $1').trim()}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Envanter (resim haric) */}
+                        {p.inventory.length > 0 && (
+                          <div className="space-y-1.5">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                              Demirbas Envanteri ({p.inventory.length})
+                            </p>
+                            <div className="space-y-1.5">
+                              {p.inventory.map(item => (
+                                <div key={item.id} className="rounded-lg border border-border/50 bg-background px-3 py-2 flex items-start gap-3">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate">{item.name}</p>
+                                    {item.description && <p className="text-xs text-muted-foreground truncate">{item.description}</p>}
+                                  </div>
+                                  <div className="flex flex-col items-end gap-1 shrink-0">
+                                    {item.condition && (
+                                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${item.condition === 'new' ? 'border-green-500/40 text-green-500' : item.condition === 'used' ? 'border-yellow-500/40 text-yellow-500' : 'border-red-500/40 text-red-500'}`}>
+                                        {item.condition === 'new' ? 'Yeni' : item.condition === 'used' ? 'Kullanilmis' : 'Hasarli'}
+                                      </Badge>
+                                    )}
+                                    {item.warrantyExpiry && (
+                                      <p className="text-[10px] text-muted-foreground">Garanti: {item.warrantyExpiry}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                         {!hasDetails && (
                           <p className="text-xs text-muted-foreground italic">{t('list.noPrivateDetails')}</p>
                         )}
 
-                        {/* Posta Kutusu */}
                         {logistics.mailboxNumber && (
                           <div className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
                             <Mailbox className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -802,7 +872,6 @@ export const ContractsPage = () => {
                           </div>
                         )}
 
-                        {/* AkÄ±llÄ± Kilit Kodu */}
                         {logistics.smartLockCode && (
                           <div className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
                             <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -813,7 +882,6 @@ export const ContractsPage = () => {
                           </div>
                         )}
 
-                        {/* Anahtar TutanaÄŸÄ± */}
                         {logistics.keyHandoverNote && (
                           <div className="flex items-start gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
                             <KeyRound className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
@@ -824,7 +892,6 @@ export const ContractsPage = () => {
                           </div>
                         )}
 
-                        {/* Ã‡Ã¶p Takvimi */}
                         {(burnable.length > 0 || nonBurnable.length > 0 || recyclable.length > 0) && (
                           <div className="flex items-start gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
                             <Trash className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
