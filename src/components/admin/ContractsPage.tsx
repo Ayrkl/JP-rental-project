@@ -211,23 +211,30 @@ export const ContractsPage = () => {
 
   const phoneRule = useMemo(() => getPhoneRule(form.countryCode), [form.countryCode]);
 
-  const formatPhoneByCountry = (countryCode: string, digits: string) => {
-    const patterns: Record<string, number[]> = {
-      '+90': [3, 3, 2, 2],
-      '+81': [2, 4, 4],
-      '+1': [3, 3, 4],
-      '+44': [4, 3, 3],
-      '+49': [3, 3, 4],
-      '+33': [1, 2, 2, 2, 2],
-      '+39': [3, 3, 4],
-      '+34': [3, 2, 2, 2],
-      '+86': [3, 4, 4],
-      '+82': [2, 4, 4],
-      '+91': [5, 5],
-      '+7': [3, 3, 2, 2],
-    };
+  const buildAutoPattern = (targetLength: number) => {
+    if (targetLength <= 3) return [targetLength];
+    if (targetLength === 4) return [2, 2];
+    if (targetLength === 5) return [3, 2];
+    if (targetLength === 6) return [3, 3];
+    if (targetLength === 7) return [3, 2, 2];
+    if (targetLength === 8) return [4, 4];
+    if (targetLength === 9) return [3, 3, 3];
+    if (targetLength === 10) return [3, 3, 2, 2];
+    if (targetLength === 11) return [3, 4, 4];
 
-    const pattern = patterns[countryCode] ?? [3, 3, 3, 3, 3];
+    const pattern: number[] = [];
+    let remain = targetLength;
+    while (remain > 4) {
+      pattern.push(3);
+      remain -= 3;
+    }
+    pattern.push(remain);
+    return pattern;
+  };
+
+  const formatPhoneByCountry = (countryCode: string, digits: string) => {
+    const rule = getPhoneRule(countryCode);
+    const pattern = buildAutoPattern(Math.max(digits.length, rule.min));
     const chunks: string[] = [];
     let i = 0;
     for (const size of pattern) {
