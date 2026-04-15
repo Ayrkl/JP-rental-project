@@ -38,12 +38,12 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
 
     return (
         // gap-10 -> gap-16 yaparak genel boşluğu artırdık
-        <div className="flex flex-col gap-24 pb-10">
+        <div className="flex flex-col gap-10 pb-10">
             {/* Görsel Galerisi */}
-            {/* h-[350px] yerine lg:h-[400px] h-auto ve mb-10 ekledik */}
-            <div className="grid grid-cols-4 gap-4 lg:h-[400px] h-auto shrink-0 mb-10">
+            {/* Çoklu görsellerde layout kaymasını engellemek için yükseklik/aspect sabit */}
+            <div className="grid grid-cols-4 gap-4 shrink-0">
                 {/* Ana görsel + navigasyon */}
-                <div className="col-span-4 lg:col-span-3 rounded-2xl overflow-hidden border bg-muted relative group h-full">
+                <div className="col-span-4 lg:col-span-3 rounded-2xl overflow-hidden border bg-muted relative group aspect-[16/9] lg:aspect-auto lg:h-[360px]">
                     {images.length > 0 ? (
                         <>
                             <img
@@ -96,7 +96,7 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
                 </div>
 
                 {/* Küçük resimler – tıklanabilir */}
-                <div className="hidden lg:flex col-span-1 flex-col gap-3 h-full">
+                <div className="hidden lg:flex col-span-1 flex-col gap-3 lg:h-[360px]">
                     {[0, 1, 2].map((idx) => (
                         <button
                             key={idx}
@@ -127,7 +127,7 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Sol Taraf: Açıklama ve Detaylar */}
                 <div className="md:col-span-2 space-y-8">
-                    <div className="pt-4"> {/* Üstten biraz daha boşluk ekledik */}
+                    <div>
                         <div className="flex items-center gap-2 text-primary mb-2">
                             <div className="p-1.5 bg-primary/10 rounded-lg">
                                 <Building2 size={18} />
