@@ -148,6 +148,7 @@ export const ContractsPage = () => {
   const [form, setForm] = useState(initialForm);
   const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
   const [editingContractId, setEditingContractId] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const countryDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -189,6 +190,27 @@ export const ContractsPage = () => {
     );
   }, [countrySearch]);
 
+  const getPhoneRule = (countryCode: string) => {
+    const rules: Record<string, { min: number; max: number; example: string }> = {
+      '+81': { min: 9, max: 10, example: '9012345678' },
+      '+90': { min: 10, max: 10, example: '5321234567' },
+      '+1': { min: 10, max: 10, example: '2125551234' },
+      '+44': { min: 10, max: 10, example: '7911123456' },
+      '+49': { min: 10, max: 11, example: '15123456789' },
+      '+33': { min: 9, max: 9, example: '612345678' },
+      '+39': { min: 9, max: 10, example: '3123456789' },
+      '+34': { min: 9, max: 9, example: '612345678' },
+      '+86': { min: 11, max: 11, example: '13812345678' },
+      '+82': { min: 9, max: 10, example: '1012345678' },
+      '+91': { min: 10, max: 10, example: '9876543210' },
+      '+7': { min: 10, max: 10, example: '9123456789' },
+    };
+
+    return rules[countryCode] ?? { min: 6, max: 15, example: '123456789' };
+  };
+
+  const phoneRule = useMemo(() => getPhoneRule(form.countryCode), [form.countryCode]);
+
   const customCountryCode = useMemo(() => {
     const q = countrySearch.trim();
     return /^\+\d{1,4}$/.test(q) ? q : '';
@@ -226,6 +248,7 @@ export const ContractsPage = () => {
       notes: c.notes ?? '',
     });
     setActiveTab('pending');
+    setPhoneError('');
   };
 
   const resetForm = () => {
@@ -233,11 +256,18 @@ export const ContractsPage = () => {
     setForm(initialForm);
     setCountrySearch('');
     setCountryDropdownOpen(false);
+    setPhoneError('');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.propertyId) return;
+
+    const digitCount = form.tenantPhone.replace(/\D/g, '').length;
+    if (digitCount < phoneRule.min || digitCount > phoneRule.max) {
+      setPhoneError(`Bu ulke kodu icin numara ${phoneRule.min}-${phoneRule.max} hane olmali.`);
+      return;
+    }
 
     const payload = {
       propertyId: form.propertyId,
@@ -264,8 +294,9 @@ export const ContractsPage = () => {
   };
 
   const normalizePhone = (raw: string) => {
-    // Numara alanı: sadece rakam, boşluk, tire, parantez
-    return raw.replace(/[^\d\-\s()]/g, '').slice(0, 24);
+    // Numara alani: sadece rakam, secili ulke koduna gore max hane
+    const digitsOnly = raw.replace(/\D/g, '');
+    return digitsOnly.slice(0, phoneRule.max);
   };
 
   return (
@@ -387,6 +418,7 @@ export const ContractsPage = () => {
                                   setForm((prev) => ({ ...prev, countryCode: country.code }));
                                   setCountryDropdownOpen(false);
                                   setCountrySearch('');
+                                  setPhoneError('');
                                 }}
                               >
                                 <span className="truncate">
@@ -404,14 +436,20 @@ export const ContractsPage = () => {
                     <Input
                       type="tel"
                       inputMode="tel"
-                      placeholder="Telefon numarasi girin"
+                      placeholder={phoneRule.example}
                       value={form.tenantPhone}
-                      onChange={(e) => setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }))}
+                      onChange={(e) => {
+                        setPhoneError('');
+                        setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }));
+                      }}
                       required
                     />
                   </div>
                 </div>
-                <p className="text-[11px] text-muted-foreground">Soldan ulke kodu secin, saga telefon numarasini girin.</p>
+                <p className="text-[11px] text-muted-foreground">
+                  Ulke koduna gore {phoneRule.min}-{phoneRule.max} hane numara girin.
+                </p>
+                {phoneError && <p className="text-[11px] text-destructive">{phoneError}</p>}
               </div>
 
               <div className="space-y-2">
