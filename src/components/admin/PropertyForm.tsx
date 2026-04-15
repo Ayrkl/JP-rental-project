@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X, Users } from 'lucide-react';
+import { Ruler, Calendar, ShieldCheck, MapPin, CheckCircle2, UploadCloud, Trash2, Plus, Layout, X, Users, Image as ImageIcon } from 'lucide-react';
 import { usePropertyStore, type InventoryItem } from '../../store/usePropertyStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -108,7 +108,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     };
 
     const addInventoryItem = () => {
-        setInventory([...inventory, { id: Math.random().toString(), name: '', description: '' }]);
+        setInventory([...inventory, { id: Math.random().toString(), name: '', description: '', image: undefined }]);
     };
 
     const updateInventoryItem = (itemId: string, field: keyof InventoryItem, value: string) => {
@@ -117,6 +117,15 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
 
     const removeInventoryItem = (itemId: string) => {
         setInventory(inventory.filter(item => item.id !== itemId));
+    };
+
+    const updateInventoryImage = (itemId: string, file: File | null) => {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setInventory(prev => prev.map(item => item.id === itemId ? { ...item, image: reader.result as string } : item));
+        };
+        reader.readAsDataURL(file);
     };
 
     const layoutString = useMemo(() => {
@@ -367,6 +376,36 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <span className="font-mono text-muted-foreground text-xs font-semibold w-6">{idx + 1}.</span>
                                 <Input className="h-9 flex-1 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
                                 <Input className="h-9 flex-[2] shadow-none" placeholder="Açıklama (örn: 2014 yılında alınmış, 14 ekran...)" value={item.description} onChange={e => updateInventoryItem(item.id, 'description', e.target.value)} />
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <div
+                                        className="group relative h-9 w-9 rounded-md overflow-hidden border border-border/60 bg-muted/30 flex items-center justify-center cursor-pointer transition-all hover:border-primary/60 hover:bg-primary/10 hover:shadow-sm hover:scale-[1.03] focus-within:ring-2 focus-within:ring-primary/40"
+                                        title={item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}
+                                    >
+                                        {item.image ? (
+                                            <img src={item.image} alt={`${item.name || 'Demirbaş'} foto`} className="h-full w-full object-cover" />
+                                        ) : (
+                                            <ImageIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                        )}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            onChange={(e) => updateInventoryImage(item.id, e.target.files?.[0] ?? null)}
+                                            aria-label="Demirbaş fotoğrafı ekle"
+                                        />
+                                    </div>
+                                    {item.image && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="h-9 px-2 text-xs"
+                                            onClick={() => setInventory(prev => prev.map(it => it.id === item.id ? { ...it, image: undefined } : it))}
+                                        >
+                                            Kaldır
+                                        </Button>
+                                    )}
+                                </div>
                                 <Button type="button" variant="ghost" size="icon" onClick={() => removeInventoryItem(item.id)} className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0">
                                     <Trash2 className="w-4 h-4 ml-0.5" />
                                 </Button>

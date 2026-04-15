@@ -134,7 +134,7 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
                             </div>
                             <span className="text-[11px] font-bold uppercase tracking-[0.2em]">Gayrimenkul Kimliği</span>
                         </div>
-                        <h2 className="text-3xl font-extrabold tracking-tight mb-3 leading-tight">Mülk ID: #{property.id.toUpperCase()}</h2>
+                        <h2 className="text-3xl font-extrabold tracking-tight mb-3 leading-tight">Mülk Bilgileri</h2>
                         <div className="flex items-start gap-2 p-3 bg-muted/40 rounded-xl border border-border/50">
                             <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                             <p className="text-sm font-medium leading-relaxed">{property.address}</p>

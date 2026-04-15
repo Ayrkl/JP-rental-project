@@ -5,6 +5,7 @@ export type InventoryItem = {
   id: string;
   name: string;
   description: string;
+  image?: string; // base64 (data URL) - demirbaş fotoğrafı
 };
 
 export type Property = {
