@@ -301,8 +301,7 @@ export const ContractsPage = () => {
     setFormError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveContract = () => {
     setFormError('');
     if (!form.propertyId) {
       setFormError('Lutfen bir mulk secin.');
@@ -313,12 +312,8 @@ export const ContractsPage = () => {
       return;
     }
 
-    const digitCount = form.tenantPhone.replace(/\D/g, '').length;
-    // Kayıt akışını bloklamamak için global telefon aralığı (E.164): 6-15 hane
-    if (digitCount < 3 || digitCount > 15) {
-      setPhoneError('Telefon numarasi 3-15 hane arasinda olmalidir.');
-      return;
-    }
+    // Edit akışını bloklamamak için telefon uzunluğunu burada zorunlu kılmıyoruz.
+    // Telefon temizleme/formatlama zaten input katmanında yapılıyor.
 
     const payload = {
       propertyId: form.propertyId,
@@ -342,6 +337,11 @@ export const ContractsPage = () => {
 
     resetForm();
     setActiveTab('contracted');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveContract();
   };
 
   const normalizePhone = (raw: string) => {
@@ -600,7 +600,7 @@ export const ContractsPage = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={properties.length === 0}>
+              <Button type="button" onClick={saveContract} className="w-full" disabled={properties.length === 0}>
                 <Plus className="w-4 h-4 mr-2" /> {editingContractId ? 'Değişiklikleri Kaydet' : 'Sözleşme Oluştur'}
               </Button>
               {editingContractId && (
