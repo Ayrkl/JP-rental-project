@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X } from 'lucide-react';
+import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X, Phone } from 'lucide-react';
 import { useContractStore, type ContractStatus } from './useContractStore';
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -107,6 +107,13 @@ export const ContractsPage = () => {
     setActiveTab('contracted');
   };
 
+  const normalizePhone = (raw: string) => {
+    // Uluslararası formatlara izin: +, rakam, boşluk, tire, parantez
+    const cleaned = raw.replace(/[^\d+\-\s()]/g, '');
+    const singlePlus = cleaned.replace(/\+/g, (m, idx) => (idx === 0 ? m : ''));
+    return singlePlus.slice(0, 24);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -150,7 +157,7 @@ export const ContractsPage = () => {
                   <SelectTrigger>
                     <SelectValue placeholder="Mülk seçin..." />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" side="bottom" sideOffset={4}>
                     {(editingContractId ? properties : pendingProperties).map((p) => (
                       <SelectItem key={p.id} value={p.id}>
                         #{p.id.toUpperCase()} - {p.address}
@@ -174,11 +181,14 @@ export const ContractsPage = () => {
                 <div className="space-y-2">
                   <Label>Telefon</Label>
                   <Input
-                    placeholder="090..."
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="+81 90 1234 5678"
                     value={form.tenantPhone}
-                    onChange={(e) => setForm((prev) => ({ ...prev, tenantPhone: e.target.value }))}
+                    onChange={(e) => setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }))}
                     required
                   />
+                  <p className="text-[11px] text-muted-foreground">Uluslararası format desteklenir (+90, +81 vb.).</p>
                 </div>
                 <div className="space-y-2">
                   <Label>E-posta</Label>
@@ -255,7 +265,7 @@ export const ContractsPage = () => {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" side="bottom" sideOffset={4}>
                       <SelectItem value="Taslak">Taslak</SelectItem>
                       <SelectItem value="Aktif">Aktif</SelectItem>
                       <SelectItem value="Sona Erdi">Sona Erdi</SelectItem>
@@ -358,7 +368,7 @@ export const ContractsPage = () => {
                         <SelectTrigger className="h-8 w-[130px]">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" side="bottom" sideOffset={4}>
                           <SelectItem value="Taslak">Taslak</SelectItem>
                           <SelectItem value="Aktif">Aktif</SelectItem>
                           <SelectItem value="Sona Erdi">Sona Erdi</SelectItem>
@@ -383,12 +393,16 @@ export const ContractsPage = () => {
                       <span>{contract.tenantName}</span>
                     </div>
                     <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <span>{contract.tenantPhone}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <CalendarDays className="w-4 h-4 text-muted-foreground" />
                       <span>
                         {contract.startDate} - {contract.endDate}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 md:col-span-3">
                       <Wallet className="w-4 h-4 text-muted-foreground" />
                       <span>¥{contract.monthlyRent.toLocaleString()} / ay</span>
                     </div>
