@@ -153,6 +153,7 @@ export const ContractsPage = () => {
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const countryDropdownRef = useRef<HTMLDivElement | null>(null);
+  const formCardRef = useRef<HTMLDivElement | null>(null);
 
   const contractsWithProperty = useMemo(
     () =>
@@ -293,8 +294,15 @@ export const ContractsPage = () => {
       status: c.status,
       notes: c.notes ?? '',
     });
-    setActiveTab('pending');
+    // Edit butonuna ilk basışta formu görünür hale getir.
+    setActiveTab('contracted');
     setPhoneError('');
+    setFormError('');
+    setCountryDropdownOpen(false);
+    setCountrySearch('');
+    requestAnimationFrame(() => {
+      formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   };
 
   const resetForm = () => {
@@ -384,7 +392,7 @@ export const ContractsPage = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <Card className="xl:col-span-1">
+        <Card className="xl:col-span-1" ref={formCardRef}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Plus className="w-4 h-4 text-primary" /> {editingContractId ? 'Sözleşme Düzenle' : 'Yeni Sözleşme'}
