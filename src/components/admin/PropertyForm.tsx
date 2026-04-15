@@ -377,6 +377,18 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                 <Input className="h-9 flex-1 shadow-none" placeholder="Eşya (TV vs.)" value={item.name} onChange={e => updateInventoryItem(item.id, 'name', e.target.value)} required />
                                 <Input className="h-9 flex-[2] shadow-none" placeholder="Açıklama (örn: 2014 yılında alınmış, 14 ekran...)" value={item.description} onChange={e => updateInventoryItem(item.id, 'description', e.target.value)} />
                                 <div className="flex items-center gap-2 shrink-0">
+                                    <div className="relative h-9 w-9 shrink-0">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0] ?? null;
+                                                updateInventoryImage(item.id, file);
+                                                e.target.value = '';
+                                            }}
+                                            aria-label="Demirbaş fotoğrafı ekle"
+                                        />
                                         <Button
                                             type="button"
                                             variant="ghost"
@@ -395,17 +407,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                                 <ImageIcon className="w-4 h-4 pointer-events-none" />
                                             )}
                                         </Button>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            onChange={(e) => {
-                                                const file = e.target.files?.[0] ?? null;
-                                                updateInventoryImage(item.id, file);
-                                                e.target.value = '';
-                                            }}
-                                            aria-label="Demirbaş fotoğrafı ekle"
-                                        />
+                                    </div>
                                     {item.image && (
                                         <Button
                                             type="button"
