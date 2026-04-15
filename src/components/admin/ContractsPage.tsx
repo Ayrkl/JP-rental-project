@@ -404,11 +404,11 @@ export const ContractsPage = () => {
 
               <div className="space-y-2">
                 <Label>Telefon Numarasi</Label>
-                <div className="flex items-start gap-2">
+                <div className="grid grid-cols-[190px_minmax(0,1fr)] items-center gap-2">
                   <div ref={countryDropdownRef} className="relative w-[190px] shrink-0">
                     <button
                       type="button"
-                      className="h-10 w-full rounded-md border border-input bg-background px-3 text-left text-sm flex items-center justify-between hover:bg-accent/40 transition-colors"
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-left text-sm flex items-center justify-between hover:bg-accent/40 transition-colors"
                       onClick={() => setCountryDropdownOpen((prev) => !prev)}
                     >
                       <span className="truncate">
@@ -472,7 +472,7 @@ export const ContractsPage = () => {
                     )}
                   </div>
 
-                  <div className="w-full">
+                  <div className="min-w-0">
                     <Input
                       type="tel"
                       inputMode="tel"
@@ -527,6 +527,7 @@ export const ContractsPage = () => {
                 <div className="space-y-2">
                   <Label>Aylık Kira</Label>
                   <Input
+                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
                     min="0"
                     placeholder="120000"
@@ -538,6 +539,7 @@ export const ContractsPage = () => {
                 <div className="space-y-2">
                   <Label>Depozito</Label>
                   <Input
+                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
                     min="0"
                     placeholder="120000"
@@ -552,6 +554,7 @@ export const ContractsPage = () => {
                 <div className="space-y-2">
                   <Label>Ödeme Günü</Label>
                   <Input
+                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
                     min="1"
                     max="31"
