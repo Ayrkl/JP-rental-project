@@ -423,11 +423,15 @@ export const ContractsPage = () => {
                       <SelectValue placeholder="Mülk seçin..." />
                     </SelectTrigger>
                     <SelectContent position="popper" side="bottom" sideOffset={4}>
-                      {pendingProperties.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          #{p.id.toUpperCase()} - {p.address}
-                        </SelectItem>
-                      ))}
+                      {pendingProperties.length === 0 ? (
+                        <div className="px-3 py-2 text-sm text-muted-foreground">Veri yok</div>
+                      ) : (
+                        pendingProperties.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            #{p.id.toUpperCase()} - {p.address}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 )}
