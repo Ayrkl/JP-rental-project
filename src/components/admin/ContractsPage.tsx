@@ -192,6 +192,8 @@ export const ContractsPage = () => {
     [properties, form.propertyId]
   );
 
+  const isFormLocked = activeTab === 'contracted' && !editingContractId;
+
   const selectedCountry = useMemo(
     () => COUNTRY_CODE_OPTIONS.find((c) => c.code === form.countryCode),
     [form.countryCode]
@@ -417,6 +419,11 @@ export const ContractsPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {activeTab === 'contracted' && !editingContractId && (
+              <div className="mb-4 rounded-md border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                Düzenlemek için sağ taraftan bir sözleşme seçin.
+              </div>
+            )}
             <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               <div className="space-y-2">
                 <Label>Mülk</Label>
@@ -492,6 +499,7 @@ export const ContractsPage = () => {
                   placeholder="Ad Soyad"
                   value={form.tenantName}
                   onChange={(e) => setForm((prev) => ({ ...prev, tenantName: e.target.value }))}
+                  disabled={isFormLocked}
                   required
                 />
               </div>
@@ -502,7 +510,8 @@ export const ContractsPage = () => {
                   <div ref={countryDropdownRef} className="relative w-[190px] shrink-0">
                     <button
                       type="button"
-                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-left text-sm flex items-center justify-between hover:bg-accent/40 transition-colors"
+                      disabled={isFormLocked}
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-left text-sm flex items-center justify-between hover:bg-accent/40 transition-colors disabled:opacity-50 disabled:pointer-events-none"
                       onClick={() => setCountryDropdownOpen((prev) => !prev)}
                     >
                       <span className="truncate">
@@ -572,6 +581,7 @@ export const ContractsPage = () => {
                       inputMode="tel"
                       placeholder={phoneRule.example}
                       value={phoneDisplayValue}
+                      disabled={isFormLocked}
                       onChange={(e) => {
                         setPhoneError('');
                         setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }));
@@ -592,6 +602,7 @@ export const ContractsPage = () => {
                   type="email"
                   placeholder="mail@ornek.com"
                   value={form.tenantEmail}
+                  disabled={isFormLocked}
                   onChange={(e) => setForm((prev) => ({ ...prev, tenantEmail: e.target.value }))}
                 />
               </div>
@@ -602,6 +613,7 @@ export const ContractsPage = () => {
                   <Input
                     type="date"
                     value={form.startDate}
+                    disabled={isFormLocked}
                     onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))}
                     required
                   />
@@ -611,6 +623,7 @@ export const ContractsPage = () => {
                   <Input
                     type="date"
                     value={form.endDate}
+                    disabled={isFormLocked}
                     onChange={(e) => setForm((prev) => ({ ...prev, endDate: e.target.value }))}
                     required
                   />
@@ -626,6 +639,7 @@ export const ContractsPage = () => {
                     min="0"
                     placeholder="120000"
                     value={form.monthlyRent}
+                    disabled={isFormLocked}
                     onChange={(e) => setForm((prev) => ({ ...prev, monthlyRent: e.target.value }))}
                     required
                   />
@@ -638,6 +652,7 @@ export const ContractsPage = () => {
                     min="0"
                     placeholder="120000"
                     value={form.deposit}
+                    disabled={isFormLocked}
                     onChange={(e) => setForm((prev) => ({ ...prev, deposit: e.target.value }))}
                     required
                   />
@@ -653,13 +668,14 @@ export const ContractsPage = () => {
                     min="1"
                     max="31"
                     value={form.paymentDay}
+                    disabled={isFormLocked}
                     onChange={(e) => setForm((prev) => ({ ...prev, paymentDay: e.target.value }))}
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Durum</Label>
-                  <Select value={form.status} onValueChange={(v) => setForm((prev) => ({ ...prev, status: v as ContractStatus }))}>
+                  <Select value={form.status} disabled={isFormLocked} onValueChange={(v) => setForm((prev) => ({ ...prev, status: v as ContractStatus }))}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -676,14 +692,15 @@ export const ContractsPage = () => {
               <div className="space-y-2">
                 <Label>Notlar</Label>
                 <textarea
-                  className="w-full min-h-[90px] rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="w-full min-h-[90px] rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Özel şartlar, ödeme notları..."
                   value={form.notes}
+                  disabled={isFormLocked}
                   onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
                 />
               </div>
 
-              <Button type="button" onClick={saveContract} className="w-full" disabled={properties.length === 0}>
+              <Button type="button" onClick={saveContract} className="w-full" disabled={properties.length === 0 || isFormLocked}>
                 <Plus className="w-4 h-4 mr-2" /> {editingContractId ? 'Değişiklikleri Kaydet' : 'Sözleşme Oluştur'}
               </Button>
               {editingContractId && (
