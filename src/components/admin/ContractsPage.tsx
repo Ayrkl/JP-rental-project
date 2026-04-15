@@ -149,6 +149,7 @@ export const ContractsPage = () => {
   const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
   const [editingContractId, setEditingContractId] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState('');
+  const [formError, setFormError] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const countryDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -297,15 +298,25 @@ export const ContractsPage = () => {
     setCountrySearch('');
     setCountryDropdownOpen(false);
     setPhoneError('');
+    setFormError('');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.propertyId) return;
+    setFormError('');
+    if (!form.propertyId) {
+      setFormError('Lutfen bir mulk secin.');
+      return;
+    }
+    if (!form.tenantName.trim()) {
+      setFormError('Kiraci adi zorunludur.');
+      return;
+    }
 
     const digitCount = form.tenantPhone.replace(/\D/g, '').length;
-    if (digitCount < phoneRule.min || digitCount > phoneRule.max) {
-      setPhoneError(`Bu ulke kodu icin numara ${phoneRule.min}-${phoneRule.max} hane olmali.`);
+    // Kayıt akışını bloklamamak için global telefon aralığı (E.164): 6-15 hane
+    if (digitCount < 3 || digitCount > 15) {
+      setPhoneError('Telefon numarasi 3-15 hane arasinda olmalidir.');
       return;
     }
 
@@ -314,11 +325,11 @@ export const ContractsPage = () => {
       tenantName: form.tenantName.trim(),
       tenantPhone: `${form.countryCode} ${form.tenantPhone.trim()}`.trim(),
       tenantEmail: form.tenantEmail.trim() || undefined,
-      startDate: form.startDate,
-      endDate: form.endDate,
-      monthlyRent: Number(form.monthlyRent),
-      deposit: Number(form.deposit),
-      paymentDay: Number(form.paymentDay),
+      startDate: form.startDate || '',
+      endDate: form.endDate || '',
+      monthlyRent: Number(form.monthlyRent || 0),
+      deposit: Number(form.deposit || 0),
+      paymentDay: Number(form.paymentDay || 1),
       status: form.status,
       notes: form.notes.trim() || undefined,
     };
@@ -375,7 +386,7 @@ export const ContractsPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               <div className="space-y-2">
                 <Label>Mülk</Label>
                 <Select value={form.propertyId} onValueChange={(v) => setForm((prev) => ({ ...prev, propertyId: v }))}>
@@ -601,6 +612,7 @@ export const ContractsPage = () => {
               {!editingContractId && properties.length > 0 && pendingProperties.length === 0 && (
                 <p className="text-xs text-muted-foreground">Tüm mülklerde aktif/taslak sözleşme var. Yeni sözleşme için önce birini tamamlayın.</p>
               )}
+              {formError && <p className="text-xs text-destructive">{formError}</p>}
             </form>
           </CardContent>
         </Card>
