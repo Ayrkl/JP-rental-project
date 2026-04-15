@@ -184,6 +184,11 @@ export const ContractsPage = () => {
     [properties, form.propertyId]
   );
 
+  const selectedProperty = useMemo(
+    () => properties.find((p) => p.id === form.propertyId),
+    [properties, form.propertyId]
+  );
+
   const selectedCountry = useMemo(
     () => COUNTRY_CODE_OPTIONS.find((c) => c.code === form.countryCode),
     [form.countryCode]
@@ -275,9 +280,17 @@ export const ContractsPage = () => {
     return () => document.removeEventListener('mousedown', onMouseDown);
   }, []);
 
+  useEffect(() => {
+    if (editingContractId) {
+      setActiveTab('contracted');
+      requestAnimationFrame(() => {
+        formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }, [editingContractId]);
+
   const startEdit = (contract: (typeof contractsWithProperty)[number]) => {
     const phoneMatch = contract.tenantPhone.trim().match(/^(\+\d{1,4})\s*(.*)$/);
-    setEditingContractId(contract.id);
     setForm({
       propertyId: contract.propertyId,
       tenantName: contract.tenantName,
@@ -292,15 +305,11 @@ export const ContractsPage = () => {
       status: contract.status,
       notes: contract.notes ?? '',
     });
-    // Edit butonuna ilk basışta formu görünür hale getir.
-    setActiveTab('contracted');
+    setEditingContractId(contract.id);
     setPhoneError('');
     setFormError('');
     setCountryDropdownOpen(false);
     setCountrySearch('');
-    requestAnimationFrame(() => {
-      formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
   };
 
   const resetForm = () => {
@@ -400,23 +409,28 @@ export const ContractsPage = () => {
             <form className="space-y-4" onSubmit={handleSubmit} noValidate>
               <div className="space-y-2">
                 <Label>Mülk</Label>
-                <Select value={form.propertyId} onValueChange={(v) => setForm((prev) => ({ ...prev, propertyId: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Mülk seçin..." />
-                  </SelectTrigger>
-                  <SelectContent position="popper" side="bottom" sideOffset={4}>
-                    {editingContractId && form.propertyId && !selectedPropertyExists && (
-                      <SelectItem value={form.propertyId}>
-                        (Arsiv/Eski) #{form.propertyId.toUpperCase()}
-                      </SelectItem>
-                    )}
-                    {(editingContractId ? properties : pendingProperties).map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        #{p.id.toUpperCase()} - {p.address}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {activeTab === 'contracted' ? (
+                  <div className="h-9 w-full rounded-md border border-input bg-muted px-3 flex items-center text-sm text-muted-foreground select-none">
+                    {selectedProperty
+                      ? `#${selectedProperty.id.toUpperCase()} - ${selectedProperty.address}`
+                      : form.propertyId
+                      ? `(Arşiv/Eski) #${form.propertyId.toUpperCase()}`
+                      : 'Mülk seçilmedi'}
+                  </div>
+                ) : (
+                  <Select value={form.propertyId} onValueChange={(v) => setForm((prev) => ({ ...prev, propertyId: v }))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Mülk seçin..." />
+                    </SelectTrigger>
+                    <SelectContent position="popper" side="bottom" sideOffset={4}>
+                      {pendingProperties.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          #{p.id.toUpperCase()} - {p.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               <div className="space-y-2">
