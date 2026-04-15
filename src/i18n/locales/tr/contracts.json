@@ -62,7 +62,8 @@
     "garbageSchedule": "Çöp Takvimi",
     "garbageDays": "{{count}} gün",
     "keyNote": "Anahtar Tutanağı",
-    "noLogistics": "Lojistik bilgi girilmemiş"
+    "noLogistics": "Lojistik bilgi girilmemiş",
+    "preview": "Önizle"
   },
   "phone": {
     "hint": "Ülke koduna göre {{min}}-{{max}} hane numara girin.",

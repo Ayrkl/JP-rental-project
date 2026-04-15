@@ -1,14 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FileText, Plus, Trash2, User, CalendarDays, Wallet, Pencil, X, Phone, ChevronDown, Search, Package, Mailbox, Lock, Trash, KeyRound } from 'lucide-react';
-import { useContractStore, type ContractStatus } from './useContractStore';
-import { usePropertyStore, type Property } from '../../store/usePropertyStore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { useTranslation } from 'react-i18next';
+import { CalendarDays, ChevronDown, Eye, FileText, KeyRound, Lock, Mailbox, Package, Pencil, Phone, Plus, Search, Trash, Trash2, User, Wallet, X } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
+
+import { useContractStore, type ContractStatus } from './useContractStore';
+import { PropertyPreview } from './PropertyPreview';
+import { usePropertyStore, type Property } from '../../store/usePropertyStore';
 
 const initialForm = {
   propertyId: '',
@@ -226,6 +232,7 @@ export const ContractsPage = () => {
   const [form, setForm] = useState(initialForm);
   const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
   const [editingContractId, setEditingContractId] = useState<string | null>(null);
+  const [previewProperty, setPreviewProperty] = useState<Property | null>(null);
   const [phoneError, setPhoneError] = useState('');
   const [formError, setFormError] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
@@ -807,8 +814,22 @@ export const ContractsPage = () => {
               ) : (
                 pendingProperties.map((p) => (
                   <div key={p.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
-                    <h3 className="font-semibold text-base">{t('list.property')}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{p.address}</p>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-semibold text-base">{t('list.property')}</h3>
+                        <p className="text-xs text-muted-foreground mt-1">{p.address}</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="shrink-0 gap-1.5"
+                        onClick={() => setPreviewProperty(p)}
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        {t('list.preview')}
+                      </Button>
+                    </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Badge variant="outline">{p.roomType}</Badge>
                       <Badge variant="outline">{p.area} m²</Badge>
@@ -918,6 +939,23 @@ export const ContractsPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Mülk Önizleme Popup */}
+      <Dialog open={!!previewProperty} onOpenChange={(open) => { if (!open) setPreviewProperty(null); }}>
+        <DialogContent className="max-w-4xl w-full p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-5 pb-3 border-b border-border">
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Eye className="w-4 h-4 text-primary" />
+              {previewProperty?.address}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[80vh]">
+            <div className="px-6 py-4">
+              {previewProperty && <PropertyPreview property={previewProperty} />}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

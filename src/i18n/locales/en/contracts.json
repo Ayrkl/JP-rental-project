@@ -62,7 +62,8 @@
     "garbageSchedule": "Garbage Schedule",
     "garbageDays": "{{count}} days",
     "keyNote": "Key Handover Note",
-    "noLogistics": "No logistics info entered"
+    "noLogistics": "No logistics info entered",
+    "preview": "Preview"
   },
   "phone": {
     "hint": "Enter {{min}}-{{max}} digit number based on country code.",
