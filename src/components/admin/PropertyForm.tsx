@@ -381,7 +381,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                                         type="button"
                                         variant="ghost"
                                         size="icon"
-                                        className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 peer-hover:bg-destructive/10 peer-hover:text-destructive peer-focus-visible:ring-2 peer-focus-visible:ring-destructive/40"
+                                            className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 peer-hover:bg-primary/10 peer-hover:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40"
                                         title={item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}
                                     >
                                         <span className="sr-only">{item.image ? 'Fotoğrafı değiştir' : 'Fotoğraf ekle'}</span>
