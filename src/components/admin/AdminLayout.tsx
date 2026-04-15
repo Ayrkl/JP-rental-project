@@ -20,7 +20,7 @@ export const AdminLayout = () => {
         { path: '/admin', icon: <LayoutDashboard size={18} />, label: 'Kontrol Paneli' },
         { path: '/admin/properties/new', icon: <Home size={18} />, label: 'Mülk Yönetimi' },
         { path: '/admin/map', icon: <Map size={18} />, label: 'Harita' },
-        { path: '#', icon: <FileText size={18} />, label: 'Sözleşmeler' },
+        { path: '/admin/contracts', icon: <FileText size={18} />, label: 'Sözleşmeler' },
       ]
     },
     {
