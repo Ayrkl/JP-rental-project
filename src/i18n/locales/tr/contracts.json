@@ -63,7 +63,15 @@
     "garbageDays": "{{count}} gün",
     "keyNote": "Anahtar Tutanağı",
     "noLogistics": "Lojistik bilgi girilmemiş",
-    "preview": "Önizle"
+    "preview": "Önizle",
+    "details": "Detaylar",
+    "privateDetailsTitle": "Mülk Özel Bilgileri",
+    "smartLockCodeLabel": "Akıllı Kilit Kodu",
+    "keyHandoverNoteLabel": "Anahtar Tutanağı",
+    "garbageBurnable": "Yanabilir",
+    "garbageNonBurnable": "Yanmaz",
+    "garbageRecyclable": "Geri Dönüşüm",
+    "noPrivateDetails": "Özel bilgi girilmemiş."
   },
   "phone": {
     "hint": "Ülke koduna göre {{min}}-{{max}} hane numara girin.",

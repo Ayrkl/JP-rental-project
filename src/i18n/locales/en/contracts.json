@@ -63,7 +63,15 @@
     "garbageDays": "{{count}} days",
     "keyNote": "Key Handover Note",
     "noLogistics": "No logistics info entered",
-    "preview": "Preview"
+    "preview": "Preview",
+    "details": "Details",
+    "privateDetailsTitle": "Property Private Info",
+    "smartLockCodeLabel": "Smart Lock Code",
+    "keyHandoverNoteLabel": "Key Handover Note",
+    "garbageBurnable": "Burnable",
+    "garbageNonBurnable": "Non-Burnable",
+    "garbageRecyclable": "Recyclable",
+    "noPrivateDetails": "No private details entered."
   },
   "phone": {
     "hint": "Enter {{min}}-{{max}} digit number based on country code.",

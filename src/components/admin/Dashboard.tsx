@@ -153,8 +153,7 @@ export const Dashboard = () => {
             {/* DÜZENLEME MODALI */}
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && setSelectedPropertyId(null)}>
                 <DialogContent
-                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-2xl max-h-[83vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-6 [&>button]:top-6 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
-                    style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
+                    className="sm:max-w-[900px] lg:max-w-[1200px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-2xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-6 [&>button]:top-6 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
                 >
                     <div className="px-6 md:px-8 py-5 border-b border-border bg-card/50 z-10 shrink-0">
                         <DialogHeader>
@@ -174,8 +173,7 @@ export const Dashboard = () => {
             {/* ÖNİZLEME MODALI */}
             <Dialog open={!!previewPropertyId} onOpenChange={(open) => !open && setPreviewPropertyId(null)}>
                 <DialogContent
-                    className="sm:max-w-[850px] lg:max-w-[1600px] w-[95vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-4 [&>button]:top-4 [&>button]:bg-black/60 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-white z-[2000]"
-                    style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
+                    className="sm:max-w-[900px] lg:max-w-[1200px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-4 [&>button]:top-4 [&>button]:bg-black/60 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-white z-[2000]"
                 >
                     <div className="px-8 py-6 overflow-y-auto flex-1">
                         {previewProperty && <PropertyPreview property={previewProperty} />}

@@ -1,20 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { CalendarDays, ChevronDown, FileText, KeyRound, Lock, Mailbox, Package, Pencil, Phone, Plus, Search, Trash, Trash2, User, Wallet, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { CalendarDays, ChevronDown, Eye, FileText, KeyRound, Lock, Mailbox, Package, Pencil, Phone, Plus, Search, Trash, Trash2, User, Wallet, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+import { usePropertyStore } from '../../store/usePropertyStore';
 import { useContractStore, type ContractStatus } from './useContractStore';
-import { PropertyPreview } from './PropertyPreview';
-import { usePropertyStore, type Property } from '../../store/usePropertyStore';
 
 const initialForm = {
   propertyId: '',
@@ -157,74 +154,6 @@ const STATUS_COLORS: Record<string, string> = {
   maintenance: 'bg-slate-500/15 text-slate-700 dark:text-slate-400',
 };
 
-function PropertyDetailsPanel({ property, t, tp }: {
-  property: Property;
-  t: (key: string, opts?: Record<string, unknown>) => string;
-  tp: (key: string, opts?: Record<string, unknown>) => string;
-}) {
-  const logistics = property.logistics ?? {};
-  const garbageDayCount = [
-    ...(logistics.garbageSchedule?.burnable ?? []),
-    ...(logistics.garbageSchedule?.nonBurnable ?? []),
-    ...(logistics.garbageSchedule?.recyclable ?? []),
-  ].length;
-  const hasAnyLogistics = !!(
-    logistics.keyHandoverNote ||
-    logistics.smartLockCode ||
-    logistics.mailboxNumber ||
-    garbageDayCount > 0
-  );
-
-  return (
-    <div className="mt-3 space-y-2 border-t border-border/50 pt-3">
-      {/* Mülk durumu */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-muted-foreground">{t('list.propertyStatus')}:</span>
-        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[property.status] ?? ''}`}>
-          {tp(`status.${property.status}`)}
-        </span>
-        {property.inventory.length > 0 && (
-          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <Package className="w-3 h-3" />
-            {t('list.inventoryCount', { count: property.inventory.length })}
-          </span>
-        )}
-      </div>
-
-      {/* Lojistik özet */}
-      {hasAnyLogistics ? (
-        <div className="flex flex-wrap gap-x-4 gap-y-1">
-          {logistics.mailboxNumber && (
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Mailbox className="w-3 h-3" />
-              {t('list.mailbox')}: <span className="font-medium text-foreground">{logistics.mailboxNumber}</span>
-            </span>
-          )}
-          {logistics.smartLockCode && (
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Lock className="w-3 h-3" />
-              {t('list.smartLock')}: <span className="font-medium text-foreground">{t('list.smartLockSet')}</span>
-            </span>
-          )}
-          {garbageDayCount > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Trash className="w-3 h-3" />
-              {t('list.garbageSchedule')}: <span className="font-medium text-foreground">{t('list.garbageDays', { count: garbageDayCount })}</span>
-            </span>
-          )}
-          {logistics.keyHandoverNote && (
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <KeyRound className="w-3 h-3" />
-              {t('list.keyNote')}
-            </span>
-          )}
-        </div>
-      ) : (
-        <p className="text-xs text-muted-foreground italic">{t('list.noLogistics')}</p>
-      )}
-    </div>
-  );
-}
 
 export const ContractsPage = () => {
   const properties = usePropertyStore((s) => s.properties);
@@ -232,7 +161,7 @@ export const ContractsPage = () => {
   const [form, setForm] = useState(initialForm);
   const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
   const [editingContractId, setEditingContractId] = useState<string | null>(null);
-  const [previewProperty, setPreviewProperty] = useState<Property | null>(null);
+  const [expandedPropertyId, setExpandedPropertyId] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState('');
   const [formError, setFormError] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
@@ -429,8 +358,8 @@ export const ContractsPage = () => {
       return;
     }
 
-    // Edit akışını bloklamamak için telefon uzunluğunu burada zorunlu kılmıyoruz.
-    // Telefon temizleme/formatlama zaten input katmanında yapılıyor.
+    // Edit akÄ±ÅŸÄ±nÄ± bloklamamak iÃ§in telefon uzunluÄŸunu burada zorunlu kÄ±lmÄ±yoruz.
+    // Telefon temizleme/formatlama zaten input katmanÄ±nda yapÄ±lÄ±yor.
 
     const payload = {
       propertyId: form.propertyId,
@@ -812,32 +741,106 @@ export const ContractsPage = () => {
               pendingProperties.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{t('list.noPending')}</p>
               ) : (
-                pendingProperties.map((p) => (
-                  <div key={p.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
+                pendingProperties.map((p) => {
+                  const isExpanded = expandedPropertyId === p.id;
+                  const logistics = p.logistics ?? {};
+                  const burnable = logistics.garbageSchedule?.burnable ?? [];
+                  const nonBurnable = logistics.garbageSchedule?.nonBurnable ?? [];
+                  const recyclable = logistics.garbageSchedule?.recyclable ?? [];
+                  const hasDetails = !!(logistics.keyHandoverNote || logistics.smartLockCode || logistics.mailboxNumber || burnable.length || nonBurnable.length || recyclable.length || p.inventory.length > 0);
+
+                  return (
+                  <div key={p.id} className="rounded-xl border border-border/60 bg-background/60 overflow-hidden">
+                    {/* Kart baÅŸlÄ±ÄŸÄ± â€” tÄ±klanabilir */}
+                    <button
+                      type="button"
+                      className="w-full text-left p-4 flex items-center justify-between gap-3 hover:bg-muted/30 transition-colors"
+                      onClick={() => setExpandedPropertyId(isExpanded ? null : p.id)}
+                    >
+                      <div className="min-w-0">
                         <h3 className="font-semibold text-base">{t('list.property')}</h3>
-                        <p className="text-xs text-muted-foreground mt-1">{p.address}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">{p.address}</p>
                       </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="shrink-0 gap-1.5"
-                        onClick={() => setPreviewProperty(p)}
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        {t('list.preview')}
-                      </Button>
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Badge variant="outline">{p.roomType}</Badge>
-                      <Badge variant="outline">{p.area} m²</Badge>
-                      <Badge>{t('tabs.pending')}</Badge>
-                    </div>
-                    <PropertyDetailsPanel property={p} t={t} tp={tp} />
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex flex-wrap gap-1.5">
+                          <Badge variant="outline">{p.roomType}</Badge>
+                          <Badge variant="outline">{p.area} mÂ²</Badge>
+                          <Badge>{t('tabs.pending')}</Badge>
+                        </div>
+                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                      </div>
+                    </button>
+
+                    {/* Accordion iÃ§eriÄŸi */}
+                    {isExpanded && (
+                      <div className="border-t border-border/60 px-4 py-4 space-y-3 bg-muted/10">
+                        {/* Durum & Envanter sayÄ±sÄ± */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium border ${STATUS_COLORS[p.status] ?? ''}`}>
+                            {tp(`status.${p.status}`)}
+                          </span>
+                          {p.inventory.length > 0 && (
+                            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <Package className="w-3.5 h-3.5" />
+                              {t('list.inventoryCount', { count: p.inventory.length })}
+                            </span>
+                          )}
+                        </div>
+
+                        {!hasDetails && (
+                          <p className="text-xs text-muted-foreground italic">{t('list.noPrivateDetails')}</p>
+                        )}
+
+                        {/* Posta Kutusu */}
+                        {logistics.mailboxNumber && (
+                          <div className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
+                            <Mailbox className="w-4 h-4 text-muted-foreground shrink-0" />
+                            <div>
+                              <p className="text-[10px] text-muted-foreground">{t('list.mailbox')}</p>
+                              <p className="text-sm font-semibold">{logistics.mailboxNumber}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* AkÄ±llÄ± Kilit Kodu */}
+                        {logistics.smartLockCode && (
+                          <div className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
+                            <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
+                            <div>
+                              <p className="text-[10px] text-muted-foreground">{t('list.smartLockCodeLabel')}</p>
+                              <p className="text-sm font-semibold font-mono tracking-widest">{logistics.smartLockCode}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Anahtar TutanaÄŸÄ± */}
+                        {logistics.keyHandoverNote && (
+                          <div className="flex items-start gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
+                            <KeyRound className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-[10px] text-muted-foreground">{t('list.keyHandoverNoteLabel')}</p>
+                              <p className="text-sm whitespace-pre-wrap">{logistics.keyHandoverNote}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Ã‡Ã¶p Takvimi */}
+                        {(burnable.length > 0 || nonBurnable.length > 0 || recyclable.length > 0) && (
+                          <div className="flex items-start gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5">
+                            <Trash className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                            <div className="space-y-1">
+                              <p className="text-[10px] text-muted-foreground">{t('list.garbageSchedule')}</p>
+                              {burnable.length > 0 && <p className="text-xs"><span className="text-muted-foreground">{t('list.garbageBurnable')}: </span>{burnable.join(', ')}</p>}
+                              {nonBurnable.length > 0 && <p className="text-xs"><span className="text-muted-foreground">{t('list.garbageNonBurnable')}: </span>{nonBurnable.join(', ')}</p>}
+                              {recyclable.length > 0 && <p className="text-xs"><span className="text-muted-foreground">{t('list.garbageRecyclable')}: </span>{recyclable.join(', ')}</p>}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                ))
+                  );
+                })
               )
             ) : (
               contractsWithProperty.length === 0 ? (
@@ -919,19 +922,18 @@ export const ContractsPage = () => {
                     </div>
                     <div className="flex items-center gap-2 md:col-span-3">
                       <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <span>¥{contract.monthlyRent.toLocaleString()} {t('list.perMonth')}</span>
+                      <span>Â¥{contract.monthlyRent.toLocaleString()} {t('list.perMonth')}</span>
                     </div>
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <Badge variant="outline">{t('list.deposit')}: ¥{contract.deposit.toLocaleString()}</Badge>
+                    <Badge variant="outline">{t('list.deposit')}: Â¥{contract.deposit.toLocaleString()}</Badge>
                     <Badge variant="outline">{t('list.paymentDay')}: {contract.paymentDay}</Badge>
                     {contract.tenantEmail && <Badge variant="secondary">{contract.tenantEmail}</Badge>}
                     <Badge>{t(`status.${contract.status}` as any)}</Badge>
                   </div>
 
                   {contract.notes && <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{contract.notes}</p>}
-                  {contract.property && <PropertyDetailsPanel property={contract.property} t={t} tp={tp} />}
                 </div>
               ))
               )
@@ -940,22 +942,6 @@ export const ContractsPage = () => {
         </Card>
       </div>
 
-      {/* Mülk Önizleme Popup */}
-      <Dialog open={!!previewProperty} onOpenChange={(open) => { if (!open) setPreviewProperty(null); }}>
-        <DialogContent className="max-w-4xl w-full p-0 overflow-hidden">
-          <DialogHeader className="px-6 pt-5 pb-3 border-b border-border">
-            <DialogTitle className="flex items-center gap-2 text-base">
-              <Eye className="w-4 h-4 text-primary" />
-              {previewProperty?.address}
-            </DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[80vh]">
-            <div className="px-6 py-4">
-              {previewProperty && <PropertyPreview property={previewProperty} />}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
