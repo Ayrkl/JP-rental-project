@@ -426,10 +426,13 @@ export const ContractsPage = () => {
                       {pendingProperties.length === 0 ? (
                         <div className="px-3 py-2 text-sm text-muted-foreground">Veri yok</div>
                       ) : (
-                        pendingProperties.map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.address}
-                          </SelectItem>
+                        pendingProperties.map((p, index) => (
+                          <div key={p.id}>
+                            {index > 0 && <div className="mx-2 my-1 h-px bg-border" />}
+                            <SelectItem value={p.id}>
+                              {p.address}
+                            </SelectItem>
+                          </div>
                         ))
                       )}
                     </SelectContent>
