@@ -275,24 +275,22 @@ export const ContractsPage = () => {
     return () => document.removeEventListener('mousedown', onMouseDown);
   }, []);
 
-  const startEdit = (contractId: string) => {
-    const c = contracts.find((x) => x.id === contractId);
-    if (!c) return;
-    const phoneMatch = c.tenantPhone.trim().match(/^(\+\d{1,4})\s*(.*)$/);
-    setEditingContractId(contractId);
+  const startEdit = (contract: (typeof contractsWithProperty)[number]) => {
+    const phoneMatch = contract.tenantPhone.trim().match(/^(\+\d{1,4})\s*(.*)$/);
+    setEditingContractId(contract.id);
     setForm({
-      propertyId: c.propertyId,
-      tenantName: c.tenantName,
+      propertyId: contract.propertyId,
+      tenantName: contract.tenantName,
       countryCode: phoneMatch?.[1] ?? '+81',
-      tenantPhone: (phoneMatch?.[2] ?? c.tenantPhone).replace(/\D/g, ''),
-      tenantEmail: c.tenantEmail ?? '',
-      startDate: c.startDate,
-      endDate: c.endDate,
-      monthlyRent: String(c.monthlyRent),
-      deposit: String(c.deposit),
-      paymentDay: String(c.paymentDay),
-      status: c.status,
-      notes: c.notes ?? '',
+      tenantPhone: (phoneMatch?.[2] ?? contract.tenantPhone).replace(/\D/g, ''),
+      tenantEmail: contract.tenantEmail ?? '',
+      startDate: contract.startDate,
+      endDate: contract.endDate,
+      monthlyRent: String(contract.monthlyRent),
+      deposit: String(contract.deposit),
+      paymentDay: String(contract.paymentDay),
+      status: contract.status,
+      notes: contract.notes ?? '',
     });
     // Edit butonuna ilk basışta formu görünür hale getir.
     setActiveTab('contracted');
@@ -677,7 +675,7 @@ export const ContractsPage = () => {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                        onClick={() => startEdit(contract.id)}
+                        onClick={() => startEdit(contract)}
                       >
                         <Pencil className="w-4 h-4" />
                       </Button>
