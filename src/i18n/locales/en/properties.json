@@ -7,6 +7,11 @@
     "inventoryDesc": "Add fixtures one by one. Item name and short description can be entered.",
     "images": "Property Images"
   },
+  "page": {
+    "addTitle": "Add New Property to System",
+    "editTitle": "Edit Property",
+    "subtitle": "Fill in the required data to save the process steps."
+  },
   "fields": {
     "address": "Full Address",
     "addressPlaceholder": "e.g. Tokyo-to, Shibuya-ku...",

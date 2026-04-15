@@ -7,6 +7,11 @@
     "inventoryDesc": "Demirbaşları tek tek ekleyin. Eşya adı ve kısa açıklama girilebilir.",
     "images": "Mülk Görselleri"
   },
+  "page": {
+    "addTitle": "Sisteme Yeni Mülk Ekle",
+    "editTitle": "Mülkü Düzenle",
+    "subtitle": "Gerekli verileri doldurarak işlem aşamalarını kaydedin."
+  },
   "fields": {
     "address": "Açık Adres",
     "addressPlaceholder": "Örn: Tokyo-to, Shibuya-ku...",

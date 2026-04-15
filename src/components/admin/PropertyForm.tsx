@@ -468,8 +468,8 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     return (
         <div className="w-full text-foreground animate-in fade-in-50 duration-500 pb-10">
             <div className="mb-6 border-none">
-                <h1 className="text-2xl font-bold tracking-tight mb-1">{id ? 'Mülkü Düzenle' : 'Sisteme Yeni Mülk Ekle'}</h1>
-                <p className="text-muted-foreground text-sm">Gerekli verileri doldurarak işlem aşamalarını kaydedin.</p>
+                <h1 className="text-2xl font-bold tracking-tight mb-1">{id ? tp('page.editTitle') : tp('page.addTitle')}</h1>
+                <p className="text-muted-foreground text-sm">{tp('page.subtitle')}</p>
             </div>
             <div className="bg-card border border-border shadow-sm rounded-xl p-8">
                 {formContent}
