@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
 const initialForm = {
@@ -428,7 +428,7 @@ export const ContractsPage = () => {
                       ) : (
                         pendingProperties.map((p, index) => (
                           <div key={p.id}>
-                            {index > 0 && <div className="mx-2 my-1 h-px bg-border" />}
+                            {index > 0 && <SelectSeparator />}
                             <SelectItem value={p.id}>
                               {p.address}
                             </SelectItem>
