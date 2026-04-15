@@ -178,6 +178,11 @@ export const ContractsPage = () => {
     [properties, occupiedPropertyIds]
   );
 
+  const selectedPropertyExists = useMemo(
+    () => properties.some((p) => p.id === form.propertyId),
+    [properties, form.propertyId]
+  );
+
   const selectedCountry = useMemo(
     () => COUNTRY_CODE_OPTIONS.find((c) => c.code === form.countryCode),
     [form.countryCode]
@@ -394,6 +399,11 @@ export const ContractsPage = () => {
                     <SelectValue placeholder="Mülk seçin..." />
                   </SelectTrigger>
                   <SelectContent position="popper" side="bottom" sideOffset={4}>
+                    {editingContractId && form.propertyId && !selectedPropertyExists && (
+                      <SelectItem value={form.propertyId}>
+                        (Arsiv/Eski) #{form.propertyId.toUpperCase()}
+                      </SelectItem>
+                    )}
                     {(editingContractId ? properties : pendingProperties).map((p) => (
                       <SelectItem key={p.id} value={p.id}>
                         #{p.id.toUpperCase()} - {p.address}
