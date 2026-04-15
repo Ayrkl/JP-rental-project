@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 const initialForm = {
   propertyId: '',
   tenantName: '',
+  countryCode: '+81',
   tenantPhone: '',
   tenantEmail: '',
   startDate: '',
@@ -57,11 +58,13 @@ export const ContractsPage = () => {
   const startEdit = (contractId: string) => {
     const c = contracts.find((x) => x.id === contractId);
     if (!c) return;
+    const phoneMatch = c.tenantPhone.trim().match(/^(\+\d{1,4})\s*(.*)$/);
     setEditingContractId(contractId);
     setForm({
       propertyId: c.propertyId,
       tenantName: c.tenantName,
-      tenantPhone: c.tenantPhone,
+      countryCode: phoneMatch?.[1] ?? '+81',
+      tenantPhone: phoneMatch?.[2] ?? c.tenantPhone,
       tenantEmail: c.tenantEmail ?? '',
       startDate: c.startDate,
       endDate: c.endDate,
@@ -86,7 +89,7 @@ export const ContractsPage = () => {
     const payload = {
       propertyId: form.propertyId,
       tenantName: form.tenantName.trim(),
-      tenantPhone: form.tenantPhone.trim(),
+      tenantPhone: `${form.countryCode} ${form.tenantPhone.trim()}`.trim(),
       tenantEmail: form.tenantEmail.trim() || undefined,
       startDate: form.startDate,
       endDate: form.endDate,
@@ -108,10 +111,8 @@ export const ContractsPage = () => {
   };
 
   const normalizePhone = (raw: string) => {
-    // Uluslararası formatlara izin: +, rakam, boşluk, tire, parantez
-    const cleaned = raw.replace(/[^\d+\-\s()]/g, '');
-    const singlePlus = cleaned.replace(/\+/g, (m, idx) => (idx === 0 ? m : ''));
-    return singlePlus.slice(0, 24);
+    // Numara alanı: sadece rakam, boşluk, tire, parantez
+    return raw.replace(/[^\d\-\s()]/g, '').slice(0, 24);
   };
 
   return (
@@ -179,16 +180,34 @@ export const ContractsPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>Telefon</Label>
+                  <Label>Ülke Kodu</Label>
+                  <Select value={form.countryCode} onValueChange={(v) => setForm((prev) => ({ ...prev, countryCode: v }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent position="popper" side="bottom" sideOffset={4}>
+                      <SelectItem value="+81">🇯🇵 +81 (Japonya)</SelectItem>
+                      <SelectItem value="+90">🇹🇷 +90 (Türkiye)</SelectItem>
+                      <SelectItem value="+1">🇺🇸 +1 (ABD/Kanada)</SelectItem>
+                      <SelectItem value="+44">🇬🇧 +44 (Birleşik Krallık)</SelectItem>
+                      <SelectItem value="+49">🇩🇪 +49 (Almanya)</SelectItem>
+                      <SelectItem value="+33">🇫🇷 +33 (Fransa)</SelectItem>
+                      <SelectItem value="+39">🇮🇹 +39 (İtalya)</SelectItem>
+                      <SelectItem value="+34">🇪🇸 +34 (İspanya)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Telefon Numarası</Label>
                   <Input
                     type="tel"
                     inputMode="tel"
-                    placeholder="+81 90 1234 5678"
+                    placeholder="90 1234 5678"
                     value={form.tenantPhone}
                     onChange={(e) => setForm((prev) => ({ ...prev, tenantPhone: normalizePhone(e.target.value) }))}
                     required
                   />
-                  <p className="text-[11px] text-muted-foreground">Uluslararası format desteklenir (+90, +81 vb.).</p>
+                  <p className="text-[11px] text-muted-foreground">Sadece numara girin, ülke kodunu soldan seçin.</p>
                 </div>
                 <div className="space-y-2">
                   <Label>E-posta</Label>
