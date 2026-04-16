@@ -10,24 +10,24 @@ import { useTranslation } from 'react-i18next';
 
 // ── Tip Konfigürasyonu ──────────────────────────────────────────────────────
 const TYPE_LABELS: Record<DocumentType, string> = {
-  Contract:  'Sözleşme',
+  Contract: 'Sözleşme',
   Insurance: 'Sigorta',
-  Rules:     'Kılavuz',
-  Other:     'Diğer',
+  Rules: 'Kılavuz',
+  Other: 'Diğer',
 };
 
 const TYPE_COLORS: Record<DocumentType, string> = {
-  Contract:  'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
+  Contract: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
   Insurance: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-  Rules:     'bg-amber-500/15 text-amber-400 border-amber-500/30',
-  Other:     'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',
+  Rules: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+  Other: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',
 };
 
 const TYPE_ICONS: Record<DocumentType, React.ReactNode> = {
-  Contract:  <FileText className="w-4 h-4" />,
+  Contract: <FileText className="w-4 h-4" />,
   Insurance: <Shield className="w-4 h-4" />,
-  Rules:     <BookOpen className="w-4 h-4" />,
-  Other:     <File className="w-4 h-4" />,
+  Rules: <BookOpen className="w-4 h-4" />,
+  Other: <File className="w-4 h-4" />,
 };
 
 const formatDate = (iso: string) => {
@@ -44,15 +44,15 @@ export const DocumentManager = () => {
   const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
 
   const TYPE_LABELS: Record<DocumentType, string> = {
-    Contract:  t('docTypeContract'),
+    Contract: t('docTypeContract'),
     Insurance: t('docTypeInsurance'),
-    Rules:     t('docTypeRules'),
-    Other:     t('docTypeOther'),
+    Rules: t('docTypeRules'),
+    Other: t('docTypeOther'),
   };
 
-  const [recipientId, setRecipientId]   = useState('');
-  const [selectedTpl, setSelectedTpl]   = useState('');
-  const [justSent, setJustSent]         = useState(false);
+  const [recipientId, setRecipientId] = useState('');
+  const [selectedTpl, setSelectedTpl] = useState('');
+  const [justSent, setJustSent] = useState(false);
 
   const handleSend = () => {
     if (!recipientId || !selectedTpl) return;
@@ -87,7 +87,7 @@ export const DocumentManager = () => {
               Alıcı Kullanıcı <span className="text-rose-400">*</span>
             </Label>
             <Select value={recipientId} onValueChange={setRecipientId}>
-              <SelectTrigger className="h-10 bg-[#111] border-[#2a2a2a] text-sm">
+              <SelectTrigger className="h-12 bg-[#111] border-[#2a2a2a] text-sm px-4">
                 <SelectValue placeholder="Kullanıcı seçin..." />
               </SelectTrigger>
               <SelectContent position="popper" side="bottom" sideOffset={4}>
@@ -109,7 +109,7 @@ export const DocumentManager = () => {
               Belge <span className="text-rose-400">*</span>
             </Label>
             <Select value={selectedTpl} onValueChange={setSelectedTpl}>
-              <SelectTrigger className="h-10 bg-[#111] border-[#2a2a2a] text-sm">
+              <SelectTrigger className="h-12 bg-[#111] border-[#2a2a2a] text-sm px-4">
                 <SelectValue placeholder="Belge seçin..." />
               </SelectTrigger>
               <SelectContent position="popper" side="bottom" sideOffset={4}>
@@ -146,9 +146,9 @@ export const DocumentManager = () => {
         <div className="flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
             {!recipientId && !selectedTpl ? 'Kullanıcı ve belge seçin.' :
-             !recipientId ? 'Alıcı kullanıcı seçilmedi.' :
-             !selectedTpl ? 'Gönderilecek belge seçilmedi.' :
-             `"${users.find(u => u.id === recipientId)?.name}" hesabına gönderilecek.`}
+              !recipientId ? 'Alıcı kullanıcı seçilmedi.' :
+                !selectedTpl ? 'Gönderilecek belge seçilmedi.' :
+                  `"${users.find(u => u.id === recipientId)?.name}" hesabına gönderilecek.`}
           </p>
           <Button
             onClick={handleSend}
