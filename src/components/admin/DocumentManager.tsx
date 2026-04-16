@@ -90,7 +90,7 @@ export const DocumentManager = () => {
               <SelectTrigger className="h-10 bg-[#111] border-[#2a2a2a] text-sm">
                 <SelectValue placeholder="Kullanıcı seçin..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" side="bottom" sideOffset={4}>
                 {users.map(u => (
                   <SelectItem key={u.id} value={u.id}>
                     <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export const DocumentManager = () => {
               <SelectTrigger className="h-10 bg-[#111] border-[#2a2a2a] text-sm">
                 <SelectValue placeholder="Belge seçin..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" side="bottom" sideOffset={4}>
                 {DOCUMENT_TEMPLATES.map(t => (
                   <SelectItem key={t.id} value={t.id}>
                     <div className="flex items-center gap-2">
