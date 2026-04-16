@@ -97,8 +97,11 @@ const DocumentRow = ({ doc }: { doc: Document }) => {
 
 export const Documents = () => {
   const { documents } = useDocumentStore();
-  // Kiracı belgelerini filtrele (mock: userId === 'tenant1')
-  const myDocs = documents.filter(d => d.userId === 'tenant1');
+  
+  // Oturum açan kiracının ID'si (gerçek auth gelince buraya session'dan alınacak)
+  // useUserStore'daki '1' ID'li kullanıcıyı simüle ediyor
+  const CURRENT_TENANT_ID = '1';
+  const myDocs = documents.filter(d => d.recipientId === CURRENT_TENANT_ID);
 
   const grouped = (Object.keys(TYPE_CONFIG) as DocumentType[]).reduce((acc, type) => {
     const items = myDocs.filter(d => d.type === type);
