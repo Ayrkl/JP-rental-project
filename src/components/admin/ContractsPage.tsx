@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { CalendarDays, ChevronDown, FileText, KeyRound, Lock, Mailbox, Pencil, Phone, Plus, Search, Trash, Trash2, User, Wallet, X } from 'lucide-react';
+import { ChevronDown, FileText, KeyRound, Lock, Mailbox, Pencil, Plus, Search, Trash, Trash2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
@@ -162,6 +162,7 @@ export const ContractsPage = () => {
   const [activeTab, setActiveTab] = useState<'pending' | 'contracted'>('pending');
   const [editingContractId, setEditingContractId] = useState<string | null>(null);
   const [expandedPropertyId, setExpandedPropertyId] = useState<string | null>(null);
+  const [expandedContractId, setExpandedContractId] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState('');
   const [formError, setFormError] = useState('');
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
@@ -913,96 +914,252 @@ export const ContractsPage = () => {
               contractsWithProperty.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{t('list.noContracts')}</p>
               ) : (
-                contractsWithProperty.map((contract) => (
-                <div key={contract.id} className="rounded-xl border border-border/60 p-4 bg-background/60">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="font-semibold text-base">{t('list.contract')}</h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {contract.property ? contract.property.address : t('list.deletedProperty')}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
+                contractsWithProperty.map((contract) => {
+                  const isContractExpanded = expandedContractId === contract.id;
+                  const prop = contract.property;
+                  const logistics = prop?.logistics ?? {};
+                  const burnable = logistics.garbageSchedule?.burnable ?? [];
+                  const nonBurnable = logistics.garbageSchedule?.nonBurnable ?? [];
+                  const recyclable = logistics.garbageSchedule?.recyclable ?? [];
+
+                  return (
+                  <div key={contract.id} className="rounded-xl border border-border/60 bg-background/60 overflow-hidden">
+                    {/* Kart basligi */}
+                    <div className="p-4 flex items-center justify-between gap-3">
+                      <button
                         type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                        onClick={() => startEdit(contract)}
+                        className="flex-1 text-left flex items-center gap-3 min-w-0"
+                        onClick={() => setExpandedContractId(isContractExpanded ? null : contract.id)}
                       >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Select
-                        value={contract.status}
-                        onValueChange={(v) =>
-                          updateContract(contract.id, {
-                            propertyId: contract.propertyId,
-                            tenantName: contract.tenantName,
-                            tenantPhone: contract.tenantPhone,
-                            tenantEmail: contract.tenantEmail,
-                            startDate: contract.startDate,
-                            endDate: contract.endDate,
-                            monthlyRent: contract.monthlyRent,
-                            deposit: contract.deposit,
-                            paymentDay: contract.paymentDay,
-                            status: v as ContractStatus,
-                            notes: contract.notes,
-                          })
-                        }
-                      >
-                        <SelectTrigger className="h-8 w-[130px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent position="popper" side="bottom" sideOffset={4}>
-                          <SelectItem value="Taslak">{t('status.Taslak')}</SelectItem>
-                          <SelectItem value="Aktif">{t('status.Aktif')}</SelectItem>
-                          <SelectItem value="Sona Erdi">{t('status.Sona Erdi')}</SelectItem>
-                          <SelectItem value="Feshedildi">{t('status.Feshedildi')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => removeContract(contract.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-base">{t('list.contract')}</h3>
+                            <Badge>{t(`status.${contract.status}` as any)}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                            {contract.property ? contract.property.address : t('list.deletedProperty')}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">{contract.tenantName}</p>
+                        </div>
+                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 shrink-0 ${isContractExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                          onClick={() => startEdit(contract)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Select
+                          value={contract.status}
+                          onValueChange={(v) =>
+                            updateContract(contract.id, {
+                              propertyId: contract.propertyId,
+                              tenantName: contract.tenantName,
+                              tenantPhone: contract.tenantPhone,
+                              tenantEmail: contract.tenantEmail,
+                              startDate: contract.startDate,
+                              endDate: contract.endDate,
+                              monthlyRent: contract.monthlyRent,
+                              deposit: contract.deposit,
+                              paymentDay: contract.paymentDay,
+                              status: v as ContractStatus,
+                              notes: contract.notes,
+                            })
+                          }
+                        >
+                          <SelectTrigger className="h-8 w-[130px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent position="popper" side="bottom" sideOffset={4}>
+                            <SelectItem value="Taslak">{t('status.Taslak')}</SelectItem>
+                            <SelectItem value="Aktif">{t('status.Aktif')}</SelectItem>
+                            <SelectItem value="Sona Erdi">{t('status.Sona Erdi')}</SelectItem>
+                            <SelectItem value="Feshedildi">{t('status.Feshedildi')}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                          onClick={() => removeContract(contract.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-muted-foreground" />
-                      <span>{contract.tenantName}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <span>{contract.tenantPhone}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                      <span>
-                        {contract.startDate} - {contract.endDate}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 md:col-span-3">
-                      <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <span>Â¥{contract.monthlyRent.toLocaleString()} {t('list.perMonth')}</span>
-                    </div>
-                  </div>
+                    {/* Accordion icerigi */}
+                    {isContractExpanded && (
+                      <div className="border-t border-border/60 px-4 py-4 space-y-4 bg-muted/10">
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Badge variant="outline">{t('list.deposit')}: Â¥{contract.deposit.toLocaleString()}</Badge>
-                    <Badge variant="outline">{t('list.paymentDay')}: {contract.paymentDay}</Badge>
-                    {contract.tenantEmail && <Badge variant="secondary">{contract.tenantEmail}</Badge>}
-                    <Badge>{t(`status.${contract.status}` as any)}</Badge>
-                  </div>
+                        {/* Sozlesme bilgileri */}
+                        <div className="space-y-1.5">
+                          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Sozlesme Bilgileri</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Kiraci</p>
+                              <p className="text-sm font-semibold">{contract.tenantName}</p>
+                            </div>
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Telefon</p>
+                              <p className="text-sm font-semibold">{contract.tenantPhone}</p>
+                            </div>
+                            {contract.tenantEmail && (
+                              <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                                <p className="text-[10px] text-muted-foreground">E-posta</p>
+                                <p className="text-sm font-semibold truncate">{contract.tenantEmail}</p>
+                              </div>
+                            )}
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Baslangic</p>
+                              <p className="text-sm font-semibold">{contract.startDate}</p>
+                            </div>
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Bitis</p>
+                              <p className="text-sm font-semibold">{contract.endDate}</p>
+                            </div>
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Odeme Gunu</p>
+                              <p className="text-sm font-semibold">{contract.paymentDay}. gun</p>
+                            </div>
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Aylik Kira</p>
+                              <p className="text-sm font-semibold">&#165;{contract.monthlyRent.toLocaleString()}</p>
+                            </div>
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Depozito</p>
+                              <p className="text-sm font-semibold">&#165;{contract.deposit.toLocaleString()}</p>
+                            </div>
+                          </div>
+                          {contract.notes && (
+                            <div className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                              <p className="text-[10px] text-muted-foreground">Notlar</p>
+                              <p className="text-sm leading-relaxed">{contract.notes}</p>
+                            </div>
+                          )}
+                        </div>
 
-                  {contract.notes && <p className="mt-3 text-xs text-muted-foreground leading-relaxed">{contract.notes}</p>}
-                </div>
-              ))
+                        {/* Mulk bilgileri */}
+                        {prop && (
+                          <div className="space-y-1.5">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Mulk Bilgileri</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                              {[
+                                { label: 'Net Alan', value: `${prop.area} m\u00b2` },
+                                { label: 'Yapim Yili', value: prop.buildYear },
+                                { label: 'Kapasite', value: `${prop.tenantCapacity} Kisi` },
+                                { label: 'Plan', value: prop.roomType },
+                                { label: 'Deprem Std.', value: prop.quakeStandard === 'new' ? 'Yeni' : prop.quakeStandard === 'old' ? 'Eski' : 'Grade 2/3' },
+                              ].map((item, i) => (
+                                <div key={i} className="rounded-lg border border-border/50 bg-background px-3 py-2">
+                                  <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                                  <p className="text-sm font-semibold">{item.value}</p>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Oda dagilimi */}
+                            {prop.rooms.length > 0 && (() => {
+                              const roomLabels: Record<string, string> = { Room: 'Yatak Odasi', Living: 'Salon', Dining: 'Yemek Alani', Kitchen: 'Mutfak', Bathroom: 'Banyo', Toilet: 'Tuvalet', Balcony: 'Balkon', Storage: 'Depo/Kiler' };
+                              const counts = prop.rooms.reduce((acc, r) => { acc[r.type] = (acc[r.type] || 0) + 1; return acc; }, {} as Record<string, number>);
+                              return (
+                                <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                  {Object.entries(counts).map(([type, count]) => (
+                                    <Badge key={type} variant="outline" className="text-xs">{roomLabels[type] || type}: {count}</Badge>
+                                  ))}
+                                </div>
+                              );
+                            })()}
+
+                            {/* Fiziksel imkanlar */}
+                            {prop.features && prop.features.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                {prop.features.map(f => (
+                                  <Badge key={f} variant="secondary" className="text-xs capitalize">
+                                    {f.replace(/([A-Z])/g, ' $1').trim()}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Envanter */}
+                            {prop.inventory.length > 0 && (
+                              <div className="space-y-1.5 mt-1.5">
+                                <p className="text-[10px] text-muted-foreground">Demirbas ({prop.inventory.length})</p>
+                                <div className="space-y-1.5">
+                                  {prop.inventory.map(item => (
+                                    <div key={item.id} className="rounded-lg border border-border/50 bg-background px-3 py-2 flex items-start gap-3">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-semibold truncate">{item.name}</p>
+                                        {item.description && <p className="text-xs text-muted-foreground truncate">{item.description}</p>}
+                                      </div>
+                                      <div className="flex flex-col items-end gap-1 shrink-0">
+                                        {item.condition && (
+                                          <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${item.condition === 'new' ? 'border-green-500/40 text-green-500' : item.condition === 'used' ? 'border-yellow-500/40 text-yellow-500' : 'border-red-500/40 text-red-500'}`}>
+                                            {item.condition === 'new' ? 'Yeni' : item.condition === 'used' ? 'Kullanilmis' : 'Hasarli'}
+                                          </Badge>
+                                        )}
+                                        {item.warrantyExpiry && (
+                                          <p className="text-[10px] text-muted-foreground">Garanti: {item.warrantyExpiry}</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Lojistik */}
+                            {logistics.mailboxNumber && (
+                              <div className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5 mt-1.5">
+                                <Mailbox className="w-4 h-4 text-muted-foreground shrink-0" />
+                                <div>
+                                  <p className="text-[10px] text-muted-foreground">Posta Kutusu</p>
+                                  <p className="text-sm font-semibold">{logistics.mailboxNumber}</p>
+                                </div>
+                              </div>
+                            )}
+                            {logistics.smartLockCode && (
+                              <div className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5 mt-1.5">
+                                <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
+                                <div>
+                                  <p className="text-[10px] text-muted-foreground">Akilli Kilit Kodu</p>
+                                  <p className="text-sm font-semibold font-mono tracking-widest">{logistics.smartLockCode}</p>
+                                </div>
+                              </div>
+                            )}
+                            {logistics.keyHandoverNote && (
+                              <div className="flex items-start gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5 mt-1.5">
+                                <KeyRound className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                                <div>
+                                  <p className="text-[10px] text-muted-foreground">Anahtar Tutanagi</p>
+                                  <p className="text-sm whitespace-pre-wrap">{logistics.keyHandoverNote}</p>
+                                </div>
+                              </div>
+                            )}
+                            {(burnable.length > 0 || nonBurnable.length > 0 || recyclable.length > 0) && (
+                              <div className="flex items-start gap-2.5 rounded-lg border border-border/50 bg-background px-3 py-2.5 mt-1.5">
+                                <Trash className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                  <p className="text-[10px] text-muted-foreground">Cop Takvimi</p>
+                                  {burnable.length > 0 && <p className="text-xs"><span className="text-muted-foreground">Yanabilir: </span>{burnable.join(', ')}</p>}
+                                  {nonBurnable.length > 0 && <p className="text-xs"><span className="text-muted-foreground">Yanmaz: </span>{nonBurnable.join(', ')}</p>}
+                                  {recyclable.length > 0 && <p className="text-xs"><span className="text-muted-foreground">Geri Donusum: </span>{recyclable.join(', ')}</p>}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  );
+                })
               )
             )}
           </CardContent>
