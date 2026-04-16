@@ -21,7 +21,7 @@ interface DocumentStore {
   getDocumentsByUserId: (userId: string) => Document[];
 }
 
-const MOCK_DOCUMENTS: Document[] = [
+export const MOCK_DOCUMENTS: Document[] = [
   { id: '1', name: 'Kira Sözleşmesi 2025.pdf', type: 'Contract', uploadDate: '2025-01-15', size: '2.4 MB', propertyId: 'prop1', userId: 'tenant1' },
   { id: '2', name: 'Deprem Sigortası Poliçesi.pdf', type: 'Insurance', uploadDate: '2025-01-20', size: '1.8 MB', propertyId: 'prop1', userId: 'tenant1' },
   { id: '3', name: 'Bina Kullanım Kılavuzu.pdf', type: 'Rules', uploadDate: '2025-01-22', size: '3.1 MB', propertyId: 'prop1', userId: 'tenant1' },
@@ -50,6 +50,15 @@ export const useDocumentStore = create<DocumentStore>()(
 
       getDocumentsByUserId: (userId) => get().documents.filter(d => d.userId === userId),
     }),
-    { name: 'document-storage' }
+    {
+      name: 'document-storage-v2',
+      version: 2,
+      migrate: () => ({ documents: MOCK_DOCUMENTS }),
+      onRehydrateStorage: () => (state) => {
+        if (state && state.documents.length === 0) {
+          state.documents = MOCK_DOCUMENTS;
+        }
+      },
+    }
   )
 );

@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react';
 import { UploadCloud, FileText, Trash2, Calendar, Download } from 'lucide-react';
-import { useDocumentStore, type DocumentType } from '@/store/useDocumentStore';
+import { useDocumentStore, type DocumentType, MOCK_DOCUMENTS } from '@/store/useDocumentStore';
 import { usePropertyStore } from '@/store/usePropertyStore';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
@@ -28,8 +27,11 @@ const TYPE_COLORS: Record<DocumentType, string> = {
 };
 
 export const DocumentManager = () => {
-  const { documents, addDocument, deleteDocument } = useDocumentStore();
+  const { documents: storeDocuments, addDocument, deleteDocument } = useDocumentStore();
   const { properties } = usePropertyStore();
+
+  // Store boş gelirse (localStorage temiz) mock'u kullan
+  const documents = storeDocuments.length > 0 ? storeDocuments : MOCK_DOCUMENTS;
 
   const [dragging, setDragging] = useState(false);
   const [docType, setDocType] = useState<DocumentType>('Contract');
