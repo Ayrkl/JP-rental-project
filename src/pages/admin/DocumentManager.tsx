@@ -268,6 +268,9 @@ export const DocumentManager = () => {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-zinc-100 truncate">{doc.name}</p>
                     <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0 border ${TYPE_COLORS[doc.type]}`}>
+                        {TYPE_LABELS[doc.type]}
+                      </Badge>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />{formatDate(doc.uploadDate)}
                       </span>
