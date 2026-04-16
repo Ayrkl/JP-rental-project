@@ -33,32 +33,63 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
   { id: 't8', name: 'Teslim Tutanağı.pdf',             type: 'Other',     size: '0.7 MB', description: 'Mülk teslim ve iade tutanağı' },
 ];
 
-export type SendDocumentPayload = Omit<PropertyDocument, 'id'>;
+export const INITIAL_DOCUMENTS: PropertyDocument[] = [];
 
 interface DocumentStore {
+  /** Gönderilmiş belgeler */
   documents: PropertyDocument[];
-  sendDocument: (payload: SendDocumentPayload) => void;
+  /** Admin bir şablonu seçilen kullanıcıya gönderir */
+  sendDocument: (templateId: string, recipientId: string) => void;
+  /** Admin özel bir dosya yükleyip gönderir */
+  sendCustomDocument: (file: { name: string; size: string; type: DocumentType }, recipientId: string) => void;
+  /** Admininin gönderdiği bir belgeyi geri alması */
   deleteDocument: (id: string) => void;
 }
 
 export const useDocumentStore = create<DocumentStore>()(
   persist(
     (set) => ({
-      documents: [],
+      documents: INITIAL_DOCUMENTS,
 
-      sendDocument: (payload) =>
+      sendDocument: (templateId, recipientId) => {
+        const template = DOCUMENT_TEMPLATES.find(t => t.id === templateId);
+        if (!template) return;
         set((state) => ({
           documents: [
-            { ...payload, id: Math.random().toString(36).slice(2, 9) },
+            {
+              id: Math.random().toString(36).slice(2, 9),
+              name: template.name,
+              type: template.type,
+              size: template.size,
+              uploadDate: new Date().toISOString().split('T')[0],
+              recipientId,
+            },
             ...state.documents,
           ],
-        })),
+        }));
+      },
+
+      sendCustomDocument: (file, recipientId) => {
+        set((state) => ({
+          documents: [
+            {
+              id: Math.random().toString(36).slice(2, 9),
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              uploadDate: new Date().toISOString().split('T')[0],
+              recipientId,
+            },
+            ...state.documents,
+          ],
+        }));
+      },
 
       deleteDocument: (id) =>
         set((state) => ({
           documents: state.documents.filter((d) => d.id !== id),
         })),
     }),
-    { name: 'property-document-storage-v2' }
+    { name: 'property-document-storage' }
   )
 );
