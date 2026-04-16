@@ -63,21 +63,15 @@ export const DocumentManager = () => {
     if (activeTab === 'template' && !recipientId) return;
 
     if (activeTab === 'template' && selectedTpl && recipientId) {
-      // Önce şablonlarda ara
-      const template = DOCUMENT_TEMPLATES.find(t => t.id === selectedTpl);
-      if (template) {
-        sendDocument(selectedTpl, recipientId);
-      } else {
-        // Şablon değilse mevcut belgelerde ara (Klonlama)
-        const existingDoc = documents.find(d => d.id === selectedTpl);
-        if (existingDoc) {
-          sendCustomDocument({
-            name: existingDoc.name,
-            size: existingDoc.size,
-            type: existingDoc.type,
-            previewUrl: existingDoc.previewUrl
-          }, recipientId);
-        }
+      // Sadece mevcut belgelerde ara (Klonlama)
+      const existingDoc = documents.find(d => d.id === selectedTpl);
+      if (existingDoc) {
+        sendCustomDocument({
+          name: existingDoc.name,
+          size: existingDoc.size,
+          type: existingDoc.type,
+          previewUrl: existingDoc.previewUrl
+        }, recipientId);
       }
       setSelectedTpl('');
     } else if (activeTab === 'upload' && uploadFile) {
@@ -165,30 +159,20 @@ export const DocumentManager = () => {
                     <SelectValue placeholder="Belge seçin..." />
                   </SelectTrigger>
                   <SelectContent position="popper" side="bottom" sideOffset={4} className="w-[var(--radix-select-trigger-width)]">
-                    {/* Şablonlar Grubu */}
-                    <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sistem Şablonları</div>
-                    {DOCUMENT_TEMPLATES.map(t => (
-                      <SelectItem key={t.id} value={t.id}>
-                        <div className="flex items-center gap-2">
-                          <span>{t.name}</span>
-                          <span className="text-xs text-muted-foreground">({t.size})</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                    
-                    {/* Yüklenen Belgeler Grubu */}
-                    {documents.length > 0 && (
-                      <>
-                        <div className="mt-2 px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-t border-border/50">Yüklenen Belgeler</div>
-                        {Array.from(new Map(documents.map(d => [d.name, d])).values()).map(d => (
-                          <SelectItem key={d.id} value={d.id}>
-                            <div className="flex items-center gap-2">
-                              <span>{d.name}</span>
-                              <span className="text-xs text-muted-foreground">({d.size})</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </>
+                    {/* Yüklenen Belgeler */}
+                    {documents.length > 0 ? (
+                      Array.from(new Map(documents.map(d => [d.name, d])).values()).map(d => (
+                        <SelectItem key={d.id} value={d.id}>
+                          <div className="flex items-center gap-2">
+                            <span>{d.name}</span>
+                            <span className="text-xs text-muted-foreground">({d.size})</span>
+                          </div>
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-4 py-8 text-center text-xs text-muted-foreground">
+                        Henüz belge yüklenmemiş.
+                      </div>
                     )}
                   </SelectContent>
                 </Select>
