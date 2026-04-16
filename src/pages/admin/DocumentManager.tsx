@@ -59,11 +59,26 @@ export const DocumentManager = () => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
-    // Şablon tabındaysak alıcı şart, upload tabındaysak alıcı opsiyonel
+    // Şablon/Belge tabındaysak alıcı şart, upload tabındaysak alıcı opsiyonel
     if (activeTab === 'template' && !recipientId) return;
 
     if (activeTab === 'template' && selectedTpl && recipientId) {
-      sendDocument(selectedTpl, recipientId);
+      // Önce şablonlarda ara
+      const template = DOCUMENT_TEMPLATES.find(t => t.id === selectedTpl);
+      if (template) {
+        sendDocument(selectedTpl, recipientId);
+      } else {
+        // Şablon değilse mevcut belgelerde ara (Klonlama)
+        const existingDoc = documents.find(d => d.id === selectedTpl);
+        if (existingDoc) {
+          sendCustomDocument({
+            name: existingDoc.name,
+            size: existingDoc.size,
+            type: existingDoc.type,
+            previewUrl: existingDoc.previewUrl
+          }, recipientId);
+        }
+      }
       setSelectedTpl('');
     } else if (activeTab === 'upload' && uploadFile) {
       // Gerçek dosya önizlemesi için Blob URL oluştur
@@ -143,13 +158,15 @@ export const DocumentManager = () => {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">
-                  Belge Şablonu <span className="text-rose-400">*</span>
+                  Belgeler <span className="text-rose-400">*</span>
                 </Label>
                 <Select value={selectedTpl} onValueChange={setSelectedTpl}>
                   <SelectTrigger className="h-14 w-full bg-[#111] border-[#2a2a2a] text-base px-6">
-                    <SelectValue placeholder="Şablon seçin..." />
+                    <SelectValue placeholder="Belge seçin..." />
                   </SelectTrigger>
                   <SelectContent position="popper" side="bottom" sideOffset={4} className="w-[var(--radix-select-trigger-width)]">
+                    {/* Şablonlar Grubu */}
+                    <div className="px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sistem Şablonları</div>
                     {DOCUMENT_TEMPLATES.map(t => (
                       <SelectItem key={t.id} value={t.id}>
                         <div className="flex items-center gap-2">
@@ -158,6 +175,21 @@ export const DocumentManager = () => {
                         </div>
                       </SelectItem>
                     ))}
+                    
+                    {/* Yüklenen Belgeler Grubu */}
+                    {documents.length > 0 && (
+                      <>
+                        <div className="mt-2 px-2 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-t border-border/50">Yüklenen Belgeler</div>
+                        {Array.from(new Map(documents.map(d => [d.name, d])).values()).map(d => (
+                          <SelectItem key={d.id} value={d.id}>
+                            <div className="flex items-center gap-2">
+                              <span>{d.name}</span>
+                              <span className="text-xs text-muted-foreground">({d.size})</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -219,7 +251,7 @@ export const DocumentManager = () => {
             <p className="text-xs text-muted-foreground">
               {activeTab === 'template' ? (
                 !recipientId ? 'Alıcı kullanıcı seçilmedi.' :
-                !selectedTpl ? 'Gönderilecek şablon seçilmedi.' :
+                !selectedTpl ? 'Gönderilecek belge seçilmedi.' :
                 `"${users.find(u => u.id === recipientId)?.name}" hesabına gönderilecek.`
               ) : (
                 !uploadFile ? 'Yüklenecek dosya seçilmedi.' : 
