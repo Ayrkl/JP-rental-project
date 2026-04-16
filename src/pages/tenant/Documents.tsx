@@ -4,6 +4,7 @@ import { useDocumentStore, type PropertyDocument, type DocumentType } from '@/st
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { DocumentPreviewModal } from '@/components/shared/DocumentPreviewModal';
 
 const formatDate = (iso: string) => {
   const d = new Date(iso);
@@ -51,7 +52,7 @@ const DownloadProgress = ({ name, onDone }: { name: string; onDone: () => void }
   );
 };
 
-const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
+const DocumentRow = ({ doc, onPreview }: { doc: PropertyDocument; onPreview: (doc: PropertyDocument) => void }) => {
   const { t: tRaw } = useTranslation('users');
   const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
   const [downloading, setDownloading] = useState(false);
@@ -60,12 +61,10 @@ const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
   return (
     <>
       <div className="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.03] transition-all duration-200 group">
-        {/* PDF İkonu */}
         <div className={`w-10 h-10 rounded-xl bg-muted/30 flex items-center justify-center shrink-0 ${cfg.color}`}>
           <FileText className="w-5 h-5" />
         </div>
 
-        {/* Bilgi */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-zinc-100 truncate">{doc.name}</p>
           <div className="flex items-center gap-3 mt-0.5">
@@ -76,9 +75,13 @@ const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
           </div>
         </div>
 
-        {/* Butonlar */}
         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
-          <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => onPreview(doc)}
+          >
             <Eye className="w-3.5 h-3.5" /> {t('docPreview')}
           </Button>
           <Button
@@ -104,6 +107,7 @@ export const Documents = () => {
   const { documents } = useDocumentStore();
   const { t: tRaw } = useTranslation('users');
   const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+  const [previewDoc, setPreviewDoc] = useState<PropertyDocument | null>(null);
 
   const TYPE_CONFIG: Record<DocumentType, { label: string; icon: React.ReactNode; color: string }> = {
     Contract:  { label: t('docGroupContract'), icon: <FileText className="w-4 h-4" />,  color: 'text-indigo-400' },
@@ -142,7 +146,7 @@ export const Documents = () => {
 
             {/* Belgeler */}
             <div className="divide-y divide-border/50">
-              {docs!.map(doc => <DocumentRow key={doc.id} doc={doc} />)}
+              {docs!.map(doc => <DocumentRow key={doc.id} doc={doc} onPreview={setPreviewDoc} />)}
             </div>
           </div>
         );
@@ -154,6 +158,12 @@ export const Documents = () => {
           <p className="text-sm">{t('docNoDocuments')}</p>
         </div>
       )}
+
+      <DocumentPreviewModal
+        doc={previewDoc}
+        open={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+      />
     </div>
   );
 };

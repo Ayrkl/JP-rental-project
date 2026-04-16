@@ -1,18 +1,19 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export type DocumentType = 'Contract' | 'Insurance' | 'Rules' | 'Other';
 
-// Belge veri modeli
 export type PropertyDocument = {
   id: string;
   name: string;
   type: DocumentType;
   uploadDate: string;
   size: string;
-  recipientId: string; // hangi kullanıcıya gönderildi
+  recipientId: string;
+  propertyId?: string;
+  fileData?: string; // base64 veya mock URL
 };
 
-// Admin'in seçebileceği önceden hazırlanmış şablon belgeler
 export type DocumentTemplate = {
   id: string;
   name: string;
@@ -32,47 +33,32 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
   { id: 't8', name: 'Teslim Tutanağı.pdf',             type: 'Other',     size: '0.7 MB', description: 'Mülk teslim ve iade tutanağı' },
 ];
 
-const INITIAL_DOCUMENTS: PropertyDocument[] = [];
+export type SendDocumentPayload = Omit<PropertyDocument, 'id'>;
 
 interface DocumentStore {
-  /** Gönderilmiş belgeler */
   documents: PropertyDocument[];
-  /** Admin bir şablonu seçilen kullanıcıya gönderir */
-  sendDocument: (templateId: string, recipientId: string) => void;
-  /** Admininin gönderdiği bir belgeyi geri alması */
+  sendDocument: (payload: SendDocumentPayload) => void;
   deleteDocument: (id: string) => void;
 }
-
-import { persist } from 'zustand/middleware';
 
 export const useDocumentStore = create<DocumentStore>()(
   persist(
     (set) => ({
-      documents: INITIAL_DOCUMENTS,
+      documents: [],
 
-      sendDocument: (templateId, recipientId) => {
-        const template = DOCUMENT_TEMPLATES.find(t => t.id === templateId);
-        if (!template) return;
+      sendDocument: (payload) =>
         set((state) => ({
           documents: [
-            {
-              id: Math.random().toString(36).slice(2, 9),
-              name: template.name,
-              type: template.type,
-              size: template.size,
-              uploadDate: new Date().toISOString().split('T')[0],
-              recipientId,
-            },
+            { ...payload, id: Math.random().toString(36).slice(2, 9) },
             ...state.documents,
           ],
-        }));
-      },
+        })),
 
       deleteDocument: (id) =>
         set((state) => ({
           documents: state.documents.filter((d) => d.id !== id),
         })),
     }),
-    { name: 'property-document-storage' }
+    { name: 'property-document-storage-v2' }
   )
 );

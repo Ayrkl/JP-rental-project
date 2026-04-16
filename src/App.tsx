@@ -5,7 +5,7 @@ import { Dashboard } from './components/admin/Dashboard';
 import { MapPage } from './components/admin/MapPage';
 import { ContractsPage } from './components/admin/ContractsPage';
 import { Users } from './pages/admin/Users';
-import { DocumentManager } from './components/admin/DocumentManager';
+import { DocumentManager } from './pages/admin/DocumentManager';
 import { Documents } from './pages/tenant/Documents';
 import { RoleSelectPage } from './pages/RoleSelectPage';
 import { TenantLayout } from './components/tenant/TenantLayout';
