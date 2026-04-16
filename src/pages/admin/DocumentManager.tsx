@@ -59,17 +59,22 @@ export const DocumentManager = () => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
-    if (!recipientId) return;
+    // Şablon tabındaysak alıcı şart, upload tabındaysak alıcı opsiyonel
+    if (activeTab === 'template' && !recipientId) return;
 
-    if (activeTab === 'template' && selectedTpl) {
+    if (activeTab === 'template' && selectedTpl && recipientId) {
       sendDocument(selectedTpl, recipientId);
       setSelectedTpl('');
     } else if (activeTab === 'upload' && uploadFile) {
+      // Gerçek dosya önizlemesi için Blob URL oluştur
+      const previewUrl = URL.createObjectURL(uploadFile);
+      
       sendCustomDocument({
         name: uploadFile.name,
         size: (uploadFile.size / 1024 / 1024).toFixed(1) + ' MB',
-        type: uploadType
-      }, recipientId);
+        type: uploadType,
+        previewUrl: previewUrl
+      }, recipientId || ''); 
       setUploadFile(null);
     }
 
@@ -112,31 +117,30 @@ export const DocumentManager = () => {
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Alıcı Seç (Her iki tab için ortak) */}
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
-              Alıcı Kullanıcı <span className="text-rose-400">*</span>
-            </Label>
-            <Select value={recipientId} onValueChange={setRecipientId}>
-              <SelectTrigger className="h-14 w-full bg-[#111] border-[#2a2a2a] text-base px-6">
-                <SelectValue placeholder="Kullanıcı seçin..." />
-              </SelectTrigger>
-              <SelectContent position="popper" side="bottom" sideOffset={4} className="w-[var(--radix-select-trigger-width)]">
-                {users.map(u => (
-                  <SelectItem key={u.id} value={u.id}>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{u.name}</span>
-                      <span className="text-xs text-muted-foreground">{u.email}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           {activeTab === 'template' ? (
             /* ── Şablon Seçimi ── */
             <div className="space-y-5">
+              {/* Alıcı Seç (Sadece Şablon için) */}
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">
+                  Alıcı Kullanıcı <span className="text-rose-400">*</span>
+                </Label>
+                <Select value={recipientId} onValueChange={setRecipientId}>
+                  <SelectTrigger className="h-14 w-full bg-[#111] border-[#2a2a2a] text-base px-6">
+                    <SelectValue placeholder="Kullanıcı seçin..." />
+                  </SelectTrigger>
+                  <SelectContent position="popper" side="bottom" sideOffset={4} className="w-[var(--radix-select-trigger-width)]">
+                    {users.map(u => (
+                      <SelectItem key={u.id} value={u.id}>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{u.name}</span>
+                          <span className="text-xs text-muted-foreground">{u.email}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">
                   Belge Şablonu <span className="text-rose-400">*</span>
@@ -180,7 +184,7 @@ export const DocumentManager = () => {
                     <SelectTrigger className="h-12 bg-[#111] border-[#2a2a2a]">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" side="bottom" sideOffset={4}>
                       {Object.entries(TYPE_LABELS).map(([val, label]) => (
                         <SelectItem key={val} value={val}>{label}</SelectItem>
                       ))}
@@ -213,19 +217,23 @@ export const DocumentManager = () => {
           {/* Gönder Butonu */}
           <div className="flex items-center justify-between pt-2">
             <p className="text-xs text-muted-foreground">
-              {!recipientId ? 'Alıcı kullanıcı seçilmedi.' :
-               (activeTab === 'template' && !selectedTpl) ? 'Gönderilecek şablon seçilmedi.' :
-               (activeTab === 'upload' && !uploadFile) ? 'Dosya yüklenmedi.' :
-               `"${users.find(u => u.id === recipientId)?.name}" hesabına gönderilecek.`}
+              {activeTab === 'template' ? (
+                !recipientId ? 'Alıcı kullanıcı seçilmedi.' :
+                !selectedTpl ? 'Gönderilecek şablon seçilmedi.' :
+                `"${users.find(u => u.id === recipientId)?.name}" hesabına gönderilecek.`
+              ) : (
+                !uploadFile ? 'Yüklenecek dosya seçilmedi.' : 
+                `"${uploadFile.name}" sisteme yüklenecek.`
+              )}
             </p>
             <Button
               onClick={handleSend}
-              disabled={!recipientId || (activeTab === 'template' ? !selectedTpl : !uploadFile)}
+              disabled={activeTab === 'template' ? (!recipientId || !selectedTpl) : !uploadFile}
               className="gap-2 min-w-[140px]"
             >
               {justSent
-                ? <><CheckCircle2 className="w-4 h-4" /> Gönderildi!</>
-                : <><Send className="w-4 h-4" /> Belgeyi Gönder</>
+                ? <><CheckCircle2 className="w-4 h-4" /> {activeTab === 'template' ? 'Gönderildi!' : 'Yüklendi!'}</>
+                : <><Send className="w-4 h-4" /> {activeTab === 'template' ? 'Belgeyi Gönder' : 'Dosyayı Yükle'}</>
               }
             </Button>
           </div>

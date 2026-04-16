@@ -120,65 +120,74 @@ export const DocumentPreviewModal = ({ doc, open, onClose }: Props) => {
           </div>
 
           {/* PDF Kağıt Alanı */}
-          <div className="w-full max-w-3xl flex-1 overflow-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
-            <div className="flex justify-center p-6">
-              <div
-                className="bg-white rounded-lg shadow-2xl origin-top transition-transform duration-200"
-                style={{
-                  width: 595,
-                  minHeight: 842,
-                  transform: `scale(${zoom})`,
-                  transformOrigin: 'top center',
-                  padding: '48px 56px',
-                }}
-              >
-                {/* PDF Başlık */}
-                <div className="mb-8 pb-6 border-b-2 border-gray-200">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${meta?.color}20`, color: meta?.color }}>
-                      {meta?.icon}
+          <div className="w-full max-w-4xl flex-1 overflow-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl relative">
+            <div className="flex justify-center p-6 h-full min-h-[600px]">
+              {doc?.previewUrl ? (
+                <iframe
+                  src={doc.previewUrl}
+                  className="w-full h-full rounded-lg bg-white"
+                  title="Belge Önizleme"
+                  style={{ border: 'none' }}
+                />
+              ) : (
+                <div
+                  className="bg-white rounded-lg shadow-2xl origin-top transition-transform duration-200"
+                  style={{
+                    width: 595,
+                    minHeight: 842,
+                    transform: `scale(${zoom})`,
+                    transformOrigin: 'top center',
+                    padding: '48px 56px',
+                  }}
+                >
+                  {/* PDF Başlık */}
+                  <div className="mb-8 pb-6 border-b-2 border-gray-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${meta?.color}20`, color: meta?.color }}>
+                        {meta?.icon}
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Edusama Rental</p>
+                        <p className="text-xs text-gray-500">{meta?.label}</p>
+                      </div>
+                    </div>
+                    <h1 className="text-xl font-bold text-gray-900 leading-tight">{doc?.name?.replace('.pdf', '')}</h1>
+                    <p className="text-xs text-gray-400 mt-1">Tarih: {doc ? formatDate(doc.uploadDate) : ''} · Boyut: {doc?.size}</p>
+                  </div>
+
+                  {/* Mock İçerik Satırları */}
+                  <div className="space-y-2">
+                    {MOCK_LINES.map((line, i) => (
+                      line.w === '0%' ? (
+                        <div key={i} style={{ height: line.h }} />
+                      ) : (
+                        <div
+                          key={i}
+                          className="rounded-sm bg-gray-200"
+                          style={{ width: line.w, height: line.h }}
+                        />
+                      )
+                    ))}
+                  </div>
+
+                  {/* İmza Alanı */}
+                  <div className="mt-16 pt-8 border-t border-gray-200 grid grid-cols-2 gap-8">
+                    <div>
+                      <div className="h-px bg-gray-300 mb-2" />
+                      <p className="text-[10px] text-gray-400">Kiracı İmzası</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Edusama Rental</p>
-                      <p className="text-xs text-gray-500">{meta?.label}</p>
+                      <div className="h-px bg-gray-300 mb-2" />
+                      <p className="text-[10px] text-gray-400">Yönetici İmzası</p>
                     </div>
                   </div>
-                  <h1 className="text-xl font-bold text-gray-900 leading-tight">{doc?.name?.replace('.pdf', '')}</h1>
-                  <p className="text-xs text-gray-400 mt-1">Tarih: {doc ? formatDate(doc.uploadDate) : ''} · Boyut: {doc?.size}</p>
-                </div>
 
-                {/* Mock İçerik Satırları */}
-                <div className="space-y-2">
-                  {MOCK_LINES.map((line, i) => (
-                    line.w === '0%' ? (
-                      <div key={i} style={{ height: line.h }} />
-                    ) : (
-                      <div
-                        key={i}
-                        className="rounded-sm bg-gray-200"
-                        style={{ width: line.w, height: line.h }}
-                      />
-                    )
-                  ))}
-                </div>
-
-                {/* İmza Alanı */}
-                <div className="mt-16 pt-8 border-t border-gray-200 grid grid-cols-2 gap-8">
-                  <div>
-                    <div className="h-px bg-gray-300 mb-2" />
-                    <p className="text-[10px] text-gray-400">Kiracı İmzası</p>
-                  </div>
-                  <div>
-                    <div className="h-px bg-gray-300 mb-2" />
-                    <p className="text-[10px] text-gray-400">Yönetici İmzası</p>
+                  {/* Footer */}
+                  <div className="mt-8 text-center">
+                    <p className="text-[9px] text-gray-300">Bu belge Edusama Rental sistemi tarafından oluşturulmuştur. · {doc ? formatDate(doc.uploadDate) : ''}</p>
                   </div>
                 </div>
-
-                {/* Footer */}
-                <div className="mt-8 text-center">
-                  <p className="text-[9px] text-gray-300">Bu belge Edusama Rental sistemi tarafından oluşturulmuştur. · {doc ? formatDate(doc.uploadDate) : ''}</p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </Dialog.Content>

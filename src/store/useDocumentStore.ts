@@ -11,7 +11,7 @@ export type PropertyDocument = {
   size: string;
   recipientId: string;
   propertyId?: string;
-  fileData?: string; // base64 veya mock URL
+  previewUrl?: string; // Gerçek dosya önizleme URL'i (Blob veya DataURL)
 };
 
 export type DocumentTemplate = {
@@ -41,7 +41,7 @@ interface DocumentStore {
   /** Admin bir şablonu seçilen kullanıcıya gönderir */
   sendDocument: (templateId: string, recipientId: string) => void;
   /** Admin özel bir dosya yükleyip gönderir */
-  sendCustomDocument: (file: { name: string; size: string; type: DocumentType }, recipientId: string) => void;
+  sendCustomDocument: (file: { name: string; size: string; type: DocumentType; previewUrl?: string }, recipientId: string) => void;
   /** Admininin gönderdiği bir belgeyi geri alması */
   deleteDocument: (id: string) => void;
 }
@@ -79,6 +79,7 @@ export const useDocumentStore = create<DocumentStore>()(
               size: file.size,
               uploadDate: new Date().toISOString().split('T')[0],
               recipientId,
+              previewUrl: file.previewUrl,
             },
             ...state.documents,
           ],
