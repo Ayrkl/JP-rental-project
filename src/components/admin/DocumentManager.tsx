@@ -87,7 +87,7 @@ export const DocumentManager = () => {
               Alıcı Kullanıcı <span className="text-rose-400">*</span>
             </Label>
             <Select value={recipientId} onValueChange={setRecipientId}>
-              <SelectTrigger className="h-12 bg-[#111] border-[#2a2a2a] text-sm px-4">
+              <SelectTrigger className="h-14 w-full bg-[#111] border-[#2a2a2a] text-base px-6">
                 <SelectValue placeholder="Kullanıcı seçin..." />
               </SelectTrigger>
               <SelectContent position="popper" side="bottom" sideOffset={4}>
@@ -109,7 +109,7 @@ export const DocumentManager = () => {
               Belge <span className="text-rose-400">*</span>
             </Label>
             <Select value={selectedTpl} onValueChange={setSelectedTpl}>
-              <SelectTrigger className="h-12 bg-[#111] border-[#2a2a2a] text-sm px-4">
+              <SelectTrigger className="h-14 w-full bg-[#111] border-[#2a2a2a] text-base px-6">
                 <SelectValue placeholder="Belge seçin..." />
               </SelectTrigger>
               <SelectContent position="popper" side="bottom" sideOffset={4}>
