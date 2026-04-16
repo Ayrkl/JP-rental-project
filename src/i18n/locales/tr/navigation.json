@@ -7,5 +7,13 @@
   "announcements": "Duyurular",
   "management": "Yönetim",
   "search": "Ara...",
-  "centerManagement": "Merkez Yönetim"
+  "centerManagement": "Merkez Yönetim",
+  "tenantHome": "Ana Sayfa",
+  "payments": "Ödemeler",
+  "myDocuments": "Belgelerim",
+  "notices": "Bildirimler",
+  "backToSelect": "Panel Seçimine Dön",
+  "listings": "İlanlar",
+  "mapSearch": "Harita Arama",
+  "apply": "Başvuru"
 }

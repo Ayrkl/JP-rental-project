@@ -7,5 +7,13 @@
   "announcements": "Announcements",
   "management": "Management",
   "search": "Search...",
-  "centerManagement": "Center Management"
+  "centerManagement": "Center Management",
+  "tenantHome": "Home",
+  "payments": "Payments",
+  "myDocuments": "My Documents",
+  "notices": "Notifications",
+  "backToSelect": "Back to Panel Select",
+  "listings": "Listings",
+  "mapSearch": "Map Search",
+  "apply": "Apply"
 }
