@@ -45,6 +45,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
     const [buildYear, setBuildYear] = useState('');
     const [quakeStandard, setQuakeStandard] = useState('new');
     const [tenantCapacity, setTenantCapacity] = useState('1');
+    const [price, setPrice] = useState('');
     const [rooms, setRooms] = useState<{ id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' | 'Bathroom' | 'Toilet' | 'Balcony' | 'Storage' }[]>([]);
     const [images, setImages] = useState<string[]>([]);
     const [features, setFeatures] = useState<string[]>([]);
@@ -70,6 +71,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                 setBuildYear(existingProp.buildYear.toString());
                 setQuakeStandard(existingProp.quakeStandard);
                 if (existingProp.tenantCapacity) setTenantCapacity(existingProp.tenantCapacity.toString());
+                if (existingProp.price) setPrice(existingProp.price.toString());
                 setRooms(existingProp.rooms);
                 setImages(existingProp.images || []);
                 setFeatures(existingProp.features || []);
@@ -207,6 +209,7 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
             buildYear: Number(buildYear),
             quakeStandard,
             tenantCapacity: Number(tenantCapacity),
+            price: price ? Number(price) : undefined,
             rooms,
             roomType: layoutString,
             images,
@@ -287,6 +290,11 @@ export const PropertyForm = ({ propertyId, onComplete, isModal }: { propertyId?:
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2"><Users size={16} /> {tp('fields.capacity')}</Label>
                             <Input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" placeholder={tp('fields.capacityPlaceholder')} min="1" max="15" value={tenantCapacity} onChange={e => e.target.value !== '0' && setTenantCapacity(e.target.value)} required />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="flex items-center gap-2"><Ruler size={16} /> Aylık Kira (¥)</Label>
+                            <Input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" placeholder="Örn: 120000" min="0" value={price} onChange={e => setPrice(e.target.value)} />
                         </div>
 
                         <div className="space-y-2">

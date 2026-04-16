@@ -38,6 +38,7 @@ export type Property = {
   buildYear: number;
   quakeStandard: string;
   tenantCapacity: number;
+  price?: number;
   rooms: { id: string; type: 'Room' | 'Living' | 'Dining' | 'Kitchen' | 'Bathroom' | 'Toilet' | 'Balcony' | 'Storage' }[];
   images: string[];
   features: string[];
