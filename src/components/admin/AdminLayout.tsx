@@ -31,6 +31,7 @@ export const AdminLayout = () => {
       title: t('management'),
       items: [
         { path: '/admin/users', icon: <Users size={18} />, label: t('users') },
+        { path: '/admin/documents', icon: <FileText size={18} />, label: 'Dökümanlar' },
         { path: '#', icon: <Megaphone size={18} />, label: t('announcements') },
       ]
     }

@@ -5,6 +5,8 @@ import { Dashboard } from './components/admin/Dashboard';
 import { MapPage } from './components/admin/MapPage';
 import { ContractsPage } from './components/admin/ContractsPage';
 import { Users } from './pages/admin/Users';
+import { DocumentManager } from './pages/admin/DocumentManager';
+import { Documents } from './pages/tenant/Documents';
 import { RoleSelectPage } from './pages/RoleSelectPage';
 import { TenantLayout } from './components/tenant/TenantLayout';
 import { TenantDashboard } from './pages/tenant/TenantDashboard';
@@ -24,6 +26,7 @@ function App() {
         <Route path="map" element={<MapPage />} />
         <Route path="contracts" element={<ContractsPage />} />
         <Route path="users" element={<Users />} />
+        <Route path="documents" element={<DocumentManager />} />
         <Route path="properties/new" element={<PropertyForm />} />
         <Route path="properties/edit/:id" element={<PropertyForm />} />
       </Route>
@@ -31,6 +34,7 @@ function App() {
       {/* Tenant */}
       <Route path="/tenant" element={<TenantLayout />}>
         <Route index element={<TenantDashboard />} />
+        <Route path="documents" element={<Documents />} />
       </Route>
 
       {/* Portal */}
