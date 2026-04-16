@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
 import { usePropertyStore } from '../../store/usePropertyStore';
+import { useContractStore } from './useContractStore';
 import { PropertyForm } from './PropertyForm';
 import { PropertyPreview } from './PropertyPreview';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,10 +13,27 @@ import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
+    const contracts = useContractStore(state => state.contracts);
     const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
     const [previewPropertyId, setPreviewPropertyId] = useState<string | null>(null);
     const [gridCols, setGridCols] = useState<number>(3);
     const { t } = useTranslation('dashboard');
+
+    // Aktif sözleşmesi olan mülk ID'leri
+    const activeContractPropertyIds = useMemo(
+        () => new Set(contracts.filter(c => c.status === 'Aktif').map(c => c.propertyId)),
+        [contracts]
+    );
+
+    // Aktif kiracı sayısı = Aktif sözleşmeli benzersiz mülk sayısı
+    const activeTenantCount = activeContractPropertyIds.size;
+
+    // Boşta ev = hiç aktif/taslak sözleşmesi olmayan mülk sayısı
+    const occupiedPropertyIds = useMemo(
+        () => new Set(contracts.filter(c => c.status === 'Aktif' || c.status === 'Taslak').map(c => c.propertyId)),
+        [contracts]
+    );
+    const vacantCount = properties.filter(p => !occupiedPropertyIds.has(p.id)).length;
 
     const gridClassMap: Record<number, string> = {
         1: 'grid-cols-1',
@@ -46,7 +64,7 @@ export const Dashboard = () => {
                         <CardTitle className="text-sm font-medium">{t('stats.activeTenants')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
+                        <div className="text-2xl font-bold">{activeTenantCount}</div>
                     </CardContent>
                 </Card>
 
@@ -56,7 +74,7 @@ export const Dashboard = () => {
                         <CardTitle className="text-sm font-medium">{t('stats.vacantHomes')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
+                        <div className="text-2xl font-bold">{vacantCount}</div>
                     </CardContent>
                 </Card>
             </div>
