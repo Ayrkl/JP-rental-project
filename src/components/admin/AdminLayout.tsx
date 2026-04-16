@@ -30,7 +30,7 @@ export const AdminLayout = () => {
     {
       title: t('management'),
       items: [
-        { path: '#', icon: <Users size={18} />, label: t('users') },
+        { path: '/admin/users', icon: <Users size={18} />, label: t('users') },
         { path: '#', icon: <Megaphone size={18} />, label: t('announcements') },
       ]
     }

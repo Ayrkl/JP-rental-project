@@ -10,6 +10,7 @@ import trProperties from './locales/tr/properties.json';
 import trContracts from './locales/tr/contracts.json';
 import trMap from './locales/tr/map.json';
 import trValidation from './locales/tr/validation.json';
+import trUsers from './locales/tr/users.json';
 
 // İngilizce paketler
 import enCommon from './locales/en/common.json';
@@ -19,6 +20,7 @@ import enProperties from './locales/en/properties.json';
 import enContracts from './locales/en/contracts.json';
 import enMap from './locales/en/map.json';
 import enValidation from './locales/en/validation.json';
+import enUsers from './locales/en/users.json';
 
 const supportedCodes = SUPPORTED_LANGUAGES.map((l) => l.code) as string[];
 
@@ -41,6 +43,7 @@ i18n.use(initReactI18next).init({
       contracts: trContracts,
       map: trMap,
       validation: trValidation,
+      users: trUsers,
     },
     en: {
       common: enCommon,
@@ -50,6 +53,7 @@ i18n.use(initReactI18next).init({
       contracts: enContracts,
       map: enMap,
       validation: enValidation,
+      users: enUsers,
     },
   },
   lng: detectedLang,

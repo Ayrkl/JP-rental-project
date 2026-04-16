@@ -4,6 +4,7 @@ import { PropertyForm } from './components/admin/PropertyForm';
 import { Dashboard } from './components/admin/Dashboard';
 import { MapPage } from './components/admin/MapPage';
 import { ContractsPage } from './components/admin/ContractsPage';
+import { Users } from './pages/admin/Users';
 import { RoleSelectPage } from './pages/RoleSelectPage';
 import { TenantLayout } from './components/tenant/TenantLayout';
 import { TenantDashboard } from './pages/tenant/TenantDashboard';
@@ -22,6 +23,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="map" element={<MapPage />} />
         <Route path="contracts" element={<ContractsPage />} />
+        <Route path="users" element={<Users />} />
         <Route path="properties/new" element={<PropertyForm />} />
         <Route path="properties/edit/:id" element={<PropertyForm />} />
       </Route>
