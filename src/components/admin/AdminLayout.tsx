@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard, Home, Users, FileText, Bell,
+  LayoutDashboard, Home, Users, FileText,
   ChevronRight, Menu, Search,
   Megaphone, PanelLeft, Map
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { NotificationSheet } from '@/components/shared/NotificationSheet';
 import { useTranslation } from 'react-i18next';
 
 export const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const { t } = useTranslation('navigation');
+  const { t: tRaw } = useTranslation('navigation');
+  const t = tRaw as unknown as (key: string) => string;
 
   const navCategories = [
     {
@@ -138,10 +140,7 @@ export const AdminLayout = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="relative rounded-full text-zinc-400 hover:text-zinc-200 hover:bg-[#1a1a1a]">
-              <Bell size={18} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full" />
-            </Button>
+            <NotificationSheet />
             <LanguageSwitcher />
             <div className="h-8 w-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400 cursor-pointer">
               AD

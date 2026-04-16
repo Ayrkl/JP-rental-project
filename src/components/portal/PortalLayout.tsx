@@ -2,6 +2,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { NotificationSheet } from '@/components/shared/NotificationSheet';
 import { useTranslation } from 'react-i18next';
 
 export const PortalLayout = () => {
@@ -61,6 +62,7 @@ export const PortalLayout = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <NotificationSheet />
           <LanguageSwitcher />
           <Button
             variant="ghost"

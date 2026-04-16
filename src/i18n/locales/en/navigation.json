@@ -37,5 +37,9 @@
   "item": "Item",
   "amount": "Amount",
   "status": "Status",
-  "document": "Document"
+  "document": "Document",
+  "notifications": "Notifications",
+  "notificationsEmpty": "No notifications at the moment",
+  "markAllRead": "Mark All as Read",
+  "newNotification": "New Notification"
 }

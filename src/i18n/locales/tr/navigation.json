@@ -37,5 +37,9 @@
   "item": "Kalem",
   "amount": "Tutar",
   "status": "Durum",
-  "document": "Belge"
+  "document": "Belge",
+  "notifications": "Bildirimler",
+  "notificationsEmpty": "Şu an bildiriminiz bulunmuyor",
+  "markAllRead": "Hepsini Okundu İşaretle",
+  "newNotification": "Yeni Bildirim"
 }

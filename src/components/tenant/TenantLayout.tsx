@@ -4,6 +4,7 @@ import { LayoutDashboard, CreditCard, FileText, Bell, PanelLeft, Menu, ArrowLeft
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { NotificationSheet } from '@/components/shared/NotificationSheet';
 import { useTranslation } from 'react-i18next';
 
 export const TenantLayout = () => {
@@ -97,6 +98,7 @@ export const TenantLayout = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <NotificationSheet />
             <LanguageSwitcher />
             <Button
               variant="ghost"
