@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -19,17 +19,26 @@ export const PortalLayout = () => {
   const isActive = (path: string, exact?: boolean) =>
     exact ? location.pathname === path : location.pathname.startsWith(path);
 
+  const currentLabel = navItems.find(i => isActive(i.path, i.exact))?.label ?? 'İlan Portalı';
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-foreground dark flex flex-col">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 border-b border-[#2a1f00] bg-[#0d0900] h-[64px] flex items-center justify-between px-6">
-        <div className="flex items-center gap-6">
+      <header className="sticky top-0 z-50 border-b border-[#1e1e1e] bg-[#0a0a0a] h-[72px] flex items-center justify-between px-6">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+            <div className="w-[36px] h-[36px] bg-white rounded-xl flex items-center justify-center overflow-hidden">
               <img src="/edusama_icon.webp" alt="Edusama" className="w-full h-full object-contain" />
             </div>
-            <span className="font-bold text-amber-100 text-sm">İlan Portalı</span>
+            {/* Breadcrumb */}
+            <div className="hidden md:flex items-center gap-2.5 text-[14px] font-medium text-zinc-400 ml-2">
+              <Home size={16} />
+              <ChevronRight size={14} className="opacity-40" />
+              <span className="text-zinc-100">{currentLabel}</span>
+            </div>
           </div>
+
+          <div className="hidden md:block h-6 w-px bg-[#2a2a2a]" />
 
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
@@ -38,10 +47,10 @@ export const PortalLayout = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-[13.5px] transition-all duration-200 ${
                     active
-                      ? 'bg-amber-900/30 text-amber-300 font-medium'
-                      : 'text-amber-700 hover:bg-amber-900/20 hover:text-amber-400'
+                      ? 'bg-[#1e1e1e] text-zinc-100 font-medium'
+                      : 'text-zinc-400 hover:bg-[#1a1a1a] hover:text-zinc-200'
                   }`}
                 >
                   {item.label}
@@ -56,11 +65,11 @@ export const PortalLayout = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-amber-600 hover:text-amber-300 hover:bg-amber-900/20 gap-1.5"
+            className="text-zinc-400 hover:text-zinc-200 hover:bg-[#1a1a1a] gap-1.5 text-xs"
             onClick={() => navigate('/select')}
           >
-            <ArrowLeft size={15} />
-            <span className="text-xs hidden sm:inline">{t('backToSelect')}</span>
+            <ArrowLeft size={14} />
+            <span className="hidden sm:inline">{t('backToSelect')}</span>
           </Button>
         </div>
       </header>
