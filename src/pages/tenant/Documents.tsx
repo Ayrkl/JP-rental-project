@@ -48,7 +48,7 @@ const DownloadProgress = ({ name, onDone }: { name: string; onDone: () => void }
   );
 };
 
-const DocumentRow = ({ doc }: { doc: Document }) => {
+const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
   const [downloading, setDownloading] = useState(false);
   const cfg = TYPE_CONFIG[doc.type];
 
@@ -98,8 +98,7 @@ const DocumentRow = ({ doc }: { doc: Document }) => {
 export const Documents = () => {
   const { documents } = useDocumentStore();
   
-  // Oturum açan kiracının ID'si (gerçek auth gelince buraya session'dan alınacak)
-  // useUserStore'daki '1' ID'li kullanıcıyı simüle ediyor
+  // Oturum açan kiracının ID'si (Hiroshi Tanaka ID: '1')
   const CURRENT_TENANT_ID = '1';
   const myDocs = documents.filter(d => d.recipientId === CURRENT_TENANT_ID);
 

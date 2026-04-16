@@ -3,7 +3,7 @@ import { create } from 'zustand';
 export type DocumentType = 'Contract' | 'Insurance' | 'Rules' | 'Other';
 
 // Belge veri modeli
-export type Document = {
+export type PropertyDocument = {
   id: string;
   name: string;
   type: DocumentType;
@@ -32,38 +32,47 @@ export const DOCUMENT_TEMPLATES: DocumentTemplate[] = [
   { id: 't8', name: 'Teslim Tutanağı.pdf',             type: 'Other',     size: '0.7 MB', description: 'Mülk teslim ve iade tutanağı' },
 ];
 
+const INITIAL_DOCUMENTS: PropertyDocument[] = [];
+
 interface DocumentStore {
   /** Gönderilmiş belgeler */
-  documents: Document[];
+  documents: PropertyDocument[];
   /** Admin bir şablonu seçilen kullanıcıya gönderir */
   sendDocument: (templateId: string, recipientId: string) => void;
-  /** Adminin gönderdiği bir belgeyi geri alması */
+  /** Admininin gönderdiği bir belgeyi geri alması */
   deleteDocument: (id: string) => void;
 }
 
-export const useDocumentStore = create<DocumentStore>()((set) => ({
-  documents: [],
+import { persist } from 'zustand/middleware';
 
-  sendDocument: (templateId, recipientId) => {
-    const template = DOCUMENT_TEMPLATES.find(t => t.id === templateId);
-    if (!template) return;
-    set((state) => ({
-      documents: [
-        {
-          id: Math.random().toString(36).slice(2, 9),
-          name: template.name,
-          type: template.type,
-          size: template.size,
-          uploadDate: new Date().toISOString().split('T')[0],
-          recipientId,
-        },
-        ...state.documents,
-      ],
-    }));
-  },
+export const useDocumentStore = create<DocumentStore>()(
+  persist(
+    (set) => ({
+      documents: INITIAL_DOCUMENTS,
 
-  deleteDocument: (id) =>
-    set((state) => ({
-      documents: state.documents.filter((d) => d.id !== id),
-    })),
-}));
+      sendDocument: (templateId, recipientId) => {
+        const template = DOCUMENT_TEMPLATES.find(t => t.id === templateId);
+        if (!template) return;
+        set((state) => ({
+          documents: [
+            {
+              id: Math.random().toString(36).slice(2, 9),
+              name: template.name,
+              type: template.type,
+              size: template.size,
+              uploadDate: new Date().toISOString().split('T')[0],
+              recipientId,
+            },
+            ...state.documents,
+          ],
+        }));
+      },
+
+      deleteDocument: (id) =>
+        set((state) => ({
+          documents: state.documents.filter((d) => d.id !== id),
+        })),
+    }),
+    { name: 'property-document-storage' }
+  )
+);
