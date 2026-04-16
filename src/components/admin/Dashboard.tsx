@@ -1,15 +1,18 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+
 import { Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { useContractStore } from './useContractStore';
 import { PropertyForm } from './PropertyForm';
 import { PropertyPreview } from './PropertyPreview';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
@@ -191,7 +194,7 @@ export const Dashboard = () => {
             {/* ÖNİZLEME MODALI */}
             <Dialog open={!!previewPropertyId} onOpenChange={(open) => !open && setPreviewPropertyId(null)}>
                 <DialogContent
-                    className="sm:max-w-[900px] lg:max-w-[1200px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-4 [&>button]:top-4 [&>button]:bg-black/60 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-white z-[2000]"
+                    className="sm:max-w-[900px] lg:max-w-[1600px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-4 [&>button]:top-4 [&>button]:bg-black/60 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-white z-[2000]"
                 >
                     <div className="px-8 py-6 overflow-y-auto flex-1">
                         {previewProperty && <PropertyPreview property={previewProperty} />}

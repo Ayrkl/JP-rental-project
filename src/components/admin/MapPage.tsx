@@ -88,7 +88,7 @@ export const MapPage = () => {
 
             <Dialog open={!!selectedPropertyId} onOpenChange={(open) => !open && handleClose()}>
                 <DialogContent
-                    className="sm:max-w-[900px] lg:max-w-[1200px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
+                    className="sm:max-w-[900px] lg:max-w-[1600px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-8 [&>button]:top-8 [&>button]:bg-muted/50 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-destructive-foreground z-[2000]"
                 >
                     {!isEditing ? (
                         <>
