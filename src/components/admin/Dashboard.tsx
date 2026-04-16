@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
@@ -21,6 +21,7 @@ export const Dashboard = () => {
     const [previewPropertyId, setPreviewPropertyId] = useState<string | null>(null);
     const [gridCols, setGridCols] = useState<number>(3);
     const { t } = useTranslation('dashboard');
+    const td = t as unknown as (key: string, opts?: Record<string, unknown>) => string;
 
     // Aktif sözleşmesi olan mülk ID'leri
     const activeContractPropertyIds = useMemo(
@@ -54,7 +55,7 @@ export const Dashboard = () => {
                 <Card className="hover:border-primary/50 transition-colors">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0 text-muted-foreground">
                         <Home className="w-4 h-4 text-primary" />
-                        <CardTitle className="text-sm font-medium">{t('stats.totalProperties')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">{td('stats.totalProperties')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{properties.length}</div>
@@ -64,7 +65,7 @@ export const Dashboard = () => {
                 <Card className="hover:border-primary/50 transition-colors text-muted-foreground">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Building2 className="w-4 h-4 text-primary" />
-                        <CardTitle className="text-sm font-medium">{t('stats.activeTenants')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">{td('stats.activeTenants')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{activeTenantCount}</div>
@@ -74,7 +75,7 @@ export const Dashboard = () => {
                 <Card className="hover:border-primary/50 transition-colors text-muted-foreground">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Calendar className="w-4 h-4 text-primary" />
-                        <CardTitle className="text-sm font-medium">{t('stats.vacantHomes')}</CardTitle>
+                        <CardTitle className="text-sm font-medium">{td('stats.vacantHomes')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{vacantCount}</div>
@@ -85,7 +86,7 @@ export const Dashboard = () => {
             <div>
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-bold tracking-tight">{t('portfolio.title')}</h2>
+                        <h2 className="text-xl font-bold tracking-tight">{td('portfolio.title')}</h2>
 
                         <div className="hidden sm:flex items-center bg-muted/40 p-1 rounded-lg border border-border h-8">
                             {[1, 2, 3, 4, 5].map(num => (
@@ -102,7 +103,7 @@ export const Dashboard = () => {
 
                     <Button asChild>
                         <Link to="/admin/properties/new">
-                            <Home className="w-4 h-4 mr-2" /> {t('portfolio.addNew')}
+                            <Home className="w-4 h-4 mr-2" /> {td('portfolio.addNew')}
                         </Link>
                     </Button>
                 </div>
@@ -112,10 +113,10 @@ export const Dashboard = () => {
                         <div className="p-4 bg-muted rounded-full mb-4">
                             <Home className="w-8 h-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-lg font-semibold mb-2">{t('portfolio.empty.title')}</h3>
-                        <p className="text-muted-foreground mb-6 max-w-[400px]">{t('portfolio.empty.description')}</p>
+                        <h3 className="text-lg font-semibold mb-2">{td('portfolio.empty.title')}</h3>
+                        <p className="text-muted-foreground mb-6 max-w-[400px]">{td('portfolio.empty.description')}</p>
                         <Button asChild>
-                            <Link to="/admin/properties/new">{t('portfolio.empty.cta')}</Link>
+                            <Link to="/admin/properties/new">{td('portfolio.empty.cta')}</Link>
                         </Button>
                     </Card>
                 ) : (
@@ -178,9 +179,9 @@ export const Dashboard = () => {
                 >
                     <div className="px-6 md:px-8 py-5 border-b border-border bg-card/50 z-10 shrink-0">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">{t('dialogs.editTitle')}</DialogTitle>
+                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">{td('dialogs.editTitle')}</DialogTitle>
                             <DialogDescription className="text-sm text-muted-foreground mt-1.5">
-                                {t('dialogs.editDescription')}
+                                {td('dialogs.editDescription')}
                             </DialogDescription>
                         </DialogHeader>
                     </div>
@@ -195,18 +196,19 @@ export const Dashboard = () => {
             <Dialog open={!!previewPropertyId} onOpenChange={(open) => !open && setPreviewPropertyId(null)}>
                 <DialogContent
                     className="sm:max-w-[900px] lg:max-w-[1600px] w-[90vw] bg-background border-border shadow-2xl sm:rounded-3xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden transition-all duration-300 [&>button]:z-[2001] [&>button]:right-4 [&>button]:top-4 [&>button]:bg-black/60 [&>button]:p-2 [&>button]:rounded-full hover:[&>button]:bg-destructive hover:[&>button]:text-white z-[2000]"
+                    style={{ left: 'calc(50% + (var(--sidebar-width, 230px) / 2))' }}
                 >
                     <div className="px-8 py-6 overflow-y-auto flex-1">
                         {previewProperty && <PropertyPreview property={previewProperty} />}
                     </div>
                     <div className="px-10 py-4 bg-muted/30 border-t border-border flex justify-end gap-3 shrink-0">
-                        <Button variant="outline" onClick={() => setPreviewPropertyId(null)}>{t('dialogs.previewClose')}</Button>
+                        <Button variant="outline" onClick={() => setPreviewPropertyId(null)}>{td('dialogs.previewClose')}</Button>
                         <Button onClick={() => {
                             const id = previewPropertyId;
                             setPreviewPropertyId(null);
                             setTimeout(() => setSelectedPropertyId(id), 100);
                         }}>
-                            <Pencil className="w-4 h-4 mr-2" /> {t('dialogs.previewEdit')}
+                            <Pencil className="w-4 h-4 mr-2" /> {td('dialogs.previewEdit')}
                         </Button>
                     </div>
                 </DialogContent>
