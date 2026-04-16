@@ -1,50 +1,53 @@
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Home, Globe } from 'lucide-react';
-
-const cards = [
-  {
-    icon: LayoutDashboard,
-    title: 'Admin Paneli',
-    subtitle: 'Mülk yöneticisi / ev sahibi arayüzü',
-    badges: ['Mülk Yönetimi', 'Raporlama', 'Muhasebe'],
-    color: '#6366f1',
-    bg: 'rgba(99,102,241,0.08)',
-    border: 'rgba(99,102,241,0.3)',
-    glow: 'rgba(99,102,241,0.4)',
-    badgeColor: 'rgba(99,102,241,0.15)',
-    badgeText: '#a5b4fc',
-    path: '/admin',
-  },
-  {
-    icon: Home,
-    title: 'Kiracı Paneli',
-    subtitle: 'Kiracı self-servis arayüzü',
-    badges: ['Ödeme Takibi', 'Borç Görüntüleme', 'Bildirimler'],
-    color: '#10b981',
-    bg: 'rgba(16,185,129,0.08)',
-    border: 'rgba(16,185,129,0.3)',
-    glow: 'rgba(16,185,129,0.4)',
-    badgeColor: 'rgba(16,185,129,0.15)',
-    badgeText: '#6ee7b7',
-    path: '/tenant',
-  },
-  {
-    icon: Globe,
-    title: 'İlan Portalı',
-    subtitle: 'Halka açık ev kiralama arayüzü',
-    badges: ['Filtreleme', 'Harita Arama', 'Ön Başvuru'],
-    color: '#f59e0b',
-    bg: 'rgba(245,158,11,0.08)',
-    border: 'rgba(245,158,11,0.3)',
-    glow: 'rgba(245,158,11,0.4)',
-    badgeColor: 'rgba(245,158,11,0.15)',
-    badgeText: '#fcd34d',
-    path: '/portal',
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 export const RoleSelectPage = () => {
   const navigate = useNavigate();
+  const { t: tRaw } = useTranslation('portal');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
+  const cards = [
+    {
+      icon: LayoutDashboard,
+      title: t('adminPanel'),
+      subtitle: t('adminSubtitle'),
+      badges: ['Mülk Yönetimi', 'Raporlama', 'Muhasebe'],
+      color: '#6366f1',
+      bg: 'rgba(99,102,241,0.08)',
+      border: 'rgba(99,102,241,0.3)',
+      glow: 'rgba(99,102,241,0.4)',
+      badgeColor: 'rgba(99,102,241,0.15)',
+      badgeText: '#a5b4fc',
+      path: '/admin',
+    },
+    {
+      icon: Home,
+      title: t('tenantPanel'),
+      subtitle: t('tenantSubtitle'),
+      badges: ['Ödeme Takibi', 'Borç Görüntüleme', 'Bildirimler'],
+      color: '#10b981',
+      bg: 'rgba(16,185,129,0.08)',
+      border: 'rgba(16,185,129,0.3)',
+      glow: 'rgba(16,185,129,0.4)',
+      badgeColor: 'rgba(16,185,129,0.15)',
+      badgeText: '#6ee7b7',
+      path: '/tenant',
+    },
+    {
+      icon: Globe,
+      title: t('portalPanel'),
+      subtitle: t('portalSubtitle'),
+      badges: ['Filtreleme', 'Harita Arama', 'Ön Başvuru'],
+      color: '#f59e0b',
+      bg: 'rgba(245,158,11,0.08)',
+      border: 'rgba(245,158,11,0.3)',
+      glow: 'rgba(245,158,11,0.4)',
+      badgeColor: 'rgba(245,158,11,0.15)',
+      badgeText: '#fcd34d',
+      path: '/portal',
+    },
+  ];
 
   return (
     <div
@@ -57,7 +60,7 @@ export const RoleSelectPage = () => {
           <img src="/edusama_icon.webp" alt="Edusama" className="w-full h-full object-contain" />
         </div>
         <h1 className="text-3xl font-bold text-white tracking-tight">Edusama Rental</h1>
-        <p className="text-zinc-500 text-sm mt-1">Panel seçimi yaparak devam edin</p>
+        <p className="text-zinc-500 text-sm mt-1">{t('selectPanel')}</p>
       </div>
 
       {/* Kartlar */}
@@ -108,7 +111,7 @@ export const RoleSelectPage = () => {
 
       {/* Disclaimer */}
       <p className="mt-10 text-zinc-600 text-xs">
-        Geliştirme modu — kimlik doğrulaması devre dışı
+        {t('devMode')}
       </p>
     </div>
   );

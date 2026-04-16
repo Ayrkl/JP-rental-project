@@ -1,6 +1,7 @@
 import { MapPin, Ruler, Users, Wifi, Car, PawPrint, Home } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Property } from '@/store/usePropertyStore';
+import { useTranslation } from 'react-i18next';
 
 const FEATURE_ICONS: Record<string, React.ReactNode> = {
   internet: <Wifi className="w-3.5 h-3.5" />,
@@ -14,6 +15,9 @@ interface Props {
 }
 
 export const PortalPropertyCard = ({ property, onClick }: Props) => {
+  const { t: tRaw } = useTranslation('portal');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
   const visibleFeatures = (property.features ?? []).filter(f => FEATURE_ICONS[f]).slice(0, 3);
 
   return (
@@ -39,7 +43,7 @@ export const PortalPropertyCard = ({ property, onClick }: Props) => {
         </Badge>
         {property.price && (
           <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-lg">
-            ¥{property.price.toLocaleString()}/ay
+            ¥{property.price.toLocaleString()}{t('perMonth')}
           </div>
         )}
       </div>
@@ -53,10 +57,10 @@ export const PortalPropertyCard = ({ property, onClick }: Props) => {
 
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
-            <Ruler className="w-3.5 h-3.5" /> {property.area} m²
+            <Ruler className="w-3.5 h-3.5" /> {property.area} {t('area')}
           </span>
           <span className="flex items-center gap-1">
-            <Users className="w-3.5 h-3.5" /> {property.tenantCapacity} kişi
+            <Users className="w-3.5 h-3.5" /> {property.tenantCapacity} {t('capacity')}
           </span>
           <span>{property.buildYear}</span>
         </div>
@@ -65,7 +69,7 @@ export const PortalPropertyCard = ({ property, onClick }: Props) => {
           <div className="flex items-center gap-2">
             {visibleFeatures.map(f => (
               <span key={f} className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-md">
-                {FEATURE_ICONS[f]} {f === 'internet' ? 'İnternet' : f === 'parking' ? 'Otopark' : 'Pet'}
+                {FEATURE_ICONS[f]} {f === 'internet' ? t('featureInternet') : f === 'parking' ? t('featureParking') : t('featurePets')}
               </span>
             ))}
           </div>

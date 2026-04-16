@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { FileText, Download, Eye, Calendar, Shield, BookOpen, File } from 'lucide-react';
-import { useDocumentStore, type Document, type DocumentType } from '@/store/useDocumentStore';
+import { useDocumentStore, type PropertyDocument, type DocumentType } from '@/store/useDocumentStore';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 const formatDate = (iso: string) => {
   const d = new Date(iso);
@@ -10,14 +11,16 @@ const formatDate = (iso: string) => {
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 };
 
-const TYPE_CONFIG: Record<DocumentType, { label: string; icon: React.ReactNode; color: string }> = {
-  Contract:  { label: 'Sözleşmeler',  icon: <FileText className="w-4 h-4" />,  color: 'text-indigo-400' },
-  Insurance: { label: 'Sigortalar',   icon: <Shield className="w-4 h-4" />,    color: 'text-emerald-400' },
-  Rules:     { label: 'Kılavuzlar',   icon: <BookOpen className="w-4 h-4" />,  color: 'text-amber-400' },
-  Other:     { label: 'Diğer',        icon: <File className="w-4 h-4" />,      color: 'text-zinc-400' },
+const TYPE_CONFIG_BASE: Record<DocumentType, { icon: React.ReactNode; color: string }> = {
+  Contract:  { icon: <FileText className="w-4 h-4" />,  color: 'text-indigo-400' },
+  Insurance: { icon: <Shield className="w-4 h-4" />,    color: 'text-emerald-400' },
+  Rules:     { icon: <BookOpen className="w-4 h-4" />,  color: 'text-amber-400' },
+  Other:     { icon: <File className="w-4 h-4" />,      color: 'text-zinc-400' },
 };
 
 const DownloadProgress = ({ name, onDone }: { name: string; onDone: () => void }) => {
+  const { t: tRaw } = useTranslation('users');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
   const [progress, setProgress] = useState(0);
 
   useState(() => {
@@ -34,7 +37,7 @@ const DownloadProgress = ({ name, onDone }: { name: string; onDone: () => void }
     <div className="fixed bottom-6 right-6 z-50 w-72 rounded-xl border border-border bg-card shadow-2xl p-4 space-y-2">
       <div className="flex items-center gap-2 text-sm font-medium">
         <Download className="w-4 h-4 text-primary animate-bounce" />
-        <span className="truncate">Dosya İndiriliyor...</span>
+        <span className="truncate">{t('docDownloading')}</span>
       </div>
       <p className="text-xs text-muted-foreground truncate">{name}</p>
       <div className="h-1.5 rounded-full bg-muted overflow-hidden">
@@ -49,8 +52,10 @@ const DownloadProgress = ({ name, onDone }: { name: string; onDone: () => void }
 };
 
 const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
+  const { t: tRaw } = useTranslation('users');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
   const [downloading, setDownloading] = useState(false);
-  const cfg = TYPE_CONFIG[doc.type];
+  const cfg = TYPE_CONFIG_BASE[doc.type];
 
   return (
     <>
@@ -74,7 +79,7 @@ const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
         {/* Butonlar */}
         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
           <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground">
-            <Eye className="w-3.5 h-3.5" /> Önizle
+            <Eye className="w-3.5 h-3.5" /> {t('docPreview')}
           </Button>
           <Button
             variant="outline"
@@ -83,7 +88,7 @@ const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
             onClick={() => setDownloading(true)}
             disabled={downloading}
           >
-            <Download className="w-3.5 h-3.5" /> İndir
+            <Download className="w-3.5 h-3.5" /> {t('docDownload')}
           </Button>
         </div>
       </div>
@@ -97,7 +102,16 @@ const DocumentRow = ({ doc }: { doc: PropertyDocument }) => {
 
 export const Documents = () => {
   const { documents } = useDocumentStore();
-  
+  const { t: tRaw } = useTranslation('users');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
+  const TYPE_CONFIG: Record<DocumentType, { label: string; icon: React.ReactNode; color: string }> = {
+    Contract:  { label: t('docGroupContract'), icon: <FileText className="w-4 h-4" />,  color: 'text-indigo-400' },
+    Insurance: { label: t('docGroupInsurance'), icon: <Shield className="w-4 h-4" />,   color: 'text-emerald-400' },
+    Rules:     { label: t('docGroupRules'), icon: <BookOpen className="w-4 h-4" />,     color: 'text-amber-400' },
+    Other:     { label: t('docGroupOther'), icon: <File className="w-4 h-4" />,         color: 'text-zinc-400' },
+  };
+
   // Oturum açan kiracının ID'si (Hiroshi Tanaka ID: '1')
   const CURRENT_TENANT_ID = '1';
   const myDocs = documents.filter(d => d.recipientId === CURRENT_TENANT_ID);
@@ -106,13 +120,13 @@ export const Documents = () => {
     const items = myDocs.filter(d => d.type === type);
     if (items.length > 0) acc[type] = items;
     return acc;
-  }, {} as Partial<Record<DocumentType, Document[]>>);
+  }, {} as Partial<Record<DocumentType, PropertyDocument[]>>);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Belgelerim</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Kira sözleşmeleriniz, sigorta poliçeleriniz ve diğer belgeleriniz.</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('docMyDocs')}</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">{t('docMyDocsSubtitle')}</p>
       </div>
 
       {Object.entries(grouped).map(([type, docs]) => {
@@ -137,7 +151,7 @@ export const Documents = () => {
       {myDocs.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-3">
           <FileText className="w-10 h-10 opacity-30" />
-          <p className="text-sm">Henüz belge bulunmuyor.</p>
+          <p className="text-sm">{t('docNoDocuments')}</p>
         </div>
       )}
     </div>

@@ -7,9 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 
-const { t: tRaw } = { t: (k: string) => k } as any;
-void tRaw;
-
 // ── Mock Veri ──────────────────────────────────────────────────────────────
 const TREND_DATA = [
   { ay: 'Oca', kira: 120000, faturalar: 18400 },
@@ -42,10 +39,10 @@ const PAYMENTS: { period: string; item: string; amount: number; status: PaymentS
 const TOTAL_PAID = PAYMENTS.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0);
 const CURRENT_BALANCE = PAYMENTS.filter(p => p.status !== 'paid').reduce((s, p) => s + p.amount, 0);
 
-const STATUS_CONFIG: Record<PaymentStatus, { label: string; className: string }> = {
-  paid:    { label: 'Ödendi',  className: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
-  pending: { label: 'Bekliyor', className: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
-  overdue: { label: 'Gecikti', className: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
+const STATUS_CONFIG_CLASSES: Record<PaymentStatus, string> = {
+  paid:    'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  pending: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+  overdue: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
 };
 
 // ── Custom Tooltip ─────────────────────────────────────────────────────────
@@ -68,12 +65,18 @@ export const TenantDashboard = () => {
   const { t: tRaw } = useTranslation('navigation');
   const t = tRaw as unknown as (key: string) => string;
 
+  const STATUS_CONFIG: Record<PaymentStatus, { label: string; className: string }> = {
+    paid:    { label: t('paid'),    className: STATUS_CONFIG_CLASSES.paid },
+    pending: { label: t('pending'), className: STATUS_CONFIG_CLASSES.pending },
+    overdue: { label: t('overdue'), className: STATUS_CONFIG_CLASSES.overdue },
+  };
+
   const statCards = [
     {
       icon: CreditCard,
       label: t('currentBalance'),
       value: `¥${CURRENT_BALANCE.toLocaleString()}`,
-      sub: 'Ödenmemiş toplam',
+      sub: t('pending'),
       valueClass: CURRENT_BALANCE > 0 ? 'text-rose-400' : 'text-emerald-400',
     },
     {
@@ -87,14 +90,14 @@ export const TenantDashboard = () => {
       icon: TrendingUp,
       label: t('totalPaid'),
       value: `¥${TOTAL_PAID.toLocaleString()}`,
-      sub: 'Kümülatif ödeme',
+      sub: t('paid'),
       valueClass: 'text-emerald-400',
     },
     {
       icon: Bell,
       label: t('activeNotices'),
       value: '3',
-      sub: 'Okunmamış mesaj',
+      sub: t('notices'),
       valueClass: 'text-indigo-400',
     },
   ];
@@ -104,7 +107,7 @@ export const TenantDashboard = () => {
       {/* Başlık */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t('financialSummary')}</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Haziran 2025 · Kiracı Paneli</p>
+        <p className="text-sm text-muted-foreground mt-0.5">Haziran 2025 · {t('tenantHome')}</p>
       </div>
 
       {/* Stat Kartları */}

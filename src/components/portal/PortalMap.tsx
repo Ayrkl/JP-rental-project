@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Property } from '@/store/usePropertyStore';
+import { useTranslation } from 'react-i18next';
 
 const createPin = () => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="25" height="41">
@@ -18,6 +19,9 @@ interface Props {
 }
 
 export const PortalMap = ({ properties, onSelect }: Props) => {
+  const { t: tRaw } = useTranslation('portal');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -49,13 +53,13 @@ export const PortalMap = ({ properties, onSelect }: Props) => {
                 <div className="p-1 min-w-[140px] space-y-1">
                   <p className="text-xs font-semibold leading-snug">{p.address}</p>
                   <p className="text-xs text-gray-500">{p.roomType} · {p.area} m²</p>
-                  {p.price && <p className="text-xs font-bold text-blue-600">¥{p.price.toLocaleString()}/ay</p>}
+                  {p.price && <p className="text-xs font-bold text-blue-600">¥{p.price.toLocaleString()}{t('perMonth')}</p>}
                   {onSelect && (
                     <button
                       onClick={() => onSelect(p)}
                       className="mt-1 text-[10px] bg-blue-600 text-white px-2 py-1 rounded w-full hover:bg-blue-700 transition-colors"
                     >
-                      Detayları Gör
+                      {t('viewDetails')}
                     </button>
                   )}
                 </div>

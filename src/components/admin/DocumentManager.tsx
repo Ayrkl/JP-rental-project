@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from 'react-i18next';
 
 // ── Tip Konfigürasyonu ──────────────────────────────────────────────────────
 const TYPE_LABELS: Record<DocumentType, string> = {
@@ -39,6 +40,15 @@ const formatDate = (iso: string) => {
 export const DocumentManager = () => {
   const { documents, sendDocument, deleteDocument } = useDocumentStore();
   const { users } = useUserStore();
+  const { t: tRaw } = useTranslation('users');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
+  const TYPE_LABELS: Record<DocumentType, string> = {
+    Contract:  t('docTypeContract'),
+    Insurance: t('docTypeInsurance'),
+    Rules:     t('docTypeRules'),
+    Other:     t('docTypeOther'),
+  };
 
   const [recipientId, setRecipientId]   = useState('');
   const [selectedTpl, setSelectedTpl]   = useState('');
@@ -59,15 +69,15 @@ export const DocumentManager = () => {
 
       {/* Başlık */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Döküman Merkezi</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t('docTitle')}</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Hazır belgelerden seçip kiracılara gönderin. Belgeler anında kiracının paneline düşer.
+          {t('docSubtitle')}
         </p>
       </div>
 
       {/* ── Gönderim Formu ── */}
       <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
-        <h2 className="text-sm font-semibold text-zinc-200">Belge Gönder</h2>
+        <h2 className="text-sm font-semibold text-zinc-200">{t('docUploadSection')}</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
@@ -157,16 +167,16 @@ export const DocumentManager = () => {
       <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-semibold">Gönderim Geçmişi</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Gönderilmiş tüm belgeler</p>
+            <h2 className="text-sm font-semibold">{t('docAllDocs')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('docSubtitle')}</p>
           </div>
-          <Badge variant="secondary" className="text-xs">{documents.length} belge</Badge>
+          <Badge variant="secondary" className="text-xs">{documents.length} {t('docCount')}</Badge>
         </div>
 
         {documents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
             <FileText className="w-8 h-8 opacity-30" />
-            <p className="text-sm">Henüz belge gönderilmedi.</p>
+            <p className="text-sm">{t('docEmpty')}</p>
             <p className="text-xs opacity-60">Yukarıdan belge seçip gönderin.</p>
           </div>
         ) : (

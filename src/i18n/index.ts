@@ -11,6 +11,7 @@ import trContracts from './locales/tr/contracts.json';
 import trMap from './locales/tr/map.json';
 import trValidation from './locales/tr/validation.json';
 import trUsers from './locales/tr/users.json';
+import trPortal from './locales/tr/portal.json';
 
 // İngilizce paketler
 import enCommon from './locales/en/common.json';
@@ -21,6 +22,7 @@ import enContracts from './locales/en/contracts.json';
 import enMap from './locales/en/map.json';
 import enValidation from './locales/en/validation.json';
 import enUsers from './locales/en/users.json';
+import enPortal from './locales/en/portal.json';
 
 const supportedCodes = SUPPORTED_LANGUAGES.map((l) => l.code) as string[];
 
@@ -44,6 +46,7 @@ i18n.use(initReactI18next).init({
       map: trMap,
       validation: trValidation,
       users: trUsers,
+      portal: trPortal,
     },
     en: {
       common: enCommon,
@@ -54,6 +57,7 @@ i18n.use(initReactI18next).init({
       map: enMap,
       validation: enValidation,
       users: enUsers,
+      portal: enPortal,
     },
   },
   lng: detectedLang,

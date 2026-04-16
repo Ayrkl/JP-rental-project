@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 export type PortalFilters = {
   priceMin: string;
@@ -13,20 +14,20 @@ export type PortalFilters = {
 };
 
 const ROOM_TYPES = ['1K', '1LDK', '2LDK', '3LDK', '4LDK'];
-const QUAKE_OPTIONS = [
-  { value: '', label: 'Tümü' },
-  { value: 'old', label: 'Eski Standart' },
-  { value: 'new', label: 'Yeni Standart' },
-  { value: 'grade2', label: 'Grade 2' },
-  { value: 'grade3', label: 'Grade 3' },
+const QUAKE_OPTION_KEYS = [
+  { value: '', labelKey: 'filterAll' },
+  { value: 'old', labelKey: 'filterOldStandard' },
+  { value: 'new', labelKey: 'filterNewStandard' },
+  { value: 'grade2', labelKey: 'filterGrade2' },
+  { value: 'grade3', labelKey: 'filterGrade3' },
 ];
-const FEATURE_OPTIONS = [
-  { id: 'internet', label: 'Fiber İnternet' },
-  { id: 'elevator', label: 'Asansör' },
-  { id: 'parking', label: 'Otopark' },
-  { id: 'pets', label: 'Evcil Hayvan' },
-  { id: 'autolock', label: 'Otomatik Kilit' },
-  { id: 'balcony', label: 'Balkon' },
+const FEATURE_OPTION_KEYS = [
+  { id: 'internet', labelKey: 'featureInternet' },
+  { id: 'elevator', labelKey: 'featureElevator' },
+  { id: 'parking', labelKey: 'featureParking' },
+  { id: 'pets', labelKey: 'featurePets' },
+  { id: 'autolock', labelKey: 'featureAutolock' },
+  { id: 'balcony', labelKey: 'featureBalcony' },
 ];
 
 interface Props {
@@ -36,6 +37,9 @@ interface Props {
 }
 
 export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
+  const { t: tRaw } = useTranslation('portal');
+  const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
   const set = (partial: Partial<PortalFilters>) => onChange({ ...filters, ...partial });
 
   const toggleFeature = (id: string) => {
@@ -52,17 +56,17 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
   return (
     <div className="rounded-xl border border-border bg-card p-4 space-y-5">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Filtreler</h3>
+        <h3 className="text-sm font-semibold">{t('filterTitle')}</h3>
         {hasActive && (
           <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground" onClick={onReset}>
-            <X className="w-3 h-3" /> Temizle
+            <X className="w-3 h-3" /> {t('filterClear')}
           </Button>
         )}
       </div>
 
       {/* Fiyat aralığı */}
       <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">Aylık Kira (¥)</Label>
+        <Label className="text-xs text-muted-foreground">{t('filterPriceLabel')}</Label>
         <div className="flex gap-2">
           <Input
             type="number"
@@ -83,7 +87,7 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
 
       {/* Oda tipi */}
       <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">Oda Tipi</Label>
+        <Label className="text-xs text-muted-foreground">{t('filterRoomType')}</Label>
         <div className="flex flex-wrap gap-1.5">
           {ROOM_TYPES.map(rt => (
             <button
@@ -104,9 +108,9 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
 
       {/* Deprem standardı */}
       <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">Deprem Standardı</Label>
+        <Label className="text-xs text-muted-foreground">{t('filterQuake')}</Label>
         <div className="flex flex-wrap gap-1.5">
-          {QUAKE_OPTIONS.map(q => (
+          {QUAKE_OPTION_KEYS.map(q => (
             <button
               key={q.value}
               type="button"
@@ -117,7 +121,7 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
                   : 'bg-background text-muted-foreground border-border hover:border-primary/50'
               }`}
             >
-              {q.label}
+              {t(q.labelKey)}
             </button>
           ))}
         </div>
@@ -125,9 +129,9 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
 
       {/* Özellikler */}
       <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">Özellikler</Label>
+        <Label className="text-xs text-muted-foreground">{t('filterFeatures')}</Label>
         <div className="flex flex-wrap gap-1.5">
-          {FEATURE_OPTIONS.map(f => (
+          {FEATURE_OPTION_KEYS.map(f => (
             <button
               key={f.id}
               type="button"
@@ -138,7 +142,7 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
                   : 'bg-background text-muted-foreground border-border hover:border-primary/50'
               }`}
             >
-              {f.label}
+              {t(f.labelKey)}
             </button>
           ))}
         </div>
@@ -148,7 +152,7 @@ export const PortalFilterPanel = ({ filters, onChange, onReset }: Props) => {
       {hasActive && (
         <div className="pt-1">
           <Badge variant="secondary" className="text-xs">
-            {[filters.priceMin || filters.priceMax ? 1 : 0, filters.roomType ? 1 : 0, filters.quakeStandard ? 1 : 0, filters.features.length].reduce((a, b) => a + b, 0)} filtre aktif
+            {t('filterActiveCount', { count: [filters.priceMin || filters.priceMax ? 1 : 0, filters.roomType ? 1 : 0, filters.quakeStandard ? 1 : 0, filters.features.length].reduce((a, b) => a + b, 0) })}
           </Badge>
         </div>
       )}
