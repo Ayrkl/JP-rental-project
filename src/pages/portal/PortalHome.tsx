@@ -54,7 +54,6 @@ export const PortalHome = () => {
         </div>
 
         {/* Liste / Harita toggle */}
-        <div className="flex items-center bg-muted/40 p-1 rounded-lg border border-border">
           <button
             onClick={() => setView('list')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
@@ -63,15 +62,6 @@ export const PortalHome = () => {
           >
             <LayoutList className="w-3.5 h-3.5" /> Liste
           </button>
-          <button
-            onClick={() => setView('map')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-              view === 'map' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Map className="w-3.5 h-3.5" /> Harita
-          </button>
-        </div>
       </div>
 
       <div className="flex gap-5">

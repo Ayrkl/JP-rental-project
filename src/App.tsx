@@ -9,6 +9,7 @@ import { TenantLayout } from './components/tenant/TenantLayout';
 import { TenantDashboard } from './pages/tenant/TenantDashboard';
 import { PortalLayout } from './components/portal/PortalLayout';
 import { PortalHome } from './pages/portal/PortalHome';
+import { PortalMapPage } from './pages/portal/PortalMapPage';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
       {/* Portal */}
       <Route path="/portal" element={<PortalLayout />}>
         <Route index element={<PortalHome />} />
+        <Route path="map" element={<PortalMapPage />} />
       </Route>
     </Routes>
   );
