@@ -36,18 +36,6 @@ const MOCK_USERS: User[] = [
   { id: '10', name: 'Nana Kimura', email: 'n.kimura@edusama.jp', phone: '+81 90 0123 4567', status: 'inactive', roles: ['Property Manager'], dateAdded: '2024-06-10' },
   { id: '11', name: 'Sora Matsumoto', email: 's.matsumoto@edusama.jp', phone: '+81 80 1122 3344', status: 'active', roles: ['Tenant'], dateAdded: '2024-06-20' },
   { id: '12', name: 'Hana Inoue', email: 'h.inoue@edusama.jp', phone: '+81 70 2233 4455', status: 'active', roles: ['Viewer'], dateAdded: '2024-07-01' },
-  { id: '13', name: 'Hiroshi Tanaka', email: 'h.tanaka@edusama.jp', phone: '+81 90 1234 5678', status: 'active', roles: ['Super Admin'], dateAdded: '2024-01-10' },
-  { id: '14', name: 'Yuki Nakamura', email: 'y.nakamura@edusama.jp', phone: '+81 80 2345 6789', status: 'active', roles: ['Property Manager'], dateAdded: '2024-02-15' },
-  { id: '15', name: 'Kenji Watanabe', email: 'k.watanabe@edusama.jp', phone: '+81 70 3456 7890', status: 'inactive', roles: ['Accountant'], dateAdded: '2024-03-01' },
-  { id: '16', name: 'Aiko Suzuki', email: 'a.suzuki@edusama.jp', phone: '+81 90 4567 8901', status: 'active', roles: ['Tenant'], dateAdded: '2024-03-20' },
-  { id: '17', name: 'Takeshi Yamamoto', email: 't.yamamoto@edusama.jp', phone: '+81 80 5678 9012', status: 'active', roles: ['Property Manager', 'Viewer'], dateAdded: '2024-04-05' },
-  { id: '18', name: 'Sakura Ito', email: 's.ito@edusama.jp', phone: '+81 70 6789 0123', status: 'inactive', roles: ['Tenant'], dateAdded: '2024-04-18' },
-  { id: '19', name: 'Ryo Kobayashi', email: 'r.kobayashi@edusama.jp', phone: '+81 90 7890 1234', status: 'active', roles: ['Viewer'], dateAdded: '2024-05-02' },
-  { id: '20', name: 'Mika Kato', email: 'm.kato@edusama.jp', phone: '+81 80 8901 2345', status: 'active', roles: ['Accountant', 'Viewer'], dateAdded: '2024-05-14' },
-  { id: '21', name: 'Daiki Hayashi', email: 'd.hayashi@edusama.jp', phone: '+81 70 9012 3456', status: 'active', roles: ['Tenant'], dateAdded: '2024-06-01' },
-  { id: '22', name: 'Nana Kimura', email: 'n.kimura@edusama.jp', phone: '+81 90 0123 4567', status: 'inactive', roles: ['Property Manager'], dateAdded: '2024-06-10' },
-  { id: '23', name: 'Sora Matsumoto', email: 's.matsumoto@edusama.jp', phone: '+81 80 1122 3344', status: 'active', roles: ['Tenant'], dateAdded: '2024-06-20' },
-  { id: '24', name: 'Hana Inoue', email: 'h.inoue@edusama.jp', phone: '+81 70 2233 4455', status: 'active', roles: ['Viewer'], dateAdded: '2024-07-01' },
 ];
 
 export const useUserStore = create<UserStore>()(
