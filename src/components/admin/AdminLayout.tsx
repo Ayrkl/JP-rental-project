@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Home, Users, FileText,
   ChevronRight, Menu, Search,
-  Megaphone, PanelLeft, Map, FolderOpen
+  Megaphone, PanelLeft, Map, FolderOpen, BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -32,6 +32,7 @@ export const AdminLayout = () => {
       items: [
         { path: '/admin/users',     icon: <Users size={18} />,      label: t('users') },
         { path: '/admin/documents', icon: <FolderOpen size={18} />, label: t('documents') },
+        { path: '/admin/accounting', icon: <BarChart3 size={18} />, label: 'Muhasebe' },
         { path: '#',                icon: <Megaphone size={18} />,  label: t('announcements') },
       ]
     }
