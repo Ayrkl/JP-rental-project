@@ -5,8 +5,9 @@ import {
     Home, Ruler, Calendar, MapPin,
     Zap, DoorOpen, Package, ShowerHead,
     CheckCircle2, Building2, Users, Layout,
-    ChevronLeft, ChevronRight
+    ChevronLeft, ChevronRight, Wrench
 } from 'lucide-react';
+import { MaintenanceTimeline } from '@/components/admin/MaintenanceTimeline';
 
 interface PropertyPreviewProps {
     property: Property;
@@ -15,6 +16,7 @@ interface PropertyPreviewProps {
 export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
     const images = property.images ?? [];
     const [activeIndex, setActiveIndex] = useState(0);
+    const [activeTab, setActiveTab] = useState<'general' | 'maintenance'>('general');
 
     const prev = () => setActiveIndex(i => (i - 1 + images.length) % images.length);
     const next = () => setActiveIndex(i => (i + 1) % images.length);
@@ -37,8 +39,38 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
     };
 
     return (
+        <div className="flex flex-col gap-6 pb-10">
+            {/* Tab Bar */}
+            <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1 w-fit">
+                <button
+                    onClick={() => setActiveTab('general')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        activeTab === 'general'
+                            ? 'bg-white/10 text-zinc-100 shadow'
+                            : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                >
+                    <Home size={14} /> Genel Bilgiler
+                </button>
+                <button
+                    onClick={() => setActiveTab('maintenance')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        activeTab === 'maintenance'
+                            ? 'bg-white/10 text-zinc-100 shadow'
+                            : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                >
+                    <Wrench size={14} /> Bakım Tarihçesi
+                </button>
+            </div>
+
+            {activeTab === 'maintenance' && (
+                <MaintenanceTimeline propertyId={property.id} />
+            )}
+
+            {activeTab === 'general' && (
         // gap-10 -> gap-16 yaparak genel boşluğu artırdık
-        <div className="flex flex-col gap-10 pb-10">
+        <div className="flex flex-col gap-10">
             {/* Görsel Galerisi */}
             {/* Çoklu görsellerde layout kaymasını engellemek için yükseklik/aspect sabit */}
             <div className="grid grid-cols-4 gap-4 shrink-0">
@@ -236,6 +268,8 @@ export const PropertyPreview = ({ property }: PropertyPreviewProps) => {
                     </div>
                 </div>
             </div>
+        </div>
+            )}
         </div>
     );
 };

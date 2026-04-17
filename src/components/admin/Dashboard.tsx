@@ -1,7 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Home, Building2, Calendar, MapPin, Pencil } from 'lucide-react';
+import { Home, Building2, Calendar, MapPin, Pencil, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
@@ -11,17 +11,29 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 
 import { usePropertyStore } from '../../store/usePropertyStore';
 import { useContractStore } from './useContractStore';
+import { useMaintenanceStore } from '@/store/useMaintenanceStore';
 import { PropertyForm } from './PropertyForm';
 import { PropertyPreview } from './PropertyPreview';
 
 export const Dashboard = () => {
     const properties = usePropertyStore(state => state.properties);
     const contracts = useContractStore(state => state.contracts);
+    const maintenanceRecords = useMaintenanceStore(state => state.records);
     const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
     const [previewPropertyId, setPreviewPropertyId] = useState<string | null>(null);
     const [gridCols, setGridCols] = useState<number>(3);
     const { t } = useTranslation('dashboard');
     const td = t as unknown as (key: string, opts?: Record<string, unknown>) => string;
+
+    // Yaklaşan bakımlar (30 gün içinde, tamamlanmamış)
+    const upcomingMaintenance = useMemo(() => {
+        const now = new Date();
+        return maintenanceRecords.filter((r) => {
+            if (!r.nextDate || r.status === 'completed') return false;
+            const diff = (new Date(r.nextDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+            return diff >= 0 && diff <= 30;
+        });
+    }, [maintenanceRecords]);
 
     // Aktif sözleşmesi olan mülk ID'leri
     const activeContractPropertyIds = useMemo(
@@ -51,6 +63,13 @@ export const Dashboard = () => {
 
     return (
         <div className="space-y-6">
+            {/* Yaklaşan Bakım Uyarısı */}
+            {upcomingMaintenance.length > 0 && (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 text-sm font-medium">
+                    <AlertTriangle size={16} className="shrink-0" />
+                    <span>{upcomingMaintenance.length} bakım yaklaşıyor — önümüzdeki 30 gün içinde planlı bakım bulunuyor.</span>
+                </div>
+            )}
             <div className="grid gap-4 md:grid-cols-3">
                 <Card className="hover:border-primary/50 transition-colors">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0 text-muted-foreground">
