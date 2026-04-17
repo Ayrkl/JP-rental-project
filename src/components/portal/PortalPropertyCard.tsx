@@ -1,7 +1,9 @@
-import { MapPin, Ruler, Users, Wifi, Car, PawPrint, Home } from 'lucide-react';
+import { MapPin, Ruler, Users, Wifi, Car, PawPrint, Home, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
 import type { Property } from '@/store/usePropertyStore';
 import { useTranslation } from 'react-i18next';
+import { ApplicationWizard } from '@/components/portal/ApplicationWizard';
 
 const FEATURE_ICONS: Record<string, React.ReactNode> = {
   internet: <Wifi className="w-3.5 h-3.5" />,
@@ -17,64 +19,81 @@ interface Props {
 export const PortalPropertyCard = ({ property, onClick }: Props) => {
   const { t: tRaw } = useTranslation('portal');
   const t = tRaw as unknown as (key: string, opts?: Record<string, unknown>) => string;
+  const [applyOpen, setApplyOpen] = useState(false);
 
   const visibleFeatures = (property.features ?? []).filter(f => FEATURE_ICONS[f]).slice(0, 3);
 
   return (
-    <div
-      onClick={onClick}
-      className="rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group"
-    >
-      {/* Görsel */}
-      <div className="h-44 bg-muted relative overflow-hidden">
-        {property.images && property.images.length > 0 ? (
-          <img
-            src={property.images[0]}
-            alt={property.address}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Home className="w-10 h-10 text-muted-foreground/30" />
-          </div>
-        )}
-        <Badge className="absolute top-3 left-3 bg-primary/90 text-primary-foreground text-xs font-bold px-2.5 py-1">
-          {property.roomType}
-        </Badge>
-        {property.price && (
-          <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-lg">
-            ¥{property.price.toLocaleString()}{t('perMonth')}
-          </div>
-        )}
-      </div>
-
-      {/* İçerik */}
-      <div className="p-4 space-y-3">
-        <div className="flex items-start gap-1.5">
-          <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-          <p className="text-sm text-foreground/80 leading-snug line-clamp-2">{property.address}</p>
+    <>
+      <div
+        onClick={onClick}
+        className="rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group"
+      >
+        {/* Görsel */}
+        <div className="h-44 bg-muted relative overflow-hidden">
+          {property.images && property.images.length > 0 ? (
+            <img
+              src={property.images[0]}
+              alt={property.address}
+              className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Home className="w-10 h-10 text-muted-foreground/30" />
+            </div>
+          )}
+          <Badge className="absolute top-3 left-3 bg-primary/90 text-primary-foreground text-xs font-bold px-2.5 py-1">
+            {property.roomType}
+          </Badge>
+          {property.price && (
+            <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-lg">
+              ¥{property.price.toLocaleString()}{t('perMonth')}
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Ruler className="w-3.5 h-3.5" /> {property.area} {t('area')}
-          </span>
-          <span className="flex items-center gap-1">
-            <Users className="w-3.5 h-3.5" /> {property.tenantCapacity} {t('capacity')}
-          </span>
-          <span>{property.buildYear}</span>
-        </div>
-
-        {visibleFeatures.length > 0 && (
-          <div className="flex items-center gap-2">
-            {visibleFeatures.map(f => (
-              <span key={f} className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-md">
-                {FEATURE_ICONS[f]} {f === 'internet' ? t('featureInternet') : f === 'parking' ? t('featureParking') : t('featurePets')}
-              </span>
-            ))}
+        {/* İçerik */}
+        <div className="p-4 space-y-3">
+          <div className="flex items-start gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+            <p className="text-sm text-foreground/80 leading-snug line-clamp-2">{property.address}</p>
           </div>
-        )}
+
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Ruler className="w-3.5 h-3.5" /> {property.area} {t('area')}
+            </span>
+            <span className="flex items-center gap-1">
+              <Users className="w-3.5 h-3.5" /> {property.tenantCapacity} {t('capacity')}
+            </span>
+            <span>{property.buildYear}</span>
+          </div>
+
+          {visibleFeatures.length > 0 && (
+            <div className="flex items-center gap-2">
+              {visibleFeatures.map(f => (
+                <span key={f} className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-md">
+                  {FEATURE_ICONS[f]} {f === 'internet' ? t('featureInternet') : f === 'parking' ? t('featureParking') : t('featurePets')}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Başvur butonu */}
+          <button
+            onClick={e => { e.stopPropagation(); setApplyOpen(true); }}
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 text-xs font-medium hover:bg-indigo-500/25 transition-all"
+          >
+            <FileText className="w-3.5 h-3.5" /> Hemen Başvur
+          </button>
+        </div>
       </div>
-    </div>
+
+      <ApplicationWizard
+        property={property}
+        open={applyOpen}
+        onClose={() => setApplyOpen(false)}
+      />
+    </>
   );
 };

@@ -7,6 +7,7 @@ import { ContractsPage } from './components/admin/ContractsPage';
 import { Users } from './pages/admin/Users';
 import { DocumentManager } from './pages/admin/DocumentManager';
 import { Accounting } from './pages/admin/Accounting';
+import { Applications } from './pages/admin/Applications';
 import { Documents } from './pages/tenant/Documents';
 import { RoleSelectPage } from './pages/RoleSelectPage';
 import { TenantLayout } from './components/tenant/TenantLayout';
@@ -29,6 +30,7 @@ function App() {
         <Route path="users" element={<Users />} />
         <Route path="documents" element={<DocumentManager />} />
         <Route path="accounting" element={<Accounting />} />
+        <Route path="applications" element={<Applications />} />
         <Route path="properties/new" element={<PropertyForm />} />
         <Route path="properties/edit/:id" element={<PropertyForm />} />
       </Route>
