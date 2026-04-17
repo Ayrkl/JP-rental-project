@@ -225,9 +225,10 @@ function InitialCostsTab() {
           <div className="space-y-1.5">
             <label className="text-xs text-zinc-400">Mülk</label>
             <select value={propertyId} onChange={e => setPropertyId(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-white/30">
-              <option value="">Seçiniz</option>
-              {properties.map(p => <option key={p.id} value={p.id}>{p.address}</option>)}
+              className="w-full appearance-none bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-500 transition-colors cursor-pointer"
+              style={{ colorScheme: 'dark' }}>
+              <option value="" className="bg-[#1a1a1a] text-zinc-100">Seçiniz</option>
+              {properties.map(p => <option key={p.id} value={p.id} className="bg-[#1a1a1a] text-zinc-100">{p.address}</option>)}
             </select>
           </div>
           <div className="space-y-1.5">
@@ -355,19 +356,32 @@ function UtilityTab() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap gap-4 items-end">
-        <div className="space-y-1.5">
-          <label className="text-xs text-zinc-400">Mülk</label>
-          <select value={propertyId} onChange={e => setPropertyId(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-white/30">
-            <option value="">Seçiniz</option>
-            {properties.map(p => <option key={p.id} value={p.id}>{p.address}</option>)}
+      <div className="flex flex-wrap gap-6 items-end">
+        <div className="flex flex-col gap-2 min-w-[280px]">
+          <label className="text-xs font-medium text-zinc-400 tracking-wide">Mülk</label>
+          <select
+            value={propertyId}
+            onChange={e => setPropertyId(e.target.value)}
+            className="appearance-none bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-zinc-500 transition-colors cursor-pointer"
+            style={{ colorScheme: 'dark' }}
+          >
+            <option value="" className="bg-[#1a1a1a] text-zinc-100">Seçiniz</option>
+            {properties.map(p => (
+              <option key={p.id} value={p.id} className="bg-[#1a1a1a] text-zinc-100">
+                {p.address}
+              </option>
+            ))}
           </select>
         </div>
-        <div className="space-y-1.5">
-          <label className="text-xs text-zinc-400">Ay</label>
-          <input type="month" value={month} onChange={e => setMonth(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-white/30" />
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-medium text-zinc-400 tracking-wide">Ay</label>
+          <input
+            type="month"
+            value={month}
+            onChange={e => setMonth(e.target.value)}
+            className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-zinc-500 transition-colors"
+            style={{ colorScheme: 'dark' }}
+          />
         </div>
       </div>
 
