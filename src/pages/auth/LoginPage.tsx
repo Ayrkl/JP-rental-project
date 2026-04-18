@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Mail, Lock, ArrowRight, Building2 } from 'lucide-react';
+import { Globe, Moon, EyeOff } from 'lucide-react';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +11,6 @@ export const LoginPage = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simüle edilmiş giriş akışı
     const role = email.includes('admin') ? 'admin' : 'tenant';
     login(
       {
@@ -22,97 +21,109 @@ export const LoginPage = () => {
       },
       'mock_jwt_token_123'
     );
-
-    // Role göre yönlendirme
     navigate(role === 'admin' ? '/admin' : '/tenant');
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-[#0a0a0a] overflow-hidden selection:bg-brand/30">
-      {/* Background Gradients (Premium) */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/4 -left-1/4 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse" />
-        <div className="absolute top-3/4 right-0 w-[30rem] h-[30rem] bg-violet-600/20 rounded-full blur-[100px] mix-blend-screen" />
+    <div className="min-h-screen w-full flex bg-[#09090B] text-white">
+      {/* Sol Panel: İllüstrasyon (Mobilde Gizli) */}
+      <div className="hidden lg:flex lg:w-[%] xl:w-[50%] flex-col justify-center relative bg-[#18181A] px-12 py-10 border-r border-white/5">
+        {/* Üstteki Logo (Opsiyonel / Resimle Uyumluluk İçin) */}
+        <div className="absolute top-10 left-12">
+          <img src="/edusama-BXUdwSsl.png" alt="Edusama Logo" className="h-8 object-contain" />
+        </div>
+
+        {/* Merkezdeki Büyük İllüstrasyon */}
+        <div className="w-full flex items-center justify-center mt-8">
+          <img 
+            src="/edusama_login-Bit-zCiy.png" 
+            alt="Login Illustration" 
+            className="w-full max-w-[900px] object-contain drop-shadow-2xl scale-110"
+          />
+        </div>
       </div>
 
-      <div className="w-full max-w-md p-8 relative z-10 m-4">
-        {/* Glassmorphism Card */}
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl" />
-        
-        <div className="relative">
-          <div className="flex justify-center mb-8">
-            <div className="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 shadow-inner overflow-hidden p-2">
-              <img src="/edusama_icon.webp" alt="Edusama Icon" className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
-            </div>
-          </div>
+      {/* Sağ Panel: Form */}
+      <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col justify-center p-8 lg:p-16 xl:p-24 relative bg-black">
+        {/* Sağ Üst İkonlar: Global (Dil) ve Temalar */}
+        <div className="absolute top-10 right-10 flex items-center space-x-6 text-white/60">
+          <button className="hover:text-white transition-colors">
+            <Globe className="w-5 h-5" />
+          </button>
+          <button className="hover:text-white transition-colors">
+            <Moon className="w-5 h-5" />
+          </button>
+        </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-light text-white tracking-tight mb-2">
-              Hoş Geldiniz
+        {/* Form Alanı container */}
+        <div className="w-full max-w-md mx-auto">
+          {/* Form Üstü Logonun ve Metinlerin Ortalanması */}
+          <div className="mb-10 text-center flex flex-col items-center">
+            <img src="/edusama-BXUdwSsl.png" alt="Edusama Logo" className="h-16 mb-8 object-contain" />
+            <h1 className="text-2xl font-semibold text-white w-full text-left tracking-tight mb-2">
+              Giriş Yap
             </h1>
-            <p className="text-white/60 font-light">
-              Hesabınıza giriş yapmak için bilgilerinizi girin.
+            <p className="text-sm text-gray-400 w-full text-left font-light tracking-wide">
+              Hesabınıza giriş yapmak için lütfen bilgilerinizi giriniz
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
+            {/* Email Girişi */}
             <div className="space-y-2">
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/40 group-focus-within:text-white transition-colors duration-300">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  placeholder="E-posta adresiniz (admin@... admin girişi yapar)"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent transition-all backdrop-blur-sm"
-                />
-              </div>
+              <label className="block text-[13px] font-medium text-gray-200">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-white text-black rounded-lg border-0 focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium text-[15px]"
+                autoComplete="email"
+              />
             </div>
 
+            {/* Şifre Girişi */}
             <div className="space-y-2">
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/40 group-focus-within:text-white transition-colors duration-300">
-                  <Lock className="h-5 w-5" />
-                </div>
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-gray-200">
+                  Şifre
+                </label>
+                <a href="#" className="text-[12px] text-gray-400 hover:text-white transition-colors">
+                  Şifremi unuttum
+                </a>
+              </div>
+              <div className="relative">
                 <input
                   type="password"
                   required
-                  placeholder="Şifreniz"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent transition-all backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white text-black rounded-lg border-0 focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium text-[15px] pr-12"
+                  autoComplete="current-password"
                 />
+                {/* Göz İkonu */}
+                <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors">
+                  <EyeOff className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-2">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-0 transition-colors" />
-                <span className="text-sm font-light text-white/60">Beni hatırla</span>
-              </label>
-              <a href="#" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-light">
-                Şifremi unuttum
-              </a>
-            </div>
-
+            {/* Giriş Yap Butonu */}
             <button
               type="submit"
-              className="group relative w-full flex justify-center items-center py-3.5 px-4 bg-white text-black font-medium rounded-xl hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 transition-all overflow-hidden"
+              className="w-full py-3.5 mt-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-white/50 transition-all"
             >
-              <span>Giriş Yap</span>
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              Giriş Yap
             </button>
           </form>
 
-          <div className="mt-8 text-center">
-            <p className="text-white/60 text-sm font-light">
-              Hesabınız yok mu?{' '}
-              <Link to="/register" className="text-white hover:text-indigo-400 transition-colors font-medium">
-                Hemen oluşturun
-              </Link>
+          {/* Sözleşme & Bilgilendirme */}
+          <div className="mt-8 text-center px-4">
+            <p className="text-[12px] leading-relaxed text-gray-500 font-light">
+              Giriş yaparak, hizmet şartlarını ve <a href="#" className="underline hover:text-gray-300">gizlilik politikasını</a> kabul etmiş olursunuz.<br />
+              Yardıma mı ihtiyacınız var? Rehberler ve SSS için <a href="#" className="underline hover:text-gray-300">Yardım Merkezi</a>'ne bakın.
             </p>
           </div>
         </div>
