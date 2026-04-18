@@ -7,28 +7,30 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
+import { trpc } from '../../utils/trpc';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const login = useAuthStore((state) => state.login);
+  const loginStore = useAuthStore((state) => state.login);
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
 
+  const loginMutation = trpc.auth.login.useMutation({
+    onSuccess: (data) => {
+      // Backend'den dönen gerçek kullanıcı ve token verisi store'a yazılıyor
+      loginStore(data.user as any, data.token);
+      navigate(data.user.role === 'admin' ? '/admin' : '/tenant');
+    },
+    onError: (error) => {
+      alert(error.message);
+    }
+  });
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const role = email.includes('admin') ? 'admin' : 'tenant';
-    login(
-      {
-        id: '12345',
-        email,
-        name: role === 'admin' ? 'Sistem Yöneticisi' : 'Test Kiracısı',
-        role,
-      },
-      'mock_jwt_token_123'
-    );
-    navigate(role === 'admin' ? '/admin' : '/tenant');
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -118,8 +120,9 @@ export const LoginPage = () => {
             <Button
               type="submit"
               className="w-full mt-6 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+              disabled={loginMutation.isLoading}
             >
-              {t('login.loginButton')}
+              {loginMutation.isLoading ? "..." : t('login.loginButton')}
             </Button>
             
             {/* Geçiş Linki */}

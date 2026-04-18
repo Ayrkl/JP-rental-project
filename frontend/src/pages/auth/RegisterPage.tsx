@@ -7,6 +7,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
+import { trpc } from '../../utils/trpc';
 
 export const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -14,22 +15,24 @@ export const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<'tenant' | 'admin'>('tenant');
-  const login = useAuthStore((state) => state.login);
+  const loginStore = useAuthStore((state) => state.login);
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
 
+  const registerMutation = trpc.auth.register.useMutation({
+    onSuccess: (data) => {
+      // Backend'den dönen gerçek kullanıcı ve token verisi store'a yazılıyor
+      loginStore(data.user as any, data.token);
+      navigate(data.user.role === 'admin' ? '/admin' : '/tenant');
+    },
+    onError: (error) => {
+      alert(error.message);
+    }
+  });
+
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    login(
-      {
-        id: Math.random().toString(36).substr(2, 9),
-        email,
-        name,
-        role,
-      },
-      'mock_jwt_token_456'
-    );
-    navigate(role === 'admin' ? '/admin' : '/tenant');
+    registerMutation.mutate({ name, email, password, role });
   };
 
   return (
@@ -134,8 +137,9 @@ export const RegisterPage = () => {
             <Button
               type="submit"
               className="w-full mt-6 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+              disabled={registerMutation.isLoading}
             >
-              {t('register.registerButton')}
+              {registerMutation.isLoading ? "..." : t('register.registerButton')}
             </Button>
 
             {/* Geçiş Linki */}
