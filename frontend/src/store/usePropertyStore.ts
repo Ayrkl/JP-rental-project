@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export type InventoryCondition = 'new' | 'used' | 'damaged';
 
@@ -69,51 +68,35 @@ function isValidTransition(from: PropertyStatus, to: PropertyStatus): boolean {
   return STATUS_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
-export const usePropertyStore = create<PropertyStore>()(
-  persist(
-    (set) => ({
-      properties: [],
+export const usePropertyStore = create<PropertyStore>((set) => ({
+  properties: [],
 
-      addProperty: (property) => set((state) => ({
-        properties: [
-          {
-            ...property,
-            id: Math.random().toString(36).substr(2, 9),
-            dateAdded: new Date().toISOString(),
-            status: 'available' as const,
-            statusChangedAt: new Date().toISOString(),
-          },
-          ...state.properties,
-        ],
-      })),
-
-      updateProperty: (id, updatedProp) => set((state) => {
-        const existing = state.properties.find(p => p.id === id);
-        if (existing && updatedProp.status && updatedProp.status !== existing.status) {
-          if (!isValidTransition(existing.status, updatedProp.status)) {
-            throw new Error(`Geçersiz durum geçişi: ${existing.status} → ${updatedProp.status}`);
-          }
-        }
-        return {
-          properties: state.properties.map(p => p.id === id ? { ...p, ...updatedProp } : p),
-        };
-      }),
-
-      removeProperty: (id) => set((state) => ({
-        properties: state.properties.filter(p => p.id !== id),
-      })),
-    }),
-    {
-      name: 'property-storage',
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.properties = state.properties.map(p => ({
-            ...p,
-            status: p.status ?? 'available',
-            logistics: p.logistics ?? {},
-          }));
-        }
+  addProperty: (property) => set((state) => ({
+    properties: [
+      {
+        ...property,
+        id: Math.random().toString(36).substr(2, 9),
+        dateAdded: new Date().toISOString(),
+        status: 'available' as const,
+        statusChangedAt: new Date().toISOString(),
       },
+      ...state.properties,
+    ],
+  })),
+
+  updateProperty: (id, updatedProp) => set((state) => {
+    const existing = state.properties.find(p => p.id === id);
+    if (existing && updatedProp.status && updatedProp.status !== existing.status) {
+      if (!isValidTransition(existing.status, updatedProp.status)) {
+        throw new Error(`Geçersiz durum geçişi: ${existing.status} → ${updatedProp.status}`);
+      }
     }
-  )
-);
+    return {
+      properties: state.properties.map(p => p.id === id ? { ...p, ...updatedProp } : p),
+    };
+  }),
+
+  removeProperty: (id) => set((state) => ({
+    properties: state.properties.filter(p => p.id !== id),
+  })),
+}));

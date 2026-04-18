@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export type ContractStatus = 'Taslak' | 'Aktif' | 'Sona Erdi' | 'Feshedildi';
 
@@ -26,35 +25,28 @@ interface ContractStore {
   removeContract: (id: string) => void;
 }
 
-export const useContractStore = create<ContractStore>()(
-  persist(
-    (set) => ({
-      contracts: [],
+export const useContractStore = create<ContractStore>((set) => ({
+  contracts: [],
 
-      addContract: (contract) =>
-        set((state) => ({
-          contracts: [
-            {
-              ...contract,
-              id: Math.random().toString(36).slice(2, 9),
-              dateAdded: new Date().toISOString(),
-            },
-            ...state.contracts,
-          ],
-        })),
+  addContract: (contract) =>
+    set((state) => ({
+      contracts: [
+        {
+          ...contract,
+          id: Math.random().toString(36).slice(2, 9),
+          dateAdded: new Date().toISOString(),
+        },
+        ...state.contracts,
+      ],
+    })),
 
-      updateContract: (id, updatedContract) =>
-        set((state) => ({
-          contracts: state.contracts.map((c) => (c.id === id ? { ...c, ...updatedContract } : c)),
-        })),
+  updateContract: (id, updatedContract) =>
+    set((state) => ({
+      contracts: state.contracts.map((c) => (c.id === id ? { ...c, ...updatedContract } : c)),
+    })),
 
-      removeContract: (id) =>
-        set((state) => ({
-          contracts: state.contracts.filter((c) => c.id !== id),
-        })),
-    }),
-    {
-      name: 'contract-storage',
-    }
-  )
-);
+  removeContract: (id) =>
+    set((state) => ({
+      contracts: state.contracts.filter((c) => c.id !== id),
+    })),
+}));

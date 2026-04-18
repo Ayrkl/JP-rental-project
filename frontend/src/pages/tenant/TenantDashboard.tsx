@@ -8,33 +8,13 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 
 // ── Mock Veri ──────────────────────────────────────────────────────────────
-const TREND_DATA = [
-  { ay: 'Oca', kira: 120000, faturalar: 18400 },
-  { ay: 'Şub', kira: 120000, faturalar: 21200 },
-  { ay: 'Mar', kira: 120000, faturalar: 16800 },
-  { ay: 'Nis', kira: 120000, faturalar: 19500 },
-  { ay: 'May', kira: 120000, faturalar: 22100 },
-  { ay: 'Haz', kira: 120000, faturalar: 17300 },
-];
+const TREND_DATA: { ay: string; kira: number; faturalar: number }[] = [];
 
-const PIE_DATA = [
-  { name: 'Kira',     value: 120000, color: '#6366f1' },
-  { name: 'Elektrik', value: 8200,   color: '#10b981' },
-  { name: 'Su',       value: 4100,   color: '#3b82f6' },
-  { name: 'Gaz',      value: 5000,   color: '#f59e0b' },
-];
+const PIE_DATA: { name: string; value: number; color: string }[] = [];
 
 type PaymentStatus = 'paid' | 'pending' | 'overdue';
 
-const PAYMENTS: { period: string; item: string; amount: number; status: PaymentStatus }[] = [
-  { period: 'Haz 2025', item: 'Kira',     amount: 120000, status: 'pending' },
-  { period: 'Haz 2025', item: 'Elektrik', amount: 8200,   status: 'pending' },
-  { period: 'May 2025', item: 'Kira',     amount: 120000, status: 'paid'    },
-  { period: 'May 2025', item: 'Su',       amount: 4100,   status: 'paid'    },
-  { period: 'May 2025', item: 'Gaz',      amount: 5000,   status: 'paid'    },
-  { period: 'Nis 2025', item: 'Kira',     amount: 120000, status: 'paid'    },
-  { period: 'Nis 2025', item: 'Elektrik', amount: 9500,   status: 'overdue' },
-];
+const PAYMENTS: { period: string; item: string; amount: number; status: PaymentStatus }[] = [];
 
 const TOTAL_PAID = PAYMENTS.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0);
 const CURRENT_BALANCE = PAYMENTS.filter(p => p.status !== 'paid').reduce((s, p) => s + p.amount, 0);
@@ -82,8 +62,8 @@ export const TenantDashboard = () => {
     {
       icon: Clock,
       label: t('nextPayment'),
-      value: '¥128,200',
-      sub: '1 Temmuz 2025',
+      value: '—',
+      sub: '—',
       valueClass: 'text-amber-400',
     },
     {
@@ -96,7 +76,7 @@ export const TenantDashboard = () => {
     {
       icon: Bell,
       label: t('activeNotices'),
-      value: '3',
+      value: '0',
       sub: t('notices'),
       valueClass: 'text-indigo-400',
     },
@@ -107,7 +87,7 @@ export const TenantDashboard = () => {
       {/* Başlık */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t('financialSummary')}</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Haziran 2025 · {t('tenantHome')}</p>
+        <p className="text-sm text-muted-foreground mt-0.5">{t('tenantHome')}</p>
       </div>
 
       {/* Stat Kartları */}
@@ -131,69 +111,90 @@ export const TenantDashboard = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
         {/* Trend Grafiği — 2/3 genişlik */}
-        <div className="xl:col-span-2 rounded-2xl border border-border bg-card p-5 space-y-4">
+        <div className="xl:col-span-2 rounded-2xl border border-border bg-card p-5 space-y-4 relative min-h-[300px] flex flex-col">
           <h2 className="text-sm font-semibold">{t('paymentTrend')}</h2>
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={TREND_DATA} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="gradKira" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#6366f1" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="gradFatura" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#10b981" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-              <XAxis dataKey="ay" tick={{ fill: '#71717a', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#71717a', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `¥${(v/1000).toFixed(0)}k`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="kira"     name={t('rent')}  stroke="#6366f1" strokeWidth={2} fill="url(#gradKira)"   />
-              <Area type="monotone" dataKey="faturalar" name={t('bills')} stroke="#10b981" strokeWidth={2} fill="url(#gradFatura)" />
-            </AreaChart>
-          </ResponsiveContainer>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-indigo-500 inline-block rounded" />{t('rent')}</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-emerald-500 inline-block rounded" />{t('bills')}</span>
-          </div>
+          {TREND_DATA.length > 0 ? (
+            <ResponsiveContainer width="100%" height={240}>
+              <AreaChart data={TREND_DATA} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                {/* ... existing chart code ... */}
+                <defs>
+                  <linearGradient id="gradKira" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#6366f1" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradFatura" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#10b981" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                <XAxis dataKey="ay" tick={{ fill: '#71717a', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#71717a', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `¥${(v/1000).toFixed(0)}k`} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="kira"     name={t('rent')}  stroke="#6366f1" strokeWidth={2} fill="url(#gradKira)"   />
+                <Area type="monotone" dataKey="faturalar" name={t('bills')} stroke="#10b981" strokeWidth={2} fill="url(#gradFatura)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2 border border-dashed border-border/50 rounded-xl my-2">
+              <TrendingUp className="w-8 h-8 opacity-20" />
+              <span className="text-xs">{t('notificationsEmpty')}</span>
+            </div>
+          )}
+          {TREND_DATA.length > 0 && (
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-indigo-500 inline-block rounded" />{t('rent')}</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 bg-emerald-500 inline-block rounded" />{t('bills')}</span>
+            </div>
+          )}
         </div>
 
         {/* Pie Chart — 1/3 genişlik */}
-        <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+        <div className="rounded-2xl border border-border bg-card p-5 space-y-4 flex flex-col min-h-[300px]">
           <h2 className="text-sm font-semibold">{t('expenseBreakdown')}</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={PIE_DATA}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={85}
-                paddingAngle={3}
-                dataKey="value"
-              >
-                {PIE_DATA.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} stroke="transparent" />
+          {PIE_DATA.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie
+                    data={PIE_DATA}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={75}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {PIE_DATA.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} stroke="transparent" />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(v: number) => [`¥${v.toLocaleString()}`, '']}
+                    contentStyle={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, fontSize: 12 }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-2 mt-auto">
+                {PIE_DATA.map(d => (
+                  <div key={d.name} className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: d.color }} />
+                      <span className="text-muted-foreground">{d.name}</span>
+                    </span>
+                    <span className="font-medium">¥{d.value.toLocaleString()}</span>
+                  </div>
                 ))}
-              </Pie>
-              <Tooltip
-                formatter={(v: number) => [`¥${v.toLocaleString()}`, '']}
-                contentStyle={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, fontSize: 12 }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="space-y-2">
-            {PIE_DATA.map(d => (
-              <div key={d.name} className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: d.color }} />
-                  <span className="text-muted-foreground">{d.name}</span>
-                </span>
-                <span className="font-medium">¥{d.value.toLocaleString()}</span>
               </div>
-            ))}
-          </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-2 border border-dashed border-border/50 rounded-xl">
+              <div className="w-12 h-12 rounded-full border-2 border-muted-foreground/10 flex items-center justify-center border-dashed">
+                <div className="w-6 h-6 rounded-full bg-muted-foreground/5" />
+              </div>
+              <span className="text-xs">{t('notificationsEmpty')}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -214,31 +215,39 @@ export const TenantDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {PAYMENTS.map((p, i) => {
-                const cfg = STATUS_CONFIG[p.status];
-                return (
-                  <tr key={i} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
-                    <td className="px-5 py-3 text-muted-foreground">{p.period}</td>
-                    <td className="px-5 py-3 font-medium">{p.item}</td>
-                    <td className="px-5 py-3 text-right font-mono font-semibold">¥{p.amount.toLocaleString()}</td>
-                    <td className="px-5 py-3 text-center">
-                      <Badge className={`text-[10px] px-2 py-0.5 border ${cfg.className}`}>
-                        {cfg.label}
-                      </Badge>
-                    </td>
-                    <td className="px-5 py-3 text-center">
-                      {p.status === 'paid' ? (
-                        <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground">
-                          <FileText className="w-3.5 h-3.5" />
-                          {t('receipt')}
-                        </Button>
-                      ) : (
-                        <span className="text-xs text-muted-foreground/40">—</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {PAYMENTS.length > 0 ? (
+                PAYMENTS.map((p, i) => {
+                  const cfg = STATUS_CONFIG[p.status];
+                  return (
+                    <tr key={i} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+                      <td className="px-5 py-3 text-muted-foreground">{p.period}</td>
+                      <td className="px-5 py-3 font-medium">{p.item}</td>
+                      <td className="px-5 py-3 text-right font-mono font-semibold">¥{p.amount.toLocaleString()}</td>
+                      <td className="px-5 py-3 text-center">
+                        <Badge className={`text-[10px] px-2 py-0.5 border ${cfg.className}`}>
+                          {cfg.label}
+                        </Badge>
+                      </td>
+                      <td className="px-5 py-3 text-center">
+                        {p.status === 'paid' ? (
+                          <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground">
+                            <FileText className="w-3.5 h-3.5" />
+                            {t('receipt')}
+                          </Button>
+                        ) : (
+                          <span className="text-xs text-muted-foreground/40">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground italic opacity-50">
+                    {t('notificationsEmpty')}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
