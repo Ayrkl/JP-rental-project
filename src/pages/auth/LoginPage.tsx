@@ -114,16 +114,26 @@ export const LoginPage = () => {
             {/* Giriş Yap Butonu */}
             <Button
               type="submit"
-              className="w-full mt-2 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+              className="w-full mt-6 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
             >
               Giriş Yap
             </Button>
+            
+            {/* Geçiş Linki */}
+            <div className="mt-4 text-center">
+              <span className="text-sm text-zinc-400">Hesabınız yok mu? </span>
+              <Link to="/register" className="text-sm text-zinc-100 font-medium hover:underline transition-colors">
+                Kayıt Ol
+              </Link>
+            </div>
           </form>
 
           {/* Sözleşme & Bilgilendirme */}
           <div className="mt-8 text-center px-2">
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Giriş yaparak, <a href="#" className="underline hover:text-foreground transition-colors">hizmet şartlarını</a> ve <a href="#" className="underline hover:text-foreground transition-colors">gizlilik politikasını</a> kabul etmiş olursunuz.<br />
+              Giriş yaparak,{' '}
+              <Link to="/terms" className="underline hover:text-foreground transition-colors">hizmet şartlarını</Link>
+              {' '}ve <Link to="/privacy" className="underline hover:text-foreground transition-colors">gizlilik politikasını</Link> kabul etmiş olursunuz.<br />
               Yardıma mı ihtiyacınız var? Rehberler ve SSS için <a href="#" className="underline hover:text-foreground transition-colors">Yardım Merkezi</a>'ne bakın.
             </p>
           </div>

@@ -5,6 +5,7 @@ import { Globe, Moon, EyeOff } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import { TermsDialog } from '../../components/auth/TermsDialog';
 
 export const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -134,16 +135,15 @@ export const RegisterPage = () => {
             >
               Hesap Oluştur
             </Button>
-          </form>
 
-          <div className="mt-8 text-center px-4">
-             <p className="text-xs text-muted-foreground">
-              Zaten hesabınız var mı?{' '}
-              <Link to="/login" className="text-zinc-200 font-medium hover:underline">
-                Giriş yapın
+            {/* Geçiş Linki */}
+            <div className="mt-4 text-center">
+              <span className="text-sm text-zinc-400">Zaten hesabınız var mı? </span>
+              <Link to="/login" className="text-sm text-zinc-100 font-medium hover:underline transition-colors">
+                Giriş Yap
               </Link>
-            </p>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
