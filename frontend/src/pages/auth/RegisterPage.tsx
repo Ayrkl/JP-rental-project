@@ -14,7 +14,6 @@ export const RegisterPage = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<'tenant' | 'admin'>('tenant');
   const loginStore = useAuthStore((state) => state.login);
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
@@ -26,13 +25,13 @@ export const RegisterPage = () => {
       navigate(data.user.role === 'admin' ? '/admin' : '/tenant');
     },
     onError: (error) => {
-      alert(error.message);
+      // Hata zaten mutation nesnesindeki error state'inden okunacak, alert kaldırıldı.
     }
   });
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    registerMutation.mutate({ name, email, password, role });
+    registerMutation.mutate({ name, email, password, role: 'tenant' });
   };
 
   return (
@@ -70,6 +69,15 @@ export const RegisterPage = () => {
               {t('register.subtitle')}
             </p>
           </div>
+
+          {/* Hata Mesajı Alanı */}
+          {registerMutation.error && (
+            <div className="mb-4 p-3 rounded-md bg-red-500/10 border border-red-500/50 text-red-500 text-xs font-medium animate-in fade-in zoom-in duration-200">
+              {registerMutation.error.message.startsWith('[') 
+                ? JSON.parse(registerMutation.error.message)[0].message 
+                : registerMutation.error.message}
+            </div>
+          )}
 
           <form onSubmit={handleRegister} className="space-y-4">
             {/* İsim Girişi */}
@@ -120,18 +128,6 @@ export const RegisterPage = () => {
                    {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
               </div>
-            </div>
-
-            {/* Rol Seçimi */}
-            <div className="flex gap-4 pt-2">
-              <label className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md border cursor-pointer transition-all ${role === 'tenant' ? 'bg-zinc-100 border-zinc-100 text-zinc-900 font-medium' : 'bg-transparent border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
-                <input type="radio" name="role" value="tenant" className="sr-only" checked={role === 'tenant'} onChange={() => setRole('tenant')} />
-                <span className="text-sm">{t('register.roleTenant')}</span>
-              </label>
-              <label className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md border cursor-pointer transition-all ${role === 'admin' ? 'bg-zinc-100 border-zinc-100 text-zinc-900 font-medium' : 'bg-transparent border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
-                <input type="radio" name="role" value="admin" className="sr-only" checked={role === 'admin'} onChange={() => setRole('admin')} />
-                <span className="text-sm">{t('register.roleAdmin')}</span>
-              </label>
             </div>
 
             <Button

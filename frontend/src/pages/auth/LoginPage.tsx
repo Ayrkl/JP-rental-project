@@ -24,7 +24,7 @@ export const LoginPage = () => {
       navigate(data.user.role === 'admin' ? '/admin' : '/tenant');
     },
     onError: (error) => {
-      alert(error.message);
+      // Hata zaten mutation nesnesindeki error state'inden okunacak, alert kaldırıldı.
     }
   });
 
@@ -70,6 +70,15 @@ export const LoginPage = () => {
               {t('login.subtitle')}
             </p>
           </div>
+
+          {/* Hata Mesajı Alanı */}
+          {loginMutation.error && (
+            <div className="mb-4 p-3 rounded-md bg-red-500/10 border border-red-500/50 text-red-500 text-xs font-medium animate-in fade-in zoom-in duration-200">
+              {loginMutation.error.message.startsWith('[') 
+                ? JSON.parse(loginMutation.error.message)[0].message 
+                : loginMutation.error.message}
+            </div>
+          )}
 
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Email Girişi */}

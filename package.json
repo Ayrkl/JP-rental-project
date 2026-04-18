@@ -1,6 +1,7 @@
 {
   "name": "jp-rental-monorepo",
   "private": true,
+  "packageManager": "npm@11.9.0",
   "engines": {
     "node": ">=20.0.0"
   },
