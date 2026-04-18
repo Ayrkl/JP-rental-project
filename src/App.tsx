@@ -9,7 +9,6 @@ import { DocumentManager } from './pages/admin/DocumentManager';
 import { Accounting } from './pages/admin/Accounting';
 import { Applications } from './pages/admin/Applications';
 import { Documents } from './pages/tenant/Documents';
-import { RoleSelectPage } from './pages/RoleSelectPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { TermsPage } from './pages/TermsPage';
@@ -28,7 +27,6 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/select" element={<RoleSelectPage />} />
 
       {/* Admin */}
       <Route path="/admin" element={<AdminLayout />}>

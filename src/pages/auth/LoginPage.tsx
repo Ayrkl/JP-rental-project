@@ -29,7 +29,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-background text-foreground dark">
+    <div className="h-screen w-full flex bg-background text-foreground dark overflow-hidden">
       {/* Sol Panel: İllüstrasyon (Mobilde Gizli) */}
       <div className="hidden lg:flex lg:w-[45%] xl:w-[50%] flex-col justify-center relative bg-zinc-950 px-12 py-10 border-r border-border/50">
         <div className="absolute top-10 left-12">
@@ -47,7 +47,7 @@ export const LoginPage = () => {
       </div>
 
       {/* Sağ Panel: Form */}
-      <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col justify-center p-8 lg:p-16 xl:p-24 relative bg-[#09090b]">
+      <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col justify-center p-6 lg:p-10 xl:p-14 relative bg-[#09090b]">
         {/* Sağ Üst İkonlar: Global (Dil) ve Temalar */}
         <div className="absolute top-10 right-10 flex items-center space-x-4 text-muted-foreground">
           <button className="hover:text-foreground transition-colors">
