@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Globe, Moon, EyeOff, Eye } from 'lucide-react';
+import { EyeOff, Eye } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { TermsDialog } from '../../components/auth/TermsDialog';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 
 export const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ export const RegisterPage = () => {
   const [role, setRole] = useState<'tenant' | 'admin'>('tenant');
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,59 +52,54 @@ export const RegisterPage = () => {
       {/* Sağ Panel: Form */}
       <div className="w-full lg:w-[55%] xl:w-[50%] flex flex-col justify-center p-6 lg:p-10 xl:p-14 relative bg-[#09090b]">
         {/* Sağ Üst İkonlar: Global (Dil) ve Temalar */}
-        <div className="absolute top-10 right-10 flex items-center space-x-4 text-muted-foreground">
-          <button className="hover:text-foreground transition-colors">
-            <Globe className="w-4 h-4" />
-          </button>
-          <button className="hover:text-foreground transition-colors">
-            <Moon className="w-4 h-4" />
-          </button>
+        <div className="absolute top-10 right-10 flex items-center space-x-4 z-50">
+          <LanguageSwitcher />
         </div>
 
         {/* Form Alanı container */}
-        <div className="w-full max-w-[380px] mx-auto">
+        <div className="w-full max-w-[380px] mx-auto z-10">
           <div className="mb-8 w-full flex flex-col items-start">
             <img src="/edusama-BXUdwSsl.png" alt="Edusama Logo" className="h-[72px] mb-8 object-contain" />
             <h1 className="text-2xl font-semibold tracking-tight mb-2 text-zinc-100">
-              Kayıt Ol
+              {t('register.title')}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Yeni bir hesap açarak platformumuza katılın
+              {t('register.subtitle')}
             </p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
             {/* İsim Girişi */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-zinc-300">Adınız Soyadınız</Label>
+              <Label htmlFor="name" className="text-zinc-300">{t('register.nameLabel')}</Label>
               <Input
                 id="name"
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Örn: Ali Yılmaz"
+                placeholder={t('register.namePlaceholder')}
                 className="bg-zinc-950 border-zinc-800 text-zinc-100 focus-visible:ring-zinc-700"
               />
             </div>
 
             {/* Email Girişi */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-zinc-300">Email</Label>
+              <Label htmlFor="email" className="text-zinc-300">{t('register.emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="ornek@sirket.com"
+                placeholder={t('register.emailPlaceholder')}
                 className="bg-zinc-950 border-zinc-800 text-zinc-100 focus-visible:ring-zinc-700"
               />
             </div>
 
             {/* Şifre Girişi */}
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-zinc-300">Şifre</Label>
+              <Label htmlFor="password" className="text-zinc-300">{t('register.passwordLabel')}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -126,11 +123,11 @@ export const RegisterPage = () => {
             <div className="flex gap-4 pt-2">
               <label className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md border cursor-pointer transition-all ${role === 'tenant' ? 'bg-zinc-100 border-zinc-100 text-zinc-900 font-medium' : 'bg-transparent border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
                 <input type="radio" name="role" value="tenant" className="sr-only" checked={role === 'tenant'} onChange={() => setRole('tenant')} />
-                <span className="text-sm">Kiracı</span>
+                <span className="text-sm">{t('register.roleTenant')}</span>
               </label>
               <label className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md border cursor-pointer transition-all ${role === 'admin' ? 'bg-zinc-100 border-zinc-100 text-zinc-900 font-medium' : 'bg-transparent border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
                 <input type="radio" name="role" value="admin" className="sr-only" checked={role === 'admin'} onChange={() => setRole('admin')} />
-                <span className="text-sm">Yönetici</span>
+                <span className="text-sm">{t('register.roleAdmin')}</span>
               </label>
             </div>
 
@@ -138,14 +135,14 @@ export const RegisterPage = () => {
               type="submit"
               className="w-full mt-6 bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
             >
-              Hesap Oluştur
+              {t('register.registerButton')}
             </Button>
 
             {/* Geçiş Linki */}
             <div className="mt-4 text-center">
-              <span className="text-sm text-zinc-400">Zaten hesabınız var mı? </span>
+              <span className="text-sm text-zinc-400">{t('register.hasAccount')} </span>
               <Link to="/login" className="text-sm text-zinc-100 font-medium hover:underline transition-colors">
-                Giriş Yap
+                {t('register.loginLink')}
               </Link>
             </div>
           </form>

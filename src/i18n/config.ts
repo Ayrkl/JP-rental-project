@@ -1,4 +1,4 @@
-export const NAMESPACES = ['common', 'navigation', 'dashboard', 'properties', 'contracts', 'map', 'validation', 'users', 'portal'] as const;
+export const NAMESPACES = ['common', 'navigation', 'dashboard', 'properties', 'contracts', 'map', 'validation', 'users', 'portal', 'auth'] as const;
 export type Namespace = typeof NAMESPACES[number];
 
 export const SUPPORTED_LANGUAGES = [

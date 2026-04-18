@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { SUPPORTED_LANGUAGES } from '@/i18n/config';
+import { Globe } from 'lucide-react';
 
 export const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
@@ -15,11 +16,11 @@ export const LanguageSwitcher = () => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#2a2a2a] bg-[#121212] text-zinc-300 hover:bg-[#1e1e1e] hover:text-zinc-100 transition-colors text-sm font-medium focus:outline-none"
+          className="flex items-center justify-center p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 transition-colors focus:outline-none"
           aria-label="Change language"
+          title="Dili Değiştir"
         >
-          <span>{currentLang.flag}</span>
-          <span className="text-xs font-bold tracking-wide">{currentLang.code.toUpperCase()}</span>
+          <Globe className="w-5 h-5" />
         </button>
       </DropdownMenu.Trigger>
 

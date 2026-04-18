@@ -12,6 +12,7 @@ import trMap from './locales/tr/map.json';
 import trValidation from './locales/tr/validation.json';
 import trUsers from './locales/tr/users.json';
 import trPortal from './locales/tr/portal.json';
+import trAuth from './locales/tr/auth.json';
 
 // İngilizce paketler
 import enCommon from './locales/en/common.json';
@@ -23,6 +24,7 @@ import enMap from './locales/en/map.json';
 import enValidation from './locales/en/validation.json';
 import enUsers from './locales/en/users.json';
 import enPortal from './locales/en/portal.json';
+import enAuth from './locales/en/auth.json';
 
 const supportedCodes = SUPPORTED_LANGUAGES.map((l) => l.code) as string[];
 
@@ -47,6 +49,7 @@ i18n.use(initReactI18next).init({
       validation: trValidation,
       users: trUsers,
       portal: trPortal,
+      auth: trAuth,
     },
     en: {
       common: enCommon,
@@ -58,6 +61,7 @@ i18n.use(initReactI18next).init({
       validation: enValidation,
       users: enUsers,
       portal: enPortal,
+      auth: enAuth,
     },
   },
   lng: detectedLang,
