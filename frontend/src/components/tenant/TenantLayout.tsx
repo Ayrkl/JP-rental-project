@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { NotificationSheet } from '@/components/shared/NotificationSheet';
+import { UserMenu } from '@/components/shared/UserMenu';
 import { useTranslation } from 'react-i18next';
 
 export const TenantLayout = () => {
@@ -100,18 +101,8 @@ export const TenantLayout = () => {
           <div className="flex items-center gap-3">
             <NotificationSheet />
             <LanguageSwitcher />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-zinc-400 hover:text-zinc-200 hover:bg-[#1a1a1a] gap-1.5 text-xs"
-              onClick={() => navigate('/select')}
-            >
-              <ArrowLeft size={14} />
-              {t('backToSelect')}
-            </Button>
-            <div className="h-8 w-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-xs text-indigo-400 cursor-pointer">
-              KR
-            </div>
+            <div className="h-6 w-px bg-[#1e1e1e] mx-1" />
+            <UserMenu />
           </div>
         </header>
 
