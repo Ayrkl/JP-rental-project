@@ -1,5 +1,6 @@
 import { router, publicProcedure } from '../trpc';
 import { LoginSchema, RegisterSchema } from 'common';
+import bcrypt from 'bcrypt';
 
 export const authRouter = router({
   login: publicProcedure
@@ -9,7 +10,9 @@ export const authRouter = router({
         where: { email: input.email },
       });
       if (!user) throw new Error("Kullanıcı bulunamadı.");
-      if (user.password !== input.password) throw new Error("Şifre hatalı."); // TODO: bcrypt check
+      
+      const isPasswordValid = await bcrypt.compare(input.password, user.password);
+      if (!isPasswordValid) throw new Error("Şifre hatalı.");
       
       return { token: "mock_jwt_token_123", user };
     }),
@@ -22,10 +25,12 @@ export const authRouter = router({
       });
       if (existingUser) throw new Error("Bu email ile kayıtlı bir kullanıcı var!");
       
+      const hashedPassword = await bcrypt.hash(input.password, 10);
+      
       const user = await ctx.prisma.user.create({
         data: {
           email: input.email,
-          password: input.password, // TODO: bcrypt hash,
+          password: hashedPassword,
           name: input.name,
           role: input.role,
         }

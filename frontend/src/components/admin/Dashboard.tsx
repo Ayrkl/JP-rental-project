@@ -1,7 +1,7 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Home, Building2, Calendar, MapPin, Pencil, AlertTriangle } from 'lucide-react';
+import { Home, Building2, Calendar, MapPin, Pencil, AlertTriangle, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
@@ -64,40 +64,45 @@ export const Dashboard = () => {
     return (
         <div className="space-y-6">
             {/* Yaklaşan Bakım Uyarısı */}
-            {upcomingMaintenance.length > 0 && (
+            {upcomingMaintenance.length > 0 ? (
                 <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 text-sm font-medium">
                     <AlertTriangle size={16} className="shrink-0" />
                     <span>{upcomingMaintenance.length} bakım yaklaşıyor — önümüzdeki 30 gün içinde planlı bakım bulunuyor.</span>
                 </div>
+            ) : (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/30 border border-border/50 text-muted-foreground text-xs italic">
+                    <Clock size={14} className="shrink-0 opacity-50" />
+                    <span>Yakın zamanda planlanmış bir bakım bulunmuyor.</span>
+                </div>
             )}
             <div className="grid gap-4 md:grid-cols-3">
-                <Card className="hover:border-primary/50 transition-colors">
+                <Card className="hover:border-primary/50 transition-colors bg-card/50">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0 text-muted-foreground">
                         <Home className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">{td('stats.totalProperties')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{properties.length}</div>
+                        <div className="text-2xl font-bold">{properties.length || '0'}</div>
                     </CardContent>
                 </Card>
 
-                <Card className="hover:border-primary/50 transition-colors text-muted-foreground">
+                <Card className="hover:border-primary/50 transition-colors text-muted-foreground bg-card/50">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Building2 className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">{td('stats.activeTenants')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{activeTenantCount}</div>
+                        <div className="text-2xl font-bold">{activeTenantCount || '0'}</div>
                     </CardContent>
                 </Card>
 
-                <Card className="hover:border-primary/50 transition-colors text-muted-foreground">
+                <Card className="hover:border-primary/50 transition-colors text-muted-foreground bg-card/50">
                     <CardHeader className="flex flex-row items-center gap-2.5 pb-2 space-y-0">
                         <Calendar className="w-4 h-4 text-primary" />
                         <CardTitle className="text-sm font-medium">{td('stats.vacantHomes')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{vacantCount}</div>
+                        <div className="text-2xl font-bold">{vacantCount || '0'}</div>
                     </CardContent>
                 </Card>
             </div>

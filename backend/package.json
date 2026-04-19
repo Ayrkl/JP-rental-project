@@ -8,20 +8,25 @@
     "start": "node dist/index.js",
     "clean": "rm -rf dist"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.0.0",
     "@trpc/server": "^11.0.0-rc.352",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.0.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^20.0.0",
+    "common": "*",
     "prisma": "^5.0.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.0",
-    "common": "*"
+    "typescript": "^5.5.0"
   }
 }
